@@ -1,0 +1,3 @@
+# relative path to comoslogical data
+src/data/eos2020.dat
+#
