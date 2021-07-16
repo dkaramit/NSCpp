@@ -58,13 +58,13 @@ PathHead=$(rootDir)src/misc_dir/path.hpp
 
 Cosmo_Headers=$(wildcard $(rootDir)src/Cosmo/Cosmo.cpp) $(wildcard $(rootDir)src/Cosmo/Cosmo.hpp)
 
-Static_Headers= $(wildcard $(rootDir)src/static.hpp) 
+Static_Funcs= $(wildcard $(rootDir)src/static.hpp) 
 
 all: NSC.run
 
 NSC.run: NSC.cpp\
 					$(NSC_Headers) $(Cosmo_Headers)\
-					$(DataFiles) $(PathHead) $(Static_Headers)\
+					$(DataFiles) $(PathHead) $(Static_Funcs)\
 					$(Ros_Headers) $(RKF_Headers) $(SPLINE_Headers)
 
 	$(CC) -o NSC.run NSC.cpp $(FLG) 
