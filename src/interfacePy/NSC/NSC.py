@@ -46,7 +46,35 @@ class NSC:
            initial_step_size=1e-2,minimum_step_size=1e-8,maximum_step_size=1e-2, 
            absolute_tolerance=1e-8,relative_tolerance=1e-8,
            beta=0.9,fac_max=1.2,fac_min=0.8, maximum_No_steps=int(1e7)):
+        '''
+        NSC class constructor:
+        NSC(TEND,c,Ti,ratio,umax,TSTOP, initial_step_size, minimum_step_size, maximum_step_size,
+                absolute_tolerance, relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
         
+        With:
+        TEND: TEND [GeV] is defined from Gamma_Phi=H_R(TEND) [H_R is the Hubble rate in RD Universe]
+        c: characterises the equation of state of Phi, with c=3(1+omega) and p=omega rho_Phi
+        Ti, ratio: ratio = rho_Phi/rho_R at temperature Ti [GeV]. These are the initial conditions
+        umax: if u>umax the integration stops (rempember that u=log(a/a_i))
+        TSTOP: if the temperature drops below this, integration stops.
+        -----------Optional arguments------------------------
+        initial_stepsize: initial step the solver takes.
+        maximum_stepsize: This limits the sepsize to an upper limit.
+        minimum_stepsize: This limits the sepsize to a lower limit.
+        absolute_tolerance: absolute tolerance of the RK solver.
+        relative_tolerance: relative tolerance of the RK solver.
+        Note:
+        Generally, both absolute and relative tolerances should be 1e-8.
+        In some cases, however, one may need more accurate result (eg if f_a is extremely high,
+        the oscillations happen violently, and the ODE destabilizes). Whatever the case, if the
+        tolerances are below 1e-8, long doubles *must* be used.
+        beta: controls how agreesive the adaptation is. Generally, it should be around but less than 1.
+        fac_max,  fac_min: the stepsize does not increase more than fac_max, and less than fac_min.
+        This ensures a better stability. Ideally, fac_max=inf and fac_min=0, but in reality one must
+        tweak them in order to avoid instabilities.
+        maximum_No_steps: maximum steps the solver can take Quits if this number is reached even if integration
+        is not finished.
+        '''
         self.voidpNSC=void_p()
         self.voidpNSC=NSClib.INIT(TEND,c,Ti,ratio,umax,TSTOP,
                         initial_step_size,minimum_step_size, maximum_step_size, 
@@ -66,12 +94,11 @@ class NSC:
         self.aD1=1
         self.aD2=1
 
-    def delete(self):
-        NSClib.DEL(self.voidpNSC)
-        del self.voidpNSC
 
     def __del__(self):
-        self.delete()
+        '''destructor'''
+        NSClib.DEL(self.voidpNSC) #don't forget to deallocated the pointer
+        del self.voidpNSC
         
         del self.a_ai
         del self.T
@@ -89,6 +116,10 @@ class NSC:
 
 
     def solve(self):
+        '''
+        solve the system (returns the time it took to finish).
+        After this is finished, we get TE1, TE2, TD1,and TD2. In order to get the entire evolution
+        run getPoints.'''
         time0=time()
         NSClib.SOLVE(self.voidpNSC)
         ArrP = cdouble * 8 
@@ -107,7 +138,10 @@ class NSC:
         return time()-time0
 
     def getPoints(self):
-
+        '''
+        get all the points of integration: a/a_i T [GeV] rho_Phi [GeV^4] logH^2.
+        You must have run self.solve() before. 
+        '''
         Arr = cdouble * NSClib.getSize(self.voidpNSC) 
         self.a_ai=Arr()
         self.T=Arr()

@@ -71,6 +71,35 @@ namespace nsc{
         unsigned int pointSize;
         LD TE1,TE2,TD1,TD2,aE1,aE2,aD1,aD2;
 
+        /*
+        NSC class constructor:
+        nsc::NSC(TEND,c,Ti,ratio,umax,TSTOP, initial_step_size, minimum_step_size, maximum_step_size,
+                absolute_tolerance, relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
+        
+        With:
+        TEND: TEND [GeV] is defined from Gamma_Phi=H_R(TEND) [H_R is the Hubble rate in RD Universe]
+        c: characterises the equation of state of Phi, with c=3(1+omega) and p=omega rho_Phi
+        Ti, ratio: ratio = rho_Phi/rho_R at temperature Ti [GeV]. These are the initial conditions
+        umax: if u>umax the integration stops (rempember that u=log(a/a_i))
+        TSTOP: if the temperature drops below this, integration stops.
+        -----------Optional arguments------------------------
+        initial_stepsize: initial step the solver takes.
+        maximum_stepsize: This limits the sepsize to an upper limit.
+        minimum_stepsize: This limits the sepsize to a lower limit.
+        absolute_tolerance: absolute tolerance of the RK solver.
+        relative_tolerance: relative tolerance of the RK solver.
+        Note:
+        Generally, both absolute and relative tolerances should be 1e-8.
+        In some cases, however, one may need more accurate result (eg if f_a is extremely high,
+        the oscillations happen violently, and the ODE destabilizes). Whatever the case, if the
+        tolerances are below 1e-8, long doubles *must* be used.
+        beta: controls how agreesive the adaptation is. Generally, it should be around but less than 1.
+        fac_max,  fac_min: the stepsize does not increase more than fac_max, and less than fac_min.
+        This ensures a better stability. Ideally, fac_max=inf and fac_min=0, but in reality one must
+        tweak them in order to avoid instabilities.
+        maximum_No_steps: maximum steps the solver can take Quits if this number is reached even if integration
+        is not finished.
+        */
 
         NSC(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP,
             LD initial_step_size=1e-2, LD minimum_step_size=1e-8, LD maximum_step_size=1e-2, 

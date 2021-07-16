@@ -55,7 +55,9 @@ STD=c++17
 
 FLG= -$(OPT) -std=$(STD) $(PATH_INCLUDE) -Wall
 
-Ros_Headers= $(wildcard src/Rosenbrock/*.hpp) $(wildcard src/Rosenbrock/LU/*.hpp) 
+Ros_Headers= $(wildcard $(rootDir)src/Rosenbrock/*.hpp) $(wildcard $(rootDir)src/Rosenbrock/LU/*.hpp) $(wildcard $(rootDir)src/Rosenbrock/Jacobian/*.hpp)
+RKF_Headers= $(wildcard $(rootDir)src/RKF/*.hpp) 
+
 SPLINE_Headers=$(wildcard src/Interpolation/*.hpp)
 
 NSCSolve_Headers= $(wildcard src/NSC/NSCSolve.hpp) 
@@ -79,7 +81,7 @@ exec: check
 lib/libCosmo.so: $(PathHead) $(PathTypePy) $(cosmoDat) $(SPLINE_Headers) $(Cosmo_Headers) $(Static_Headers) 
 	$(CC) -o lib/libCosmo.so src/Cosmo/Cosmo.cpp -fPIC -shared $(FLG) -DLONG=$(LONGpy)
 
-lib/libNSC.so: $(PathHead) $(PathTypePy) $(cosmoDat) $(SPLINE_Headers) $(NSCpy_Cpp) $(NSCSolve_Headers) $(NSC_Headers) $(Cosmo_Headers) $(Static_Headers) 
+lib/libNSC.so: $(PathHead) $(PathTypePy) $(cosmoDat) $(Ros_Headers) $(RKF_Headers) $(SPLINE_Headers) $(NSCpy_Cpp) $(NSCSolve_Headers) $(NSC_Headers) $(Cosmo_Headers) $(Static_Headers) 
 	$(CC) -o lib/libNSC.so src/NSC/NSC-py.cpp -fPIC -shared $(FLG) -DLONG=$(LONGpy)
 
  
