@@ -125,7 +125,7 @@ check: exec/Cosmo_check.run exec/NSCSolve_check.run
 Cosmo_cpp=$(wildcard src/Cosmo/checks/Cosmo_check.cpp)
 # check anharmonic factor interpolation
 exec/Cosmo_check.run: $(PathHead) $(Cosmo_cpp) $(DataFiles) $(SPLINE_Headers) 
-	$(CC) -o exec/Cosmo_check.run src/Cosmo/checks/Cosmo_check.cpp $(FLG) 
+	$(CC) -o exec/Cosmo_check.run src/Cosmo/checks/Cosmo_check.cpp $(FLG) -DLONG=$(LONG)
 
 NSCSolve_cpp=$(wildcard src/NSC/checks/NSCSolve_check.cpp)
 # check interpolations of the NSC_eom class 
