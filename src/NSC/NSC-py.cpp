@@ -1,4 +1,4 @@
-#include"NonStandardCosmology/NSC/NSCSolve.hpp"
+#include"src/NSC/NSCSolve.hpp"
 
 #ifndef LONG
     #define LONG long
@@ -8,53 +8,50 @@
     #define LD LONG double
 #endif
 
-typedef void* (*initType)(LD , LD , LD, LD , LD , LD, LD);
-typedef void (*solveType)(LD, void*);
-typedef unsigned int (*sizeType)(void*);
-
-
-void* __cc__(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP){ 
-    return new NSC<LD>(TEND, c, Ti, ratio, umax, TSTOP);
-}
-// destructor to delete the void*
-void delete_ptr(void * nsc){  delete static_cast<NSC<LD>*>(nsc) ; }
-
-void __solve__(LD fa, void* nsc){ 
-    static_cast<NSC<LD>*>(nsc) -> solve(fa);
-}
-
-unsigned int returnSize(void* nsc){
-    return static_cast<NSC<LD>*>(nsc) -> N;
-}
-
-
+#define Cast(BE) static_cast<nsc::NSC<LD>*>(BE)
 
 extern "C"{
-    initType INIT () {return __cc__ ; }
-    makeType DEL () {return delete_ptr ; }
-    solveType SOLVE () { return __solve__;}
-    sizeType getSize(){return returnSize ;}
-
-
-
-    void getResults(LD *a, LD *T, LD *rho, LD *rhoPhi, LD *points, void* nsc){
-        unsigned int N= (static_cast<NSC<LD>*>(nsc) -> N);
+    void* INIT(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP, 
+                    LD initial_step_size, LD minimum_step_size, LD maximum_step_size, 
+                    LD absolute_tolerance, LD relative_tolerance,
+                    LD beta, LD fac_max, LD fac_min, int maximum_No_steps){ 
         
+        return new nsc::NSC<LD>(TEND, c, Ti, ratio, umax, TSTOP,
+                            initial_step_size,minimum_step_size, maximum_step_size, 
+                            absolute_tolerance, relative_tolerance, beta,
+                            fac_max, fac_min, maximum_No_steps);
+    }
+
+    void DEL(void* BE){  delete Cast(BE) ; }
+    
+    void SOLVE(void* BE){ 
+        Cast(BE) -> solveNSC();
+    }
+
+    unsigned int getSize(void* BE){ return Cast(BE) -> pointSize;}
+
+
+
+
+    void getPoints(LD *a, LD *T, LD *rhoPhi, LD *logH2, void* BE){
+        unsigned int N= (Cast(BE) -> pointSize);
+
         for(unsigned int i=0; i<N; ++i){
-            a[i]=static_cast<NSC<LD>*>(nsc) ->results[i][0];
-            T[i]=static_cast<NSC<LD>*>(nsc) ->results[i][2];
-            rho[i]=static_cast<NSC<LD>*>(nsc) ->results[i][3];
-            rhoPhi[i]=static_cast<NSC<LD>*>(nsc) ->results[i][4];
+            a[i]=Cast(BE) ->points[i][0];
+            T[i]=Cast(BE) ->points[i][1];
+            rhoPhi[i]=Cast(BE) ->points[i][2];
+            logH2[i]=Cast(BE) ->points[i][3];
         }
+    }
 
-
-        points[0]=static_cast<NSC<LD>*>(nsc)->TE1;
-        points[1]=static_cast<NSC<LD>*>(nsc)->TE2;
-        points[2]=static_cast<NSC<LD>*>(nsc)->TD1;
-        points[3]=static_cast<NSC<LD>*>(nsc)->TD2;
-        points[4]=static_cast<NSC<LD>*>(nsc)->aE1;
-        points[5]=static_cast<NSC<LD>*>(nsc)->aE2;
-        points[6]=static_cast<NSC<LD>*>(nsc)->aD1;
-        points[7]=static_cast<NSC<LD>*>(nsc)->aD2;
+    void getResults(LD *points, void* BE){
+        points[0]=Cast(BE)->TE1;
+        points[1]=Cast(BE)->TE2;
+        points[2]=Cast(BE)->TD1;
+        points[3]=Cast(BE)->TD2;
+        points[4]=Cast(BE)->aE1;
+        points[5]=Cast(BE)->aE2;
+        points[6]=Cast(BE)->aD1;
+        points[7]=Cast(BE)->aD2;
     }
 }

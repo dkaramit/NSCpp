@@ -73,9 +73,10 @@ namespace nsc{
 
 
         NSC(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP,
-                    LD initial_step_size=1e-2, LD minimum_step_size=1e-8, LD maximum_step_size=1e-2, 
-                    LD absolute_tolerance=1e-8, LD relative_tolerance=1e-8,
-                    LD beta=0.9, LD fac_max=1.2, LD fac_min=0.8, int maximum_No_steps=int(1e7)){
+            LD initial_step_size=1e-2, LD minimum_step_size=1e-8, LD maximum_step_size=1e-2, 
+            LD absolute_tolerance=1e-8, LD relative_tolerance=1e-8,
+            LD beta=0.9, LD fac_max=1.2, LD fac_min=0.8, int maximum_No_steps=int(1e7)){
+            
             this->TEND=TEND;
             this->c=c;
             this->Ti=Ti;

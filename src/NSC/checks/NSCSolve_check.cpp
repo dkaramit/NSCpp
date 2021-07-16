@@ -27,9 +27,26 @@ int main(int argc, char **argv){
     // solver parameters
     LD umax = 500; //u at which the integration stops 
     LD TSTOP = 1e-4; // temperature at which integration stops
+    /*options for the solver*/
+    LD initial_step_size=1e-2; //initial step the solver takes. 
+    LD minimum_step_size=1e-8; //This limits the sepsize to an upper limit. 
+    LD maximum_step_size=1e-2; //This limits the sepsize to a lower limit.
+    LD absolute_tolerance=1e-8; //absolute tolerance of the RK solver
+    LD relative_tolerance=1e-8; //relative tolerance of the RK solver
+    LD beta=0.9; //controls how agreesive the adaptation is. Generally, it should be around but less than 1.
+    
+    /*
+    the stepsize does not increase more than fac_max, and less than fac_min. 
+    This ensures a better stability. Ideally, fac_max=inf and fac_min=0, but in reality one must 
+    tweak them in order to avoid instabilities.
+    */
+    LD fac_max=1.2; 
+    LD fac_min=0.8;
+    int maximum_No_steps=int(1e7); //maximum steps the solver can take Quits if this number is reached even if integration is not finished.
 
-
-    nsc::NSC<LD> BE(TEND,c,Ti,ratio,umax,TSTOP);
+    nsc::NSC<LD> BE(TEND,c,Ti,ratio,umax,TSTOP,
+    initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, relative_tolerance, beta,
+    fac_max, fac_min, maximum_No_steps);
 
     BE.solveNSC();
 

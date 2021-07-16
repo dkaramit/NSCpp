@@ -1,72 +1,83 @@
-import ctypes
-import os
-import numpy as np
-import time
+from ctypes import  CDLL, c_longdouble, c_double, c_void_p, c_int, POINTER
+from numpy import array as np_array
 
-from .Cosmo import *
-from .src.misc_dir.path import _PATH_
-from .src.misc_dir.type import cdouble
+from time import time
 
+from sys import path as sysPath
+from os import path as osPath
 
-cint=ctypes.c_int
-void_p=ctypes.c_void_p
+sysPath.append(osPath.join(osPath.dirname(__file__), '../../'))
+
+from misc_dir.path import _PATH_
+from misc_dir.type import cdouble
+
+cint=c_int
+void_p=c_void_p
+
 
 #load the library
-NSC = ctypes.CDLL(_PATH_+'/lib/NSC_py.so')
+NSClib = CDLL(_PATH_+'/lib/libNSC.so')
 
-NSC.INIT.argtypes= None
-NSC.INIT.restype = ctypes.CFUNCTYPE( void_p, cdouble, cdouble, cdouble, cdouble, cdouble, cdouble, cdouble)
+NSClib.INIT.argtypes= cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble, cint
+NSClib.INIT.restype = void_p
 
-NSC.INIT.argtypes= None
-NSC.INIT.restype = ctypes.CFUNCTYPE( void_p, cdouble, cdouble, cdouble, cdouble, cdouble, cdouble, cdouble)
-
-NSC.SOLVE.argtypes= None
-NSC.SOLVE.restype = ctypes.CFUNCTYPE( None, cdouble, void_p)
-
-NSC.MAKEINT.argtypes= None
-NSC.MAKEINT.restype = ctypes.CFUNCTYPE( None, void_p)
-
-NSC.DEL.argtypes= None
-NSC.DEL.restype = ctypes.CFUNCTYPE( None, void_p)
+NSClib.DEL.argtypes= void_p,
+NSClib.DEL.restype = None
 
 
-NSC.EVALT.argtypes= None
-NSC.EVALT.restype = ctypes.CFUNCTYPE( cdouble, cdouble, void_p)
+NSClib.SOLVE.argtypes= void_p,
+NSClib.SOLVE.restype = None
 
-NSC.EVALLOGH2.argtypes= None
-NSC.EVALLOGH2.restype = ctypes.CFUNCTYPE( cdouble, cdouble, void_p)
-
-NSC.EVALDLOGH2DU.argtypes= None
-NSC.EVALDLOGH2DU.restype = ctypes.CFUNCTYPE( cdouble, cdouble, void_p)
-
-NSC.getSize.argtypes= None
-NSC.getSize.restype = ctypes.CFUNCTYPE( cint,  void_p)
+NSClib.getResults.argtypes= POINTER(cdouble),void_p,
+NSClib.getResults.restype = None
 
 
-NSC.getResults.argtypes= ctypes.POINTER(cdouble),ctypes.POINTER(cdouble),ctypes.POINTER(cdouble),ctypes.POINTER(cdouble), ctypes.POINTER(cdouble), void_p
-NSC.getResults.restype=None
+NSClib.getSize.argtypes= void_p,
+NSClib.getSize.restype = cint
+
+NSClib.getPoints.argtypes=POINTER(cdouble),POINTER(cdouble),POINTER(cdouble),POINTER(cdouble),void_p
+NSClib.getPoints.restype=None
 
 
 
 
-class Boltzmann:
-    def __init__(self, TEND, c, Ti, ratio, umax, TSTOP=5e-4):
-        self.voidNSC=void_p()
-        self.voidNSC=NSC.INIT()(TEND, c, Ti, ratio, umax, TSTOP)
+class NSC:
+    def __init__(self, TEND,c, Ti,ratio,umax, TSTOP,
+           initial_step_size=1e-2,minimum_step_size=1e-8,maximum_step_size=1e-2, 
+           absolute_tolerance=1e-8,relative_tolerance=1e-8,
+           beta=0.9,fac_max=1.2,fac_min=0.8, maximum_No_steps=int(1e7)):
+        
+        self.voidpNSC=void_p()
+        self.voidpNSC=NSClib.INIT(TEND,c,Ti,ratio,umax,TSTOP,
+                        initial_step_size,minimum_step_size, maximum_step_size, 
+                        absolute_tolerance, relative_tolerance, beta,
+                        fac_max, fac_min, maximum_No_steps)
     
+        self.a_ai=[]
+        self.T=[]
+        self.rhoPhi=[]
+        self.logH2=[]
+        self.TE1=Ti
+        self.TE2=Ti
+        self.TD1=Ti
+        self.TD2=Ti
+        self.aE1=1
+        self.aE2=1
+        self.aD1=1
+        self.aD2=1
 
     def delete(self):
-        NSC.DEL()(self.voidNSC)
-        del self.voidNSC
+        NSClib.DEL(self.voidpNSC)
+        del self.voidpNSC
 
     def __del__(self):
         self.delete()
         
         del self.a_ai
         del self.T
-        
-        del self.rho
         del self.rhoPhi
+        self.logH2
+        
         del self.TE1
         del self.TE2
         del self.TD1
@@ -77,27 +88,13 @@ class Boltzmann:
         del self.aD2
 
 
-    def solve(self, _timeit=True, fa=mP):
-        time0=time.time()
-        NSC.SOLVE()(fa,self.voidNSC)
-
-        max_int=NSC.getSize()(self.voidNSC)
-
-        Arr = cdouble * max_int # Define an array of doubles with the same length as _A 
-        ArrP = cdouble * 10 # Define an array of doubles with the same length as _A 
-        self.a_ai=Arr()
-        self.rho=Arr()
-        self.T=Arr()
-        self.rhoPhi=Arr()
+    def solve(self):
+        time0=time()
+        NSClib.SOLVE(self.voidpNSC)
+        ArrP = cdouble * 8 
         points=ArrP()
 
-        NSC.getResults(self.a_ai, self.T, self.rho, self.rhoPhi, points, self.voidNSC)
-        
-        self.a_ai=np.array(list(self.a_ai))
-        self.T=np.array(list(self.T))
-        self.rho=np.array(list(self.rho))
-        self.rhoPhi=np.array(list(self.rhoPhi))
-        
+        NSClib.getResults(points,self.voidpNSC)
         self.TE1=points[0]
         self.TE2=points[1]
         self.TD1=points[2]
@@ -106,10 +103,21 @@ class Boltzmann:
         self.aE2=points[5]
         self.aD1=points[6]
         self.aD2=points[7]
+
+        return time()-time0
+
+    def getPoints(self):
+
+        Arr = cdouble * NSClib.getSize(self.voidpNSC) 
+        self.a_ai=Arr()
+        self.T=Arr()
+        self.rhoPhi=Arr()
+        self.logH2=Arr()
+
+        NSClib.getPoints(self.a_ai, self.T, self.rhoPhi, self.logH2, self.voidpNSC)
         
-
-
-        if(_timeit):
-            print(time.time()-time0)
-        return time.time()-time0
-
+        self.a_ai=np_array(list(self.a_ai))
+        self.T=np_array(list(self.T))
+        self.rhoPhi=np_array(list(self.rhoPhi))
+        self.logH2=np_array(list(self.logH2))
+        
