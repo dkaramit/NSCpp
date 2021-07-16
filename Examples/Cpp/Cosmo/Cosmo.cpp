@@ -38,7 +38,7 @@ int main(int argc, char **argv){
     LD minT=atof(argv[1]);
     LD maxT=atof(argv[2]);
 
-    mimes::Cosmo<LD> cosmo(cosmo_PATH,minT,maxT);
+    nsc::Cosmo<LD> cosmo(cosmo_PATH,minT,maxT);
 
     // print N points
     unsigned int N=50;

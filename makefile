@@ -71,7 +71,7 @@ Cosmo_Headers=$(wildcard src/Cosmo/Cosmo.cpp) $(wildcard src/Cosmo/Cosmo.hpp)
 
 Static_Funcs= $(wildcard src/static.hpp) 
 
-all: lib exec 
+all: lib exec examples
 
 lib: lib/libCosmo.so lib/libNSC.so
 	
@@ -81,7 +81,9 @@ exec: check
 lib/libCosmo.so: $(PathHead) $(PathTypePy) $(cosmoDat) $(SPLINE_Headers) $(Cosmo_Headers) $(Static_Funcs) 
 	$(CC) -o lib/libCosmo.so src/Cosmo/Cosmo.cpp -fPIC -shared $(FLG) -DLONG=$(LONGpy)
 
-lib/libNSC.so: $(PathHead) $(PathTypePy) $(cosmoDat) $(Ros_Headers) $(RKF_Headers) $(SPLINE_Headers) $(NSCpy_Cpp) $(NSCSolve_Headers) $(NSC_Headers) $(Cosmo_Headers) $(Static_Funcs) 
+lib/libNSC.so: $(PathHead) $(PathTypePy) $(cosmoDat) $(Cosmo_Headers) $(Static_Funcs)\
+               $(NSCpy_Cpp) $(NSCSolve_Headers) $(NSC_Headers)\
+			   $(Ros_Headers) $(RKF_Headers) $(SPLINE_Headers)   
 	$(CC) -o lib/libNSC.so src/NSC/NSC-py.cpp -fPIC -shared $(FLG) -DLONG=$(LONGpy)
 
  
@@ -127,5 +129,7 @@ exec/Cosmo_check.run: $(PathHead) $(Cosmo_cpp) $(DataFiles) $(SPLINE_Headers)
 
 NSCSolve_cpp=$(wildcard src/NSC/checks/NSCSolve_check.cpp)
 # check interpolations of the NSC_eom class 
-exec/NSCSolve_check.run: $(NSC_Headers) $(NSCSolve_Headers) $(PathHead) $(NSCSolve_cpp) $(Ros_Headers) $(RKF_Headers) $(DataFiles) $(SPLINE_Headers) $(Static_Funcs) 
+exec/NSCSolve_check.run: $(PathHead) $(cosmoDat) $(Cosmo_Headers) $(Static_Funcs)\
+               $(NSCSolve_cpp) $(NSCpy_Cpp) $(NSCSolve_Headers) $(NSC_Headers)\
+			   $(Ros_Headers) $(RKF_Headers) $(SPLINE_Headers)   
 	$(CC) -o exec/NSCSolve_check.run src/NSC/checks/NSCSolve_check.cpp $(FLG) -DLONG=$(LONG) -DMETHOD=$(METHOD) -Dsolver=$(Solver)

@@ -44,10 +44,9 @@ STD=c++17
 PATH_INCLUDE= -I$(rootDir)
 FLG= -$(OPT) -std=$(STD) $(PATH_INCLUDE) -Wall -DLONG=$(LONG) -DMETHOD=$(METHOD) -Dsolver=$(Solver)
 
-cosmoDat=$(shell cat .cosmoDat) 
+cosmoDat=$(shell cat rootDir/.cosmoDat) 
 DataFiles= $(cosmoDat)  
 
-DataFiles=$(wildcard $(rootDir)src/data/*.dat)
 Ros_Headers= $(wildcard $(rootDir)src/Rosenbrock/*.hpp) $(wildcard $(rootDir)src/Rosenbrock/LU/*.hpp) $(wildcard $(rootDir)src/Rosenbrock/Jacobian/*.hpp)
 RKF_Headers= $(wildcard $(rootDir)src/RKF/*.hpp) 
 SPLINE_Headers=$(wildcard $(rootDir)src/Interpolation/*.hpp)
