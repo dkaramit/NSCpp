@@ -25,7 +25,7 @@ int main(int argc, char **argv){
     LD ratio=1e-3;
 
     // solver parameters
-    LD umax = 500; //t at which the integration stops 
+    LD umax = 500; //u at which the integration stops 
     LD TSTOP = 1e-4; // temperature at which integration stops
 
 

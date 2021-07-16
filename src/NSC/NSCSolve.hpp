@@ -137,24 +137,24 @@ namespace nsc{
             // increase time
             System.tn+=System.h;
 
-            _u=System.tn * (-1) ;
-            _a=std::exp( -_u );
-            _T=Ti*std::exp(System.ynext[0]+_u);
+            _u=System.tn ;
+            _a=std::exp( _u );
+            _T=Ti*std::exp(System.ynext[0]-_u);
 
             if(_T<TSTOP){break;}
 
-            _rhoPhi = rhoPhii*std::exp(System.ynext[1]+c*_u);
+            _rhoPhi = rhoPhii*std::exp(System.ynext[1]-c*_u);
             
             _rhoR = cosmo.rhoR(_T);
             _H=std::sqrt( (8*M_PI)/(3*mP*mP)* ( _rhoR   +  _rhoPhi )  );
             points.push_back(std::vector<LD>{_a,_T,_rhoPhi,2*std::log(_H)}); 
 
             
-            if(pE==0){  if(_rhoR < _rhoPhi){ TE1 = _T; aE1 = _a; pE++;}   }
-            if(pE==1){  if(_rhoR > _rhoPhi){ TE2 = _T; aE2 = _a; pE++;}   }
+            if(pE==0){  if(_rhoR < _rhoPhi){ TE1 = _T; aE1 = _a; pE++;}   }//the first time \rho_R = \rho_\Phi
+            if(pE==1){  if(_rhoR > _rhoPhi){ TE2 = _T; aE2 = _a; pE++;}   }//the second time \rho_R = \rho_\Phi
             
-            if(pD==0){  if(Gamma/_H*_rhoPhi/_rhoR>4./10. ){ TD1 = _T; aD1 = _a; pD++;}   }
-            if(pD==1){  if(Gamma/_H*_rhoPhi/_rhoR<4./10. ){ TD2 = _T; aD2 = _a; pD++;}   }
+            if(pD==0){  if(Gamma/_H*_rhoPhi/_rhoR>4./10. ){ TD1 = _T; aD1 = _a; pD++;}   }// the first time \rho_R/H = 0.4* \rho_\Phi/\Gamma
+            if(pD==1){  if(Gamma/_H*_rhoPhi/_rhoR<4./10. ){ TD2 = _T; aD2 = _a; pD++;}   }// the second time \rho_R/H = 0.4* \rho_\Phi/\Gamma
         }
 
         pointSize=points.size();
