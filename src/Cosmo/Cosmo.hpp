@@ -9,7 +9,7 @@
 
 #include "src/Interpolation/Interpolation.hpp"
 
-namespace mimes{    
+namespace nsc{    
     template<class LD>
     class Cosmo {
         using VecLD=std::vector<LD>;

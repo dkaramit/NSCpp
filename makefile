@@ -14,20 +14,20 @@ LONGpy=long
 
 #######################################-Runge Kutta method-#######################################
 #------------------These are Rosenbrock (semi implicit) methods: Generally RECOMMENDED---------------------#
-Solver=1
+# Solver=1
 
 # RODASPR2 is fairly accurate and fast enough (faster than the other two from NaBBODES), but one 
 # can use the others or provide another Butcher tableu and use it.
-METHOD=RODASPR2 
+# METHOD=RODASPR2 
 # METHOD=ROS34PW2
 # METHOD=ROS3w
 
 #-------------------------These are explicit RK methods: Generally NOT RECOMMENDED--------------------------#
-# Solver=2
+Solver=2
 
 # DormandPrince is fairly fast. It can be better than RODASPR2 at very low tolerances 
 # because it is higher order. The other two can't even finish...
-# METHOD=DormandPrince
+METHOD=DormandPrince
 # METHOD=CashKarp
 # METHOD=RKF45
 
@@ -58,8 +58,8 @@ FLG= -$(OPT) -std=$(STD) $(PATH_INCLUDE) -Wall
 Ros_Headers= $(wildcard src/Rosenbrock/*.hpp) $(wildcard src/Rosenbrock/LU/*.hpp) 
 SPLINE_Headers=$(wildcard src/Interpolation/*.hpp)
 
-NSCSolve_Headers= $(wildcard src/Axion/NSCSolve.hpp) 
-NSC_Headers= $(wildcard src/Axion/NSC.hpp) 
+NSCSolve_Headers= $(wildcard src/NSC/NSCSolve.hpp) 
+NSC_Headers= $(wildcard src/NSC/NSC.hpp) 
 
 PathHead=src/misc_dir/path.hpp
 PathTypePy=src/misc_dir/type.py
@@ -68,11 +68,11 @@ Cosmo_Headers=$(wildcard src/Cosmo/Cosmo.cpp) $(wildcard src/Cosmo/Cosmo.hpp)
 
 Static_Headers= $(wildcard src/static.hpp) 
 
-all: lib 
+all: lib exec
 
 lib: lib/libCosmo.so
 	
-exec: 
+exec: exec/Cosmo_check.run
 
 #shared libraries that can be used from python
 lib/libCosmo.so: $(PathHead) $(PathTypePy) $(cosmoDat) $(SPLINE_Headers) $(Cosmo_Headers) $(Static_Headers) makefile
@@ -118,3 +118,8 @@ Cosmo_cpp=$(wildcard src/Cosmo/checks/Cosmo_check.cpp)
 # check anharmonic factor interpolation
 exec/Cosmo_check.run: $(PathHead) $(Cosmo_cpp) $(DataFiles) $(SPLINE_Headers) makefile
 	$(CC) -o exec/Cosmo_check.run src/Cosmo/checks/Cosmo_check.cpp $(FLG) 
+
+NSCSolve_cpp=$(wildcard src/NSC/checks/NSCSolve_check.cpp)
+# check interpolations of the NSC_eom class 
+exec/NSCSolve_check.run: $(NSC_Headers) $(NSCSolve_Headers) $(PathHead) $(NSCSolve_cpp) $(Ros_Headers) $(RKF_Headers) $(DataFiles) $(SPLINE_Headers) $(Static_Headers) makefile
+	$(CC) -o exec/NSCSolve_check.run src/NSC/checks/NSCSolve_check.cpp $(FLG) -DLONG=$(LONG) -DMETHOD=$(METHOD) -Dsolver=$(Solver)

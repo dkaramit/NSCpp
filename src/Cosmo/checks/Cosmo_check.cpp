@@ -22,7 +22,7 @@
 #endif
 
 int main(){
-    static mimes::Cosmo<LD> cosmo(cosmo_PATH,1e-5,1e4);
+    static nsc::Cosmo<LD> cosmo(cosmo_PATH,1e-5,1e4);
 
     #ifdef printDiff
     {
