@@ -1,7 +1,6 @@
 #!/bin/bash
-listVars=($(grep -v "^#" List.txt))
+source DataPaths.txt
 
-cosmoDat=${listVars[0]}
 
 [ -f $cosmoDat ] || { echo "$cosmoDat file does not exit. You need to provide a valid path for it!" ;  exit 1; }
 echo $cosmoDat > .cosmoDat
