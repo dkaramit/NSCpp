@@ -5,7 +5,7 @@
 #include"src/NSC/NSCSolve.hpp"
 
 
-#define preintPoints
+#define printPoints
 
 
 #ifndef LONG
@@ -29,24 +29,24 @@ int main(int argc, char **argv){
     LD TSTOP = 1e-4; // temperature at which integration stops
 
 
-    NSC<LD> nsc(TEND,c,Ti,ratio,umax,TSTOP);
+    nsc::NSC<LD> BE(TEND,c,Ti,ratio,umax,TSTOP);
 
-    nsc.solveNSC();
+    BE.solveNSC();
 
 
 
     std::cout<<std::setprecision(5)
-    <<TEND<<"\t"<<c<<"\t"<<Ti<<"\t"<<ratio<<"\t"<<nsc.TE1<<"\t"<<nsc.TE2<<"\t"<<nsc.TD1<<"\t"<<nsc.TD2<<"\n";
+    <<TEND<<"\t"<<c<<"\t"<<Ti<<"\t"<<ratio<<"\t"<<BE.TE1<<"\t"<<BE.TE2<<"\t"<<BE.TD1<<"\t"<<BE.TD2<<"\n";
 
 
     // print all the points
     #ifdef printPoints
     std::cout<<"---------------------points:---------------------\n";
-    std::cout<<"a/a_i\tT [GeV]\ttheta\tzeta\trho_a [GeV^4]"<<std::endl;
-    for(size_t i=0; i<Ax.pointSize; ++i ){
-        for(int j=0; j<5; ++j){
-            std::cout<<Ax.points[i][j];
-            if(j==4){std::cout<<"\n";}else{std::cout<<"\t";}
+    std::cout<<"a/a_i\tT [GeV]\trho_Phi [GeV^4]\tlogH^2"<<std::endl;
+    for(size_t i=0; i<BE.pointSize; ++i ){
+        for(int j=0; j<4; ++j){
+            std::cout<<BE.points[i][j];
+            if(j==3){std::cout<<"\n";}else{std::cout<<"\t";}
         }
     }
     #endif
