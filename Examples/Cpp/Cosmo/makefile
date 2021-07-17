@@ -26,7 +26,7 @@ PATH_INCLUDE=-I$(rootDir)
 FLG= -$(OPT) -std=$(STD) $(PATH_INCLUDE) -Wall -DLONG=$(LONG)
 
 SPLINE_Headers=$(wildcard $(rootDir)src/Interpolation/*.hpp)
-cosmoDat=$(shell cat rootDir/.cosmoDat) 
+cosmoDat=$(rootDir)$(shell cat $(rootDir).cosmoDat) 
 PathHead=$(rootDir)src/misc_dir/path.hpp
 Cosmo_Headers=$(wildcard $(rootDir)src/Cosmo/Cosmo.hpp)
 
