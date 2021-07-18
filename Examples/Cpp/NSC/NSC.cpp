@@ -76,7 +76,7 @@ int main(int argc, char **argv){
     */
     LD fac_max=1.2; 
     LD fac_min=0.8;
-    int maximum_No_steps=int(1e7); //maximum steps the solver can take Quits if this number is reached even if integration is not finished.
+    unsigned int maximum_No_steps=int(1e7); //maximum steps the solver can take Quits if this number is reached even if integration is not finished.
     
 
     if(argc>7){

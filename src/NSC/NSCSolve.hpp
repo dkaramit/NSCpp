@@ -61,7 +61,7 @@ namespace nsc{
 
         LD initial_step_size, minimum_step_size, maximum_step_size, absolute_tolerance, relative_tolerance;
         LD beta,fac_max,fac_min;
-        int maximum_No_steps;
+        unsigned int maximum_No_steps;
         
         public:
 
@@ -104,7 +104,7 @@ namespace nsc{
         NSC(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP,
             LD initial_step_size=1e-2, LD minimum_step_size=1e-8, LD maximum_step_size=1e-2, 
             LD absolute_tolerance=1e-8, LD relative_tolerance=1e-8,
-            LD beta=0.9, LD fac_max=1.2, LD fac_min=0.8, int maximum_No_steps=int(1e7)){
+            LD beta=0.9, LD fac_max=1.2, LD fac_min=0.8, unsigned int maximum_No_steps=10000000){
             
             this->TEND=TEND;
             this->c=c;
@@ -155,12 +155,12 @@ namespace nsc{
         _H=std::sqrt( (8*M_PI)/(3*mP*mP)* ( cosmo.rhoR(Ti)   +  rhoPhii )  );
         points.push_back(std::vector<LD>{1.,Ti,rhoPhii,2*std::log(_H)});
 
-        int current_step=0;
+        unsigned int current_step=0;
         
 
         while (true){
             current_step++;
-            if( System.tn>=System.tmax  or current_step == System.max_N  ) {   break ;}
+            if( System.tn>=System.tmax  or current_step == maximum_No_steps  ) {   break ;}
 
             System.next_step();
             for (int eq = 0; eq < 2; eq++){System.yprev[eq]=System.ynext[eq];}

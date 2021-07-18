@@ -14,20 +14,20 @@ LONGpy=long
 
 #######################################-Runge Kutta method-#######################################
 #------------------These are Rosenbrock (semi implicit) methods: Generally RECOMMENDED---------------------#
-# Solver=1
+Solver=1
 
 # RODASPR2 is fairly accurate and fast enough (faster than the other two from NaBBODES), but one 
 # can use the others or provide another Butcher tableu and use it.
-# METHOD=RODASPR2 
+METHOD=RODASPR2 
 # METHOD=ROS34PW2
 # METHOD=ROS3w
 
 #-------------------------These are explicit RK methods: Generally NOT RECOMMENDED--------------------------#
-Solver=2
+# Solver=2
 
 # DormandPrince is fairly fast. It can be better than RODASPR2 at very low tolerances 
 # because it is higher order. The other two can't even finish...
-METHOD=DormandPrince
+# METHOD=DormandPrince
 # METHOD=CashKarp
 # METHOD=RKF45
 
@@ -84,7 +84,7 @@ lib/libCosmo.so: $(PathHead) $(PathTypePy) $(cosmoDat) $(SPLINE_Headers) $(Cosmo
 lib/libNSC.so: $(PathHead) $(PathTypePy) $(cosmoDat) $(Cosmo_Headers) $(Static_Funcs)\
                $(NSCpy_Cpp) $(NSCSolve_Headers) $(NSC_Headers)\
 			   $(Ros_Headers) $(RKF_Headers) $(SPLINE_Headers)   
-	$(CC) -o lib/libNSC.so src/NSC/NSC-py.cpp -fPIC -shared $(FLG) -DLONG=$(LONGpy)
+	$(CC) -o lib/libNSC.so src/NSC/NSC-py.cpp -fPIC -shared $(FLG) -DLONG=$(LONGpy) -DMETHOD=$(METHOD) -Dsolver=$(Solver)
 
  
 $(PathTypePy): 

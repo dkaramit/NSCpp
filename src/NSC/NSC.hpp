@@ -1,6 +1,7 @@
 #ifndef SYSTEM_RadPhi
 #define SYSTEM_RadPhi
 #include <cmath>
+#include <array>
 
 #include"src/Interpolation/Interpolation.hpp"
 
@@ -8,8 +9,8 @@
 #include "src/static.hpp"
 
 namespace nsc{
-    constexpr int  Neqs=2;
-    template<class LD> using  Array = LD[Neqs];
+    constexpr unsigned int Neqs=2;
+    template<class LD> using  Array = std::array<LD,Neqs>;
 
     template<class LD>
     class RadPhi{
