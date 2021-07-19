@@ -25,9 +25,7 @@ SPLINE_Headers=$(wildcard src/SimpleSplines/*.hpp)
 
 NSCSolve_Headers= $(wildcard src/NSC/NSCSolve.hpp) 
 NSC_Headers= $(wildcard src/NSC/NSC.hpp) 
-NSCpy_Cpp= $(wildcard src/NSC/NSC-py.cpp) 
-
-PathHead=src/misc_dir/path.hpp
+NSCpy_Cpp= $(wildcard src/NSC/NSC-py.cpp)
 
 Cosmo_Headers=$(wildcard src/Cosmo/Cosmo.hpp)
 Cosmopy_cpp=$(wildcard src/Cosmo/Cosmo.cpp) 
@@ -41,11 +39,11 @@ lib: lib/libCosmo.so lib/libNSC.so
 exec: check
 
 #shared libraries that can be used from python
-lib/libCosmo.so: $(Cosmopy_cpp) $(Cosmo_Headers) $(PathHead) $(Static_Funcs) $(SPLINE_Headers) 
+lib/libCosmo.so: $(Cosmopy_cpp) $(Cosmo_Headers) $(Static_Funcs) $(SPLINE_Headers) 
 	$(CC) -o $@ $< -fPIC -shared $(FLG) -DLONG=$(LONGpy)
 
 lib/libNSC.so: $(NSCpy_Cpp) $(NSCSolve_Headers) $(NSC_Headers)\
-			   $(Cosmo_Headers) $(PathHead) $(Static_Funcs)\
+			   $(Cosmo_Headers) $(Static_Funcs)\
 			   $(Ros_Headers) $(RKF_Headers) $(SPLINE_Headers)   
 	$(CC) -o $@ $< -fPIC -shared $(FLG) -DLONG=$(LONGpy) -DMETHOD=$(METHOD) -Dsolver=$(Solver)
 
@@ -53,7 +51,7 @@ lib/libNSC.so: $(NSCpy_Cpp) $(NSCSolve_Headers) $(NSC_Headers)\
 
 
 # make the examples in Examples/Cpp
-examples: $(PathHead)
+examples:
 	cd Examples/Cpp && $(MAKE)
 
 
@@ -79,12 +77,12 @@ check: exec/Cosmo_check.run exec/NSCSolve_check.run
 
 Cosmo_cpp=$(wildcard src/Cosmo/checks/Cosmo_check.cpp)
 # check anharmonic factor interpolation
-exec/Cosmo_check.run: $(Cosmo_cpp) $(Cosmo_Headers) $(PathHead) $(SPLINE_Headers) 
+exec/Cosmo_check.run: $(Cosmo_cpp) $(Cosmo_Headers) $(SPLINE_Headers) 
 	$(CC) -o $@ $< $(FLG) -DLONG=$(LONG)
 
 NSCSolve_cpp=$(wildcard src/NSC/checks/NSCSolve_check.cpp)
 # check interpolations of the NSC_eom class 
 exec/NSCSolve_check.run: $(NSC_Cpp) $(NSCSolve_cpp) $(NSCSolve_Headers) $(NSC_Headers)\
-						 $(PathHead) $(Cosmo_Headers) $(Static_Funcs)\
+						 $(Cosmo_Headers) $(Static_Funcs)\
 					     $(Ros_Headers) $(RKF_Headers) $(SPLINE_Headers)   
 	$(CC) -o $@ $< $(FLG) -DLONG=$(LONG) -DMETHOD=$(METHOD) -Dsolver=$(Solver)
