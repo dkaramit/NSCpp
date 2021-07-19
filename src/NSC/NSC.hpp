@@ -3,7 +3,6 @@
 #include <cmath>
 #include <array>
 
-#include"src/Interpolation/Interpolation.hpp"
 
 /*get static variables (includes cosmological parameters, axion mass, and anharmonic factor)*/
 #include "src/static.hpp"

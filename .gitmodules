@@ -1,0 +1,6 @@
+[submodule "src/NaBBODES"]
+	path = src/NaBBODES
+	url = git@github.com:dkaramit/NaBBODES.git
+[submodule "src/SimpleSplines"]
+	path = src/SimpleSplines
+	url = git@github.com:dkaramit/SimpleSplines.git

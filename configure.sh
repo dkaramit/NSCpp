@@ -1,9 +1,5 @@
 #!/bin/bash
-source DataPaths.txt
-
-
-[ -f $cosmoDat ] || { echo "$cosmoDat file does not exit. You need to provide a valid path for it!" ;  exit 1; }
-echo $cosmoDat > .cosmoDat
+source Definitions.mk
 
 
 # ---------these are needed for python and c++---------------- #
@@ -13,6 +9,10 @@ mkdir "src/misc_dir" 2> /dev/null
 
 PathHead=src/misc_dir/path.hpp
 PathHeadPy=src/misc_dir/path.py
+PathTypePy=src/misc_dir/type.py
+
+echo "from ctypes import c_"$LONGpy"double as cdouble" > $PathTypePy
+echo "_PATH_=\"$PWD\" "> $PathHeadPy
 
 echo "#ifndef PATHS_HEAD
 #define PATHS_HEAD
@@ -23,51 +23,9 @@ echo "#ifndef PATHS_HEAD
 #endif
 ">$PathHead
 
-echo "_PATH_=\"$PWD\" "> $PathHeadPy
-
-
-##------clone ODE solver and iinterpolation from my github repos------##
-if [ -d "src/Rosenbrock" ] && [ -d "src/RKF" ]  
-then
-    echo " Rosenbrock and RKF directories exist. Nothing to do here."
-else
-    curl -JLO https://github.com/dkaramit/NaBBODES/archive/refs/heads/stable.zip
-    unzip NaBBODES-stable.zip 
-    rm NaBBODES-stable.zip 
-
-    mkdir src/Rosenbrock 2>/dev/null
-    mkdir src/Rosenbrock/LU  2>/dev/null
-    mkdir src/Rosenbrock/Jacobian 2>/dev/null
-    mkdir src/RKF 2>/dev/null
-
-    mv  NaBBODES-stable/Rosenbrock/*.hpp                 src/Rosenbrock
-    mv  NaBBODES-stable/Rosenbrock/Jacobian/Jacobian.hpp src/Rosenbrock/Jacobian
-    mv  NaBBODES-stable/Rosenbrock/LU/*.hpp              src/Rosenbrock/LU
-
-    mv  NaBBODES-stable/RKF/*.hpp src/RKF
 
 
 
-    rm -r NaBBODES-stable
-fi
-
-if [ -d "src/Interpolation" ]
-then
-    echo "Spline exists. Nothing to do here."
-else
-    curl -JLO https://github.com/dkaramit/SimpleSplines/archive/refs/heads/stable.zip
-
-    unzip SimpleSplines-stable.zip 
-    rm SimpleSplines-stable.zip 
-
-    mkdir src/Interpolation
-    mv  SimpleSplines-stable/*.hpp src/Interpolation
-
-    rm -r SimpleSplines-stable
-fi
-
-
-# cloc --match-f='(\.cpp|\.hpp|\.py)' ./ | tail +6
 echo -e "License:"
 cat LICENSE
 

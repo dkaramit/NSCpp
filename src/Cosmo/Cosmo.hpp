@@ -7,7 +7,7 @@
 #include<cmath>
 #include<string>
 
-#include "src/Interpolation/Interpolation.hpp"
+#include"src/SimpleSplines/Interpolation.hpp"
 
 namespace nsc{    
     template<class LD>

@@ -9,30 +9,30 @@
 
 
 //----Solver-----//
-#include "src/RKF/RKF_class.hpp"
-#include "src/RKF/RKF_costructor.hpp"
-#include "src/RKF/RKF_calc_k.hpp"
-#include "src/RKF/RKF_sums.hpp"
-#include "src/RKF/RKF_step_control-simple.hpp"
-// #include "src/RKF/RKF_step_control-PI.hpp"
-#include "src/RKF/RKF_steps.hpp"
-#include "src/RKF/METHOD.hpp"
+#include "src/NaBBODES/RKF/RKF_class.hpp"
+#include "src/NaBBODES/RKF/RKF_costructor.hpp"
+#include "src/NaBBODES/RKF/RKF_calc_k.hpp"
+#include "src/NaBBODES/RKF/RKF_sums.hpp"
+#include "src/NaBBODES/RKF/RKF_step_control-simple.hpp"
+// #include "src/NaBBODES/RKF/RKF_step_control-PI.hpp"
+#include "src/NaBBODES/RKF/RKF_steps.hpp"
+#include "src/NaBBODES/RKF/METHOD.hpp"
 
 
 
 
 //----Solver-----//
-#include "src/Rosenbrock/LU/LU.hpp"
-#include "src/Rosenbrock/Ros_class.hpp"
-#include "src/Rosenbrock/Ros_costructor.hpp"
-#include "src/Rosenbrock/Ros_LU.hpp"
-#include "src/Rosenbrock/Ros_calc_k.hpp"
-#include "src/Rosenbrock/Ros_sums.hpp"
-#include "src/Rosenbrock/Ros_step_control-simple.hpp"
-// #include "src/Rosenbrock/Ros_step_control-PI.hpp"
-#include "src/Rosenbrock/Ros_steps.hpp"
-#include "src/Rosenbrock/Jacobian/Jacobian.hpp"
-#include "src/Rosenbrock/METHOD.hpp"
+#include "src/NaBBODES/Rosenbrock/LU/LU.hpp"
+#include "src/NaBBODES/Rosenbrock/Ros_class.hpp"
+#include "src/NaBBODES/Rosenbrock/Ros_costructor.hpp"
+#include "src/NaBBODES/Rosenbrock/Ros_LU.hpp"
+#include "src/NaBBODES/Rosenbrock/Ros_calc_k.hpp"
+#include "src/NaBBODES/Rosenbrock/Ros_sums.hpp"
+#include "src/NaBBODES/Rosenbrock/Ros_step_control-simple.hpp"
+// #include "src/NaBBODES/Rosenbrock/Ros_step_control-PI.hpp"
+#include "src/NaBBODES/Rosenbrock/Ros_steps.hpp"
+#include "src/NaBBODES/Rosenbrock/Jacobian/Jacobian.hpp"
+#include "src/NaBBODES/Rosenbrock/METHOD.hpp"
 
 
 
