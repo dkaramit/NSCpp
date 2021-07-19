@@ -1,6 +1,8 @@
 [submodule "src/NaBBODES"]
 	path = src/NaBBODES
 	url = git@github.com:dkaramit/NaBBODES.git
+	branch = stable
 [submodule "src/SimpleSplines"]
 	path = src/SimpleSplines
 	url = git@github.com:dkaramit/SimpleSplines.git
+	branch = stable
