@@ -8,8 +8,4 @@
 *.so
 *.run
 Examples/Python/*_examplePlot.pdf
-*src/Rosenbrock
-*src/RKF
-*src/Interpolation
-.cosmoDat
 *.xtx
