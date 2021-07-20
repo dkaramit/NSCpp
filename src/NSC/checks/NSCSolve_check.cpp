@@ -48,7 +48,7 @@ int main(int argc, char **argv){
     initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, relative_tolerance, beta,
     fac_max, fac_min, maximum_No_steps);
 
-    // BE.solveNSC();solve the system. 
+    BE.solveNSC(); //solve the system. 
 
 
 

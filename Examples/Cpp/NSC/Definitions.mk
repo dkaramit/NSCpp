@@ -30,3 +30,13 @@ METHOD=RODASPR2
 # METHOD=DormandPrince
 # METHOD=CashKarp
 # METHOD=RKF45
+
+
+#compiler. I use g++, but clang seems to work as well.
+CC=g++ 
+# CC=clang  
+
+#---optimization options---#
+OPT=O3 #this should be fast and safe
+# OPT=O0 #this is generally 2x slower than O3
+# OPT=Ofast #this is usually bit faster than O3 but can cause issues (I haven't observed any though)
