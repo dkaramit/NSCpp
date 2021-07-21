@@ -153,7 +153,7 @@ namespace nsc{
 
         
         _H=std::sqrt( (8*M_PI)/(3*mP*mP)* ( cosmo.rhoR(Ti)   +  rhoPhii )  );
-        points.push_back(std::vector<LD>{1.,Ti,rhoPhii,2*std::log(_H)});
+        points.push_back(std::vector<LD>{1.,Ti,rhoPhii,std::log(_H)});
 
         unsigned int current_step=0;
         
@@ -177,7 +177,7 @@ namespace nsc{
             
             _rhoR = cosmo.rhoR(_T);
             _H=std::sqrt( (8*M_PI)/(3*mP*mP)* ( _rhoR   +  _rhoPhi )  );
-            points.push_back(std::vector<LD>{_a,_T,_rhoPhi,2*std::log(_H)}); 
+            points.push_back(std::vector<LD>{_a,_T,_rhoPhi,std::log(_H)}); 
 
             
             if(pE==0){  if(_rhoR < _rhoPhi){ TE1 = _T; aE1 = _a; pE++;}   }//the first time \rho_R = \rho_\Phi
