@@ -1,4 +1,4 @@
-rootDir=./#the root directory of MiMeS
+rootDir=./#the root directory of NSCpp
 
 #######################################-data files-#######################################
 # relative path to comoslogical data
