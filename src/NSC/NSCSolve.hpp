@@ -139,9 +139,8 @@ namespace nsc{
         /*================================*/
         
         RadPhi<LD> BE(Gamma, c, Ti,  rhoPhii);
-        sys Boltzmann = [&BE](Array<LD> &lhs, Array<LD> &y, LD t){BE(lhs, y, t);};
 
-        Solver System(Boltzmann, y0,umax,
+        Solver System(BE, y0,umax,
                         initial_step_size, minimum_step_size, maximum_step_size, maximum_No_steps,
                         absolute_tolerance, relative_tolerance, beta, fac_max, fac_min);
 
