@@ -12,29 +12,10 @@ LONG=long
 # use doubles
 # LONG= 
 
-#######################################-Runge Kutta method-#######################################
-#------------------These are Rosenbrock (semi implicit) methods: Generally RECOMMENDED---------------------#
-Solver=1
-
-# RODASPR2 is fairly accurate and fast enough (faster than the other two from NaBBODES), but one 
-# can use the others or provide another Butcher tableu and use it.
-METHOD=RODASPR2 
-# METHOD=ROS34PW2
-# METHOD=ROS3w
-
-#-------------------------These are explicit RK methods: Generally NOT RECOMMENDED--------------------------#
-# Solver=2
-
-# DormandPrince is fairly fast. It can be better than RODASPR2 at very low tolerances 
-# because it is higher order. The other two can't even finish...
-# METHOD=DormandPrince
-# METHOD=CashKarp
-# METHOD=RKF45
-
 
 #compiler. I use g++, but clang seems to work as well.
 CC=g++ 
-# CC=clang  
+# CC=clang  -lstdc++
 
 #---optimization options---#
 OPT=O3 #this should be fast and safe

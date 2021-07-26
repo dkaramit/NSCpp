@@ -40,7 +40,7 @@ METHOD=RODASPR2
 
 #compiler. I use g++, but clang seems to work as well.
 CC=g++ 
-# CC=clang  
+# CC=clang  -lstdc++
 
 #---optimization options---#
 OPT=O3 #this should be fast and safe

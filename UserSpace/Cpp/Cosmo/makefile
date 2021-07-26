@@ -6,7 +6,7 @@ STD=c++17
 
 PATH_INCLUDE=-I$(rootDir)
 
-FLG= -$(OPT) -std=$(STD) -lstdc++ -lm  $(PATH_INCLUDE) -Wall -DLONG=$(LONG)
+FLG= -$(OPT) -std=$(STD) -lm  $(PATH_INCLUDE) -Wall -DLONG=$(LONG)
 
 SPLINE_Headers=$(wildcard $(rootDir)src/SimpleSplines/*.hpp)
 Cosmo_Headers=$(wildcard $(rootDir)src/Cosmo/Cosmo.hpp)

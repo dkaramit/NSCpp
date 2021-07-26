@@ -39,7 +39,6 @@ namespace nsc{
             LD T,heff,geff;
             std::ifstream data_file(path,std::ios::in);
 
-            LD T_prev=-1;
             while (not data_file.eof()){
                 data_file>>T;
                 data_file>>heff;
@@ -47,9 +46,6 @@ namespace nsc{
                 
                 
                 if(T>=minT and T<=maxT){
-                    
-                    //if there is an empty line theta does not change, so do skip it.
-                    if(N>1 and T==T_prev){continue;}
 
                     Ttab.push_back(T);
                     htab.push_back(heff);
@@ -57,7 +53,6 @@ namespace nsc{
 
                     N++;
                 }
-                T_prev=T;
             }
             data_file.close();
 

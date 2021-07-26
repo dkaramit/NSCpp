@@ -1,13 +1,13 @@
 -include Definitions.mk 
 
 #you can inlude more things here
-PATH_INCLUDE= -I./
+PATH_INCLUDE= -I$(rootDir)
 
 #c++ std
 STD=c++17
 
 
-FLG= -$(OPT) -std=$(STD) -lstdc++ -lm  $(PATH_INCLUDE) -Wall
+FLG= -$(OPT) -std=$(STD) -lm  $(PATH_INCLUDE) -Wall
 
 Ros_Headers= $(wildcard $(rootDir)src/NaBBODES/Rosenbrock/*.hpp) $(wildcard $(rootDir)src/NaBBODES/Rosenbrock/LU/*.hpp) $(wildcard $(rootDir)src/NaBBODES/Rosenbrock/Jacobian/*.hpp)
 RKF_Headers= $(wildcard $(rootDir)src/NaBBODES/RKF/*.hpp) 
@@ -41,9 +41,9 @@ lib/libNSC.so: $(NSCpy_Cpp) $(NSCSolve_Headers) $(NSC_Headers)\
  
 
 
-# make the examples in Examples/Cpp
+# make the examples in UserSpace/Cpp
 examples:
-	cd Examples/Cpp && $(MAKE)
+	cd UserSpace/Cpp && $(MAKE)
 
 
 #cleans whatever make all created
@@ -51,8 +51,8 @@ clean:
 
 	rm -rf $(wildcard lib/*)
 	rm -rf $(wildcard exec/*)
-	rm -rf $(wildcard Examples/Python/*_examplePlot.pdf)
-	cd Examples/Cpp && $(MAKE) clean
+	rm -rf $(wildcard UserSpace/Python/*_examplePlot.pdf)
+	cd UserSpace/Cpp && $(MAKE) clean
 
 
 #deletes directories that configure.sh made
