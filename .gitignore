@@ -7,5 +7,5 @@
 *__pycache__*
 *.so
 *.run
-Examples/Python/*_examplePlot.pdf
+UserSpace/Python/*_examplePlot.pdf
 *.xtx
