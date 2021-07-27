@@ -1,10 +1,10 @@
 #make the examples
-all: Cosmo/Cosmo.run NSC/NSC.run
+all: cosmo nsc
 
-Cosmo/Cosmo.run:
+cosmo:
 	cd Cosmo && $(MAKE)
 
-NSC/NSC.run:
+nsc:
 	cd NSC && $(MAKE)
 
 clean:
