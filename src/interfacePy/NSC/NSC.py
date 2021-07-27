@@ -44,6 +44,23 @@ NSClib.getPoints.restype=None
 
 
 class NSC:
+    '''
+    The NSC class solves the Boltzmann equations (BEs) of the plasma coupled to a decaying fluid.
+    
+    Methods: 
+        solveNSC(): solves the system of BEs. After running this,  we have:
+                    T_{E_1},T_{E_2},T_{D_1},T_{D_2},a_{E_1},a_{E_2},a_{D_1},a_{D_2}
+                    in the variables self.TE1, self.TE2, self.TD1, self.TD2, 
+                    self.aE1, self.aE2, self.aD1, self.aD2
+        
+        getPoints(): this stores the points of integration for a/a_i, T (in GeV), \\rho_Phi (in GeV^4), and log H in 
+                        the numpy arrays self.a_ai, self.T, self.rhoPhi, self.logH
+
+        setParams(TEND, c, Ti, ratio, umax, TSTOP): set the parameters of the NSC without rebuilding the 
+                                            interpolations. Once this is ran, all the other member variables are reset
+                                            intil we run self.solveNSC().
+
+    '''
     def __init__(self, TEND,c, Ti,ratio,umax, TSTOP,
            initial_step_size=1e-2,minimum_step_size=1e-8,maximum_step_size=1e-2, 
            absolute_tolerance=1e-8,relative_tolerance=1e-8,
@@ -86,7 +103,7 @@ class NSC:
         self.a_ai=[]
         self.T=[]
         self.rhoPhi=[]
-        self.logH2=[]
+        self.logH=[]
         self.TE1=Ti
         self.TE2=Ti
         self.TD1=Ti
@@ -105,7 +122,7 @@ class NSC:
         del self.a_ai
         del self.T
         del self.rhoPhi
-        self.logH2
+        self.logH
         
         del self.TE1
         del self.TE2
@@ -117,11 +134,12 @@ class NSC:
         del self.aD2
 
     def setParams(self,TEND, c, Ti, ratio, umax, TSTOP):
+        '''set the parameters of the NSC without rebuilding the interpolations'''
         NSClib.setParams(TEND, c, Ti, ratio, umax, TSTOP,self.voidpNSC)
         self.a_ai=[]
         self.T=[]
         self.rhoPhi=[]
-        self.logH2=[]
+        self.logH=[]
         self.TE1=Ti
         self.TE2=Ti
         self.TD1=Ti
@@ -163,12 +181,12 @@ class NSC:
         self.a_ai=Arr()
         self.T=Arr()
         self.rhoPhi=Arr()
-        self.logH2=Arr()
+        self.logH=Arr()
 
-        NSClib.getPoints(self.a_ai, self.T, self.rhoPhi, self.logH2, self.voidpNSC)
+        NSClib.getPoints(self.a_ai, self.T, self.rhoPhi, self.logH, self.voidpNSC)
         
         self.a_ai=np_array(list(self.a_ai))
         self.T=np_array(list(self.T))
         self.rhoPhi=np_array(list(self.rhoPhi))
-        self.logH2=np_array(list(self.logH2))
+        self.logH=np_array(list(self.logH))
         
