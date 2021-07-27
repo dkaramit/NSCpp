@@ -16,6 +16,9 @@ namespace nsc{
         LD Gamma, c;
         LD Ti, rhoPhii;
     public:
+        RadPhi()=default;
+        ~RadPhi()=default;
+        
         RadPhi(LD Gamma, LD c, LD Ti,  LD rhoPhii){
             this->Gamma = Gamma;
             this->c = c;

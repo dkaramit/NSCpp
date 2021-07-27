@@ -37,7 +37,7 @@ BE=NSC(TEND,c,Ti,ratio,umax,TSTOP,
         initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, 
         relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
 
-BE.solve()
+BE.solveNSC()
 
 
 print(TEND,c,Ti,ratio,BE.TE1,BE.TE2,BE.TD1,BE.TD2)

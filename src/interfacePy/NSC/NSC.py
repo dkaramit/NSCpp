@@ -24,6 +24,8 @@ NSClib.INIT.restype = void_p
 NSClib.DEL.argtypes= void_p,
 NSClib.DEL.restype = None
 
+NSClib.setParams.argtypes= cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,void_p
+NSClib.setParams.restype = None
 
 NSClib.SOLVE.argtypes= void_p,
 NSClib.SOLVE.restype = None
@@ -114,8 +116,23 @@ class NSC:
         del self.aD1
         del self.aD2
 
+    def setParams(self,TEND, c, Ti, ratio, umax, TSTOP):
+        NSClib.setParams(TEND, c, Ti, ratio, umax, TSTOP,self.voidpNSC)
+        self.a_ai=[]
+        self.T=[]
+        self.rhoPhi=[]
+        self.logH2=[]
+        self.TE1=Ti
+        self.TE2=Ti
+        self.TD1=Ti
+        self.TD2=Ti
+        self.aE1=1
+        self.aE2=1
+        self.aD1=1
+        self.aD2=1
 
-    def solve(self):
+
+    def solveNSC(self):
         '''
         solve the system (returns the time it took to finish).
         After this is finished, we get TE1, TE2, TD1,and TD2. In order to get the entire evolution
@@ -140,7 +157,7 @@ class NSC:
     def getPoints(self):
         '''
         get all the points of integration: a/a_i T [GeV] rho_Phi [GeV^4] logH^2.
-        You must have run self.solve() before. 
+        You must have ran self.solve() before. 
         '''
         Arr = cdouble * NSClib.getSize(self.voidpNSC) 
         self.a_ai=Arr()

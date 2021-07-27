@@ -24,6 +24,10 @@ extern "C"{
 
     void DEL(void* BE){  delete Cast(BE) ; }
     
+    void setParams(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP, void* BE){
+        Cast(BE)->setParams(TEND, c, Ti, ratio, umax, TSTOP);
+    }
+
     void SOLVE(void* BE){ 
         Cast(BE) -> solveNSC();
     }

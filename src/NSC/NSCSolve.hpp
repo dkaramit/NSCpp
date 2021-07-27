@@ -54,11 +54,12 @@ namespace nsc{
         #if solver==2
         using Solver=RKF<Neqs, METHOD<LD>, LD>;
         #endif
-
+        RadPhi<LD> BE;
+        LD Gamma,rhoPhii;
         LD initial_step_size, minimum_step_size, maximum_step_size, absolute_tolerance, relative_tolerance;
         LD beta,fac_max,fac_min;
         unsigned int maximum_No_steps;
-        
+
         public:
 
         LD TEND,c,Ti,ratio,umax,TSTOP;
@@ -108,6 +109,14 @@ namespace nsc{
             this->ratio=ratio;
             this->umax=umax;
             this->TSTOP=TSTOP;
+            
+            
+            Gamma = cosmo.Hubble(TEND) ;
+            rhoPhii = cosmo.rhoR(Ti) * ratio;
+
+
+            BE = RadPhi<LD>(Gamma, c, Ti,  rhoPhii);
+
 
             this->initial_step_size=initial_step_size;
             this->minimum_step_size=minimum_step_size;
@@ -121,21 +130,46 @@ namespace nsc{
         };
 
         void solveNSC();
+
+        void setParams(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP){
+            this->TEND=TEND;
+            this->c=c;
+            this->Ti=Ti;
+            this->ratio=ratio;
+            this->umax=umax;
+            this->TSTOP=TSTOP;
+
+            Gamma = cosmo.Hubble(TEND) ;
+            rhoPhii = cosmo.rhoR(Ti) * ratio;
+
+            BE = RadPhi<LD>(Gamma, c, Ti,  rhoPhii);
+
+            points.clear();
+            pointSize=points.size();
+            TE1=Ti;
+            TE2=Ti;
+            TD1=Ti;
+            TD2=Ti;
+            aE1=1;
+            aE2=1;
+            aD1=1;
+            aD2=1;
+
+        }
     };
 
 
 
     template<class LD>
     void NSC<LD>::solveNSC(){ 
-        LD Gamma = cosmo.Hubble(TEND) ;
-        LD rhoPhii = cosmo.rhoR(Ti) * ratio;
+        // LD Gamma = cosmo.Hubble(TEND) ;
+        // LD rhoPhii = cosmo.rhoR(Ti) * ratio;
 
         /*================================*/
         Array<LD> y0={0.,0.}; 
         /*================================*/
         
-        RadPhi<LD> BE(Gamma, c, Ti,  rhoPhii);
-
+        
         Solver System(BE, y0,umax,
                         initial_step_size, minimum_step_size, maximum_step_size, maximum_No_steps,
                         absolute_tolerance, relative_tolerance, beta, fac_max, fac_min);
