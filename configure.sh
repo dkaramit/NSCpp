@@ -6,9 +6,14 @@ for file in $(find . -regex ".*\.sh");do
   chmod +x $file
 done
 
-for dataFile in $cosmoDat;do
-  echo "format $dataFile" 
-  bash src/FormatFile.sh $dataFile
+for dataFile in $cosmoDat ;do
+  if [ -f "$dataFile" ]; then 
+    echo "format $dataFile" 
+    bash src/FormatFile.sh $dataFile 
+  else 
+    echo  "$dataFile does not exist! Make sure that you provide valid paths in Definitions.mk"
+    exit 
+  fi
 done
 
 # ---------these are needed for python and c++---------------- #

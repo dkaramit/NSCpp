@@ -16,7 +16,7 @@
 /*cosmological parameters*/
 //it is better not to use all the available data h_PATH, because there are a lot of points.
 //interpolating up to T=3GeV should be enough (the difference is less than 1%)...
-static nsc::Cosmo<LD> cosmo(cosmo_PATH,1e-5,3e3);
+static nsc::Cosmo<LD> cosmo(cosmo_PATH,0,nsc::Cosmo<LD>::mP);
 
 static const LD T0=  nsc::Cosmo<LD>::T0;
 static const LD h_hub= nsc::Cosmo<LD>::h_hub;
