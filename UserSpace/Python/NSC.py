@@ -1,3 +1,6 @@
+from time import time
+from sys import stderr
+
 from sys import path as sysPath
 from os import path as osPath
 sysPath.append(osPath.join(osPath.dirname(__file__), '../../src'))
@@ -9,8 +12,8 @@ from interfacePy.Cosmo import Hubble,rhoR
 
 TEND=1e-2
 c=3
-Ti=1e5
-ratio=1e-4
+Ti=1e12
+ratio=1e-1
 
 umax=500
 TSTOP=1e-4
@@ -19,9 +22,9 @@ TSTOP=1e-4
 # These variables are optional. Yoou can use the NSC class without them.
 initial_step_size=1e-2; #initial step the solver takes. 
 minimum_step_size=1e-8; #This limits the sepsize to an upper limit. 
-maximum_step_size=1e-3; #This limits the sepsize to a lower limit.
-absolute_tolerance=1e-6; #absolute tolerance of the RK solver
-relative_tolerance=1e-6; #relative tolerance of the RK solver
+maximum_step_size=1e-2; #This limits the sepsize to a lower limit.
+absolute_tolerance=1e-8; #absolute tolerance of the RK solver
+relative_tolerance=1e-8; #relative tolerance of the RK solver
 beta=0.9; #controls how agreesive the adaptation is. Generally, it should be around but less than 1.
 
 #The stepsize does not increase more than fac_max, and less than fac_min. 
@@ -32,6 +35,7 @@ fac_min=0.8;
 maximum_No_steps=int(1e7); #maximum steps the solver can take Quits if this number is reached even if integration is not finished.
 
 
+_=time()
 # NSC instance
 BE=NSC(TEND,c,Ti,ratio,umax,TSTOP,
         initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, 
@@ -41,9 +45,10 @@ BE.solveNSC()
 
 
 print(TEND,c,Ti,ratio,BE.TE1,BE.TE2,BE.TD1,BE.TD2)
+print(round(time()-_,3),file=stderr)
 
 
-if True:
+if False:
     from numpy import max as np_max
     import matplotlib.pyplot as plt
 

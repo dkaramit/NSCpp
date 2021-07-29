@@ -1,7 +1,10 @@
 #!/bin/bash
 
+# Note: this script adds a tiny overhead. 
+# You can use mimes::Timer in MiMeS/src/util/timeit.hpp in order time your program. 
+
 # This script executes the first argument and prints the time it took (is seconds) to run it.
-# 
+ 
 
 # check if the number of arguments is correct
 expectedArgs=2
@@ -34,12 +37,11 @@ if [ ! -r $2 ]; then
 fi
 
 err_out=$1._nscpp_ 
-
-time_out=.time._nscpp_ 
+touch $err_out 
 # run the executable ($1) passing as arguments the contents of the file ($2)
-time (xargs -a $2 $1 2>$err_out || cat $err_out; rm -f $err_out ) 2> $time_out
 
-# print the time it took in seconds
-perl -pe 's/m/ /g; s/\,/./g; s/s//g' $time_out | awk '$1 ~ /real/ {print 60*$2+$3}' >&2
-rm -f $time_out
+t0=$(date +%s%N)
+xargs -a $2 $1 2>$err_out || cat $err_out; rm -f $err_out 
+t1=$(date +%s%N)
 
+awk -v t0=$t0 -v t1=$t1 'BEGIN{print (t1-t0)*1e-9}'  >&2

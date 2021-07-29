@@ -3,6 +3,7 @@
 #include <cmath> 
 #include <string> 
 #include"src/NSC/NSCSolve.hpp"
+#include"src/util/timeit.hpp"
 
 
 #define printResults
@@ -51,6 +52,9 @@ int main(int argc, char **argv){
 
         return 1;
     }
+    //timeit.sh adds some overhead. Alternatively, you can use
+    // nsc::Timer _time_; 
+    // The _time_ instance  prints the time the program took in stderr.  
 
 
     int ar=0;
@@ -80,7 +84,6 @@ int main(int argc, char **argv){
     LD fac_min=atof(argv[++ar]);
     unsigned int maximum_No_steps=atoi(argv[++ar]); //maximum steps the solver can take Quits if this number is reached even if integration is not finished.
     
-
 
     nsc::NSC<LD> BE(TEND,c,Ti,ratio,umax,TSTOP,
     initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, relative_tolerance, beta,
