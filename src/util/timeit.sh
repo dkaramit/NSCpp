@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Note: this script adds a tiny overhead. 
-# You can use mimes::Timer in MiMeS/src/util/timeit.hpp in order time your program. 
+# You can use nsc::Timer in NSCpp/src/util/timeit.hpp in order time your program. 
 
 # This script executes the first argument and prints the time it took (is seconds) to run it.
  
