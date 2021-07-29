@@ -9,3 +9,4 @@
 *.run
 UserSpace/Python/*_examplePlot.pdf
 *.xtx
+*._nscpp_

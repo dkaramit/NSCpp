@@ -1,15 +1,18 @@
 #!/bin/bash
 source Definitions.mk
 
-for file in $(find . -regex ".*\.sh");do
+# change permissions to all .sh files
+for file in $(find . -type f -regex ".*\.sh");do
   echo "allow $file to be executed" 
   chmod +x $file
 done
 
-for dataFile in $cosmoDat ;do
+# since FormatFile.sh can change directories in future versions, let's find it first 
+formatF=$(find . -type f -regex ".*FormatFile.sh")
+for dataFile in $cosmoDat;do
   if [ -f "$dataFile" ]; then 
     echo "format $dataFile" 
-    bash src/FormatFile.sh $dataFile 
+    eval $formatF $dataFile 
   else 
     echo  "$dataFile does not exist! Make sure that you provide valid paths in Definitions.mk"
     exit 

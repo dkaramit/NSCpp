@@ -38,6 +38,13 @@ namespace nsc{
             unsigned int N=0;
             LD T,heff,geff;
             std::ifstream data_file(path,std::ios::in);
+            //quit if the file does not exist.
+            if(not data_file.good()) {
+                std::cerr << path << " does not exist.";
+                std::cerr <<" Please make sure to provide a valid path for the Cosmo datafile";
+                std::cerr <<" in NSCpp/Definitions.mk\n"; 
+                exit(1);
+            }
 
             while (not data_file.eof()){
                 data_file>>T;

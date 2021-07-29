@@ -1,4 +1,5 @@
-rootDir=./#the root directory of NSCpp
+# NSCpp root directory
+rootDir=./
 
 #######################################-data files-#######################################
 # relative path to comoslogical data

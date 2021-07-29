@@ -1,4 +1,5 @@
-rootDir=../../../#the root directory of NSCpp
+#the root directory of NSCpp
+rootDir=../../../
 #######################################-data files-#######################################
 # relative path to comoslogical data
 cosmoDat=src/data/eos2020.dat
