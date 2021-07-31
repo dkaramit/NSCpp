@@ -1,5 +1,5 @@
 #!/bin/bash
-source Definitions.mk
+source Paths.mk
 
 # change permissions to all .sh files
 for file in $(find . -type f -regex ".*\.sh");do

@@ -1,9 +1,5 @@
 # NSCpp root directory
 rootDir=./
-
-#######################################-data files-#######################################
-# relative path to comoslogical data
-cosmoDat=src/data/eos2020.dat
 #
 #######################################-precision-#######################################
 # LONG=long : in order to use long doubles. This is slower, but generally more accurate, since we can use tolerances down to 10^-11 (or below that). 
