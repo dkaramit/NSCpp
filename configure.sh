@@ -42,14 +42,19 @@ echo "_PATH_=\"$PWD\" "> $PathHeadPy
 
 echo "write paths in $PathHead"
 
-echo "#ifndef PATHS_HEAD
-#define PATHS_HEAD
+rm -f $PathHead
+touch $PathHead
+echo "#ifndef PATHS_HEAD">>$PathHead
+echo "#define PATHS_HEAD">>$PathHead
+echo "#include<string>">>$PathHead
+echo "">>$PathHead
 
-#define cosmo_PATH \"$PWD/$cosmoDat\" 
-#define PWD \"$PWD\" 
+[  -z "$cosmoDat" ] || echo "constexpr const static auto cosmo_PATH = \"$PWD/$cosmoDat\";">>$PathHead
+
+echo "constexpr const static auto rootDir = \"$PWD\"; 
 
 #endif
-">$PathHead
+">>$PathHead
 
 
 
