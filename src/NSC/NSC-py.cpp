@@ -1,14 +1,22 @@
 #include"src/NSC/NSCSolve.hpp"
 
+// macros for the solver
+#ifndef SOLVER
+    #define SOLVER 1
+    #define METHOD RODASPR2
+#endif
+
+
+// macros for the numeric type
 #ifndef LONG
-    #define LONG long
+    #define LONG 
 #endif
 
 #ifndef LD
     #define LD LONG double
 #endif
 
-#define Cast(BE) static_cast<nsc::NSC<LD>*>(BE)
+#define Cast(BE) static_cast<nsc::NSC<LD,SOLVER,METHOD<LD>>*>(BE)
 
 extern "C"{
     void* INIT(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP, 
@@ -16,7 +24,7 @@ extern "C"{
                     LD absolute_tolerance, LD relative_tolerance,
                     LD beta, LD fac_max, LD fac_min, int maximum_No_steps){ 
         
-        return new nsc::NSC<LD>(TEND, c, Ti, ratio, umax, TSTOP,
+        return new nsc::NSC<LD,SOLVER,METHOD<LD>>(TEND, c, Ti, ratio, umax, TSTOP,
                             initial_step_size,minimum_step_size, maximum_step_size, 
                             absolute_tolerance, relative_tolerance, beta,
                             fac_max, fac_min, maximum_No_steps);

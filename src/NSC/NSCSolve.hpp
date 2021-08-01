@@ -34,26 +34,23 @@
 #include "src/NaBBODES/Rosenbrock/METHOD.hpp"
 
 
+namespace nsc{
+    template<bool C, typename T1, typename T2>
+    struct IF{using type=T1;};
 
-/*================================*/
-#ifndef METHOD
-    #define solver 1 
-    #define METHOD RODASPR2
-#endif
-
-
+    template<typename T1, typename T2>
+    struct IF<false,T1,T2>{using type=T2;};
+}
 
 namespace nsc{
 
-    template<class LD>
+    template<class LD, const int Solver, class Method>
     class NSC{
-        #if solver==1
-        using Solver=Ros<Neqs, METHOD<LD>, Jacobian<Neqs, LD>, LD>;
-        #endif
+        using RKSolver = typename IF<Solver==1,
+            Ros<Neqs, Method, Jacobian<Neqs, LD>, LD>,
+            typename IF<Solver==2,RKF<Neqs, Method, LD>,void>::type>::type; 
 
-        #if solver==2
-        using Solver=RKF<Neqs, METHOD<LD>, LD>;
-        #endif
+
         RadPhi<LD> BE;
         LD Gamma,rhoPhii;
         LD initial_step_size, minimum_step_size, maximum_step_size, absolute_tolerance, relative_tolerance;
@@ -160,8 +157,8 @@ namespace nsc{
 
 
 
-    template<class LD>
-    void NSC<LD>::solveNSC(){ 
+    template<class LD, const int Solver, class Method>
+    void NSC<LD,Solver,Method>::solveNSC(){ 
         // LD Gamma = cosmo<LD>.Hubble(TEND) ;
         // LD rhoPhii = cosmo<LD>.rhoR(Ti) * ratio;
 
@@ -170,7 +167,7 @@ namespace nsc{
         /*================================*/
         
         
-        Solver System(BE, y0,umax,
+        RKSolver System(BE, y0,umax,
                         initial_step_size, minimum_step_size, maximum_step_size, maximum_No_steps,
                         absolute_tolerance, relative_tolerance, beta, fac_max, fac_min);
 

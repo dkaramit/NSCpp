@@ -36,7 +36,7 @@ lib/libCosmo.so: $(Cosmopy_cpp) $(Cosmo_Headers) $(Static_Funcs) $(SPLINE_Header
 lib/libNSC.so: $(NSCpy_Cpp) $(NSCSolve_Headers) $(NSC_Headers)\
 			   $(Cosmo_Headers) $(Static_Funcs)\
 			   $(Ros_Headers) $(RKF_Headers) $(SPLINE_Headers)   
-	$(CC) -o $@ $< -fPIC -shared $(FLG) -DLONG=$(LONGpy) -DMETHOD=$(METHOD) -Dsolver=$(Solver)
+	$(CC) -o $@ $< -fPIC -shared $(FLG) -DLONG=$(LONGpy) -DMETHOD=$(METHOD) -DSOLVER=$(SOLVER)
 
  
 
@@ -76,4 +76,4 @@ NSCSolve_cpp=$(wildcard $(rootDir)src/NSC/checks/NSCSolve_check.cpp)
 exec/NSCSolve_check.run: $(NSC_Cpp) $(NSCSolve_cpp) $(NSCSolve_Headers) $(NSC_Headers)\
 						 $(Cosmo_Headers) $(Static_Funcs)\
 					     $(Ros_Headers) $(RKF_Headers) $(SPLINE_Headers)   
-	$(CC) -o $@ $< $(FLG) -DLONG=$(LONG) -DMETHOD=$(METHOD) -Dsolver=$(Solver)
+	$(CC) -o $@ $< $(FLG) -DLONG=$(LONG) -DMETHOD=$(METHOD) -DSOLVER=$(SOLVER)
