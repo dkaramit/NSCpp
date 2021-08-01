@@ -111,8 +111,8 @@ namespace nsc{
             this->TSTOP=TSTOP;
             
             
-            Gamma = cosmo.Hubble(TEND) ;
-            rhoPhii = cosmo.rhoR(Ti) * ratio;
+            Gamma = cosmo<LD>.Hubble(TEND) ;
+            rhoPhii = cosmo<LD>.rhoR(Ti) * ratio;
 
 
             BE = RadPhi<LD>(Gamma, c, Ti,  rhoPhii);
@@ -139,8 +139,8 @@ namespace nsc{
             this->umax=umax;
             this->TSTOP=TSTOP;
 
-            Gamma = cosmo.Hubble(TEND) ;
-            rhoPhii = cosmo.rhoR(Ti) * ratio;
+            Gamma = cosmo<LD>.Hubble(TEND) ;
+            rhoPhii = cosmo<LD>.rhoR(Ti) * ratio;
 
             BE = RadPhi<LD>(Gamma, c, Ti,  rhoPhii);
 
@@ -162,8 +162,8 @@ namespace nsc{
 
     template<class LD>
     void NSC<LD>::solveNSC(){ 
-        // LD Gamma = cosmo.Hubble(TEND) ;
-        // LD rhoPhii = cosmo.rhoR(Ti) * ratio;
+        // LD Gamma = cosmo<LD>.Hubble(TEND) ;
+        // LD rhoPhii = cosmo<LD>.rhoR(Ti) * ratio;
 
         /*================================*/
         Array<LD> y0={0.,0.}; 
@@ -181,7 +181,7 @@ namespace nsc{
         int pE=0,pD=0;
 
         
-        _H=std::sqrt( (8*M_PI)/(3*mP*mP)* ( cosmo.rhoR(Ti)   +  rhoPhii )  );
+        _H=std::sqrt( (8*M_PI)/(3*Cosmo<LD>::mP*Cosmo<LD>::mP)* ( cosmo<LD>.rhoR(Ti)   +  rhoPhii )  );
         points.push_back(std::vector<LD>{1.,Ti,rhoPhii,std::log(_H)});
 
         unsigned int current_step=0;
@@ -204,8 +204,8 @@ namespace nsc{
 
             _rhoPhi = rhoPhii*std::exp(System.ynext[1]-c*_u);
             
-            _rhoR = cosmo.rhoR(_T);
-            _H=std::sqrt( (8*M_PI)/(3*mP*mP)* ( _rhoR   +  _rhoPhi )  );
+            _rhoR = cosmo<LD>.rhoR(_T);
+            _H=std::sqrt( (8*M_PI)/(3*Cosmo<LD>::mP*Cosmo<LD>::mP)* ( _rhoR   +  _rhoPhi )  );
             points.push_back(std::vector<LD>{_a,_T,_rhoPhi,std::log(_H)}); 
 
             

@@ -36,10 +36,10 @@ namespace nsc{
             // \rho_\Phi=\rho_{\Phi,i} e^{-c u} f_\Phi(u)
             _rhoPhi=rhoPhii*exp(y[1]-c*u);
 
-            _s=cosmo.s(_T);
-            _rhoR = cosmo.rhoR(_T);
-            _dh=cosmo.dh(_T);
-            _H = std::sqrt(8. * M_PI / (3. * mP * mP) * (_rhoR + _rhoPhi));
+            _s=cosmo<LD>.s(_T);
+            _rhoR = cosmo<LD>.rhoR(_T);
+            _dh=cosmo<LD>.dh(_T);
+            _H = std::sqrt(8. * M_PI / (3. * Cosmo<LD>::mP * Cosmo<LD>::mP) * (_rhoR + _rhoPhi));
             
             lhs[0] = 1 -1/_dh +  1/3.*Gamma*_rhoPhi/(_H*_s*_T*_dh); // dlogf_R/du  
             lhs[1] = - Gamma / _H; // dlogf_Phi/du
