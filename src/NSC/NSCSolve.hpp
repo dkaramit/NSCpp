@@ -61,6 +61,8 @@ namespace nsc{
 
         LD TEND,c,Ti,ratio,umax,TSTOP;
         std::vector<std::vector<LD>> points;
+        std::vector<LD> dT;
+        std::vector<LD> drhoPhi;
 
         unsigned int pointSize;
         LD TE1,TE2,TD1,TD2,aE1,aE2,aD1,aD2;
@@ -142,6 +144,8 @@ namespace nsc{
             BE = RadPhi<LD>(Gamma, c, Ti,  rhoPhii);
 
             points.clear();
+            dT.clear();
+            drhoPhi.clear();
             pointSize=points.size();
             TE1=Ti;
             TE2=Ti;
@@ -181,6 +185,9 @@ namespace nsc{
         _H=std::sqrt( (8*M_PI)/(3*Cosmo<LD>::mP*Cosmo<LD>::mP)* ( cosmo<LD>.rhoR(Ti)   +  rhoPhii )  );
         points.push_back(std::vector<LD>{1.,Ti,rhoPhii,std::log(_H)});
 
+        dT.push_back(0);
+        drhoPhi.push_back(0);
+
         unsigned int current_step=0;
         
 
@@ -189,6 +196,8 @@ namespace nsc{
             if( System.tn>=System.tmax  or current_step == maximum_No_steps  ) {   break ;}
 
             System.next_step();
+
+
             for (int eq = 0; eq < 2; eq++){System.yprev[eq]=System.ynext[eq];}
             // increase time
             System.tn+=System.h;
@@ -205,6 +214,8 @@ namespace nsc{
             _H=std::sqrt( (8*M_PI)/(3*Cosmo<LD>::mP*Cosmo<LD>::mP)* ( _rhoR   +  _rhoPhi )  );
             points.push_back(std::vector<LD>{_a,_T,_rhoPhi,std::log(_H)}); 
 
+            dT.push_back(_T*(System.ynext[0] - System.ynext_star[0]));
+            drhoPhi.push_back(_rhoPhi*(System.ynext[1] - System.ynext_star[1]));
             
             if(pE==0){  if(_rhoR < _rhoPhi){ TE1 = _T; aE1 = _a; pE++;}   }//the first time \rho_R = \rho_\Phi
             if(pE==1){  if(_rhoR > _rhoPhi){ TE2 = _T; aE2 = _a; pE++;}   }//the second time \rho_R = \rho_\Phi

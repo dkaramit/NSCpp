@@ -33,6 +33,9 @@ NSClib.SOLVE.restype = None
 NSClib.getResults.argtypes= POINTER(cdouble),void_p,
 NSClib.getResults.restype = None
 
+NSClib.getErrors.argtypes= POINTER(cdouble),POINTER(cdouble),void_p,
+NSClib.getErrors.restype = None
+
 
 NSClib.getSize.argtypes= void_p,
 NSClib.getSize.restype = cint
@@ -189,4 +192,19 @@ class NSC:
         self.T=np_array(list(self.T))
         self.rhoPhi=np_array(list(self.rhoPhi))
         self.logH=np_array(list(self.logH))
+        
+    def getErrors(self):
+        '''
+        This function stores the local errors of theta and zeta in
+        self.dT and self.drhoPhi
+
+        '''
+        Arr = cdouble * NSClib.getSize(self.voidpNSC) 
+        self.dT=Arr()
+        self.drhoPhi=Arr()
+
+        NSClib.getErrors(self.dT, self.drhoPhi, self.voidpNSC)
+        
+        self.dT=np_array(list(self.dT))
+        self.drhoPhi=np_array(list(self.drhoPhi))
         

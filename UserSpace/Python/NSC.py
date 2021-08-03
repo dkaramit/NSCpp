@@ -50,9 +50,11 @@ print(round(time()-_,3),file=stderr)
 
 if False:
     from numpy import max as np_max
+    from numpy import abs as np_abs
     import matplotlib.pyplot as plt
 
     BE.getPoints()#this gives you all the points of integration
+    BE.getErrors()#this gives you the local errors
     
     fig=plt.figure(figsize=(9,4))
     fig.subplots_adjust(bottom=0.15, left=0.15, top = 0.9, right=0.9,wspace=0.0,hspace=0.25)
@@ -96,6 +98,33 @@ if False:
            borderpad=0.05,ncol=1,loc='lower right',fontsize=14,framealpha=0)
 
     fig.savefig('energy_densities_examplePlot.pdf',bbox_inches='tight')
+
+
+    #error plot 
+    fig=plt.figure(figsize=(9,4))
+    fig.subplots_adjust(bottom=0.15, left=0.15, top = 0.9, right=0.9,wspace=0.0,hspace=0.25)
+    sub = fig.add_subplot(1,1,1)
+    
+    X=BE.a_ai
+    Y=np_abs(BE.drhoPhi/BE.rhoPhi)
+    sub.plot(X,Y,linestyle='--',linewidth=2,alpha=1,c='xkcd:red',label=r'$\dfrac{\delta\rho_{\Phi}}{\rho_{\Phi}}$')
+    
+    Y=np_abs(BE.dT/BE.T)
+    sub.plot(X,Y,linestyle='-',linewidth=2,alpha=1,c='xkcd:black',label=r'$\dfrac{\delta T}{T}$')
+    
+
+    sub.set_yscale('log')
+    sub.set_xscale('log')
+    
+    sub.set_xlabel(r'$\dfrac{a}{a_i}$')
+    sub.xaxis.set_label_coords(0.5, -0.1) 
+    sub.set_ylabel(r'local error')
+    sub.yaxis.set_label_coords(-0.1,0.5) 
+
+    sub.legend(bbox_to_anchor=(1, 0.0),borderaxespad=0., 
+           borderpad=0.05,ncol=1,loc='lower right',fontsize=14,framealpha=0)
+
+    fig.savefig('errors_examplePlot.pdf',bbox_inches='tight')
 
 #run the destructor
 del BE

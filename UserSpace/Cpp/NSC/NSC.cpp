@@ -8,6 +8,7 @@
 
 #define printResults
 // #define printPoints
+// #define printError
 // #define printRelevant //prints what you need for MiMeS
 
 
@@ -128,6 +129,16 @@ int main(int argc, char **argv){
             
     }
     #endif
+
+    // print the local errors
+    #ifdef printError
+    std::cout<<"---------------------local error:---------------------\n";
+    std::cout<<"dT\tdrhoPhi"<<std::endl;
+    for(size_t i=0; i<BE.pointSize; ++i ){
+        std::cout<<BE.dT[i]<<"\t"<<BE.drhoPhi[i]<<"\n";
+    }
+    #endif
+
 
     return 0;
 }

@@ -56,6 +56,15 @@ extern "C"{
         }
     }
 
+    void getErrors(LD *dT,LD *drhoPhi, void* BE){
+        unsigned int N= (Cast(BE) -> pointSize);
+
+        for(unsigned int i=0; i<N; ++i){
+            dT[i]=Cast(BE) ->dT[i];
+            drhoPhi[i]=Cast(BE) ->drhoPhi[i];
+        }
+    }
+
     void getResults(LD *points, void* BE){
         points[0]=Cast(BE)->TE1;
         points[1]=Cast(BE)->TE2;

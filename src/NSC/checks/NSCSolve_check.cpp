@@ -6,6 +6,7 @@
 
 
 #define printPoints
+#define printError
 
 
 // macros for the solver
@@ -73,6 +74,15 @@ int main(int argc, char **argv){
             std::cout<<BE.points[i][j];
             if(j==3){std::cout<<"\n";}else{std::cout<<"\t";}
         }
+    }
+    #endif
+
+    // print the local errors
+    #ifdef printError
+    std::cout<<"---------------------local error:---------------------\n";
+    std::cout<<"dT\tdrhoPhi"<<std::endl;
+    for(size_t i=0; i<BE.pointSize; ++i ){
+        std::cout<<BE.dT[i]<<"\t"<<BE.drhoPhi[i]<<"\n";
     }
     #endif
 
