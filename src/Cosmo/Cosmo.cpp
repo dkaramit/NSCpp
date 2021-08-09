@@ -1,4 +1,10 @@
-#include"src/static.hpp"
+#include"src/Cosmo/Cosmo.hpp"
+#include "src/misc_dir/path.hpp"
+
+
+/*cosmological parameters*/
+template<class LD> nsc::Cosmo<LD> cosmo(cosmo_PATH,0,nsc::Cosmo<LD>::mP);
+
 
 #ifndef LONG
     #define LONG 
