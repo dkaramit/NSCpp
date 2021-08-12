@@ -2,17 +2,8 @@
 #include <iomanip> 
 #include <cmath> 
 #include <string> 
-#include"src/Cosmo/Cosmo.hpp"
-#include"src/misc_dir/path.hpp"
+#include"NSCpp.hpp"
 
-
-//-- Get a number (length) of log_10-spaced points from 10^min to 10^max. --//
-template<class LD>
-void logspace(LD min, LD max, int length, std::vector<LD> &X ){
-    for(int i = 0; i<length ; ++i){
-        X.push_back(pow( 10, min + i*(max-min)/( length-1 )));
-    }
-}
 
 #ifndef LONG
     #define LONG 
@@ -45,7 +36,7 @@ int main(int argc, char **argv){
     
     // take logarithmically spaced points 
     std::vector<LD> T;
-    logspace<LD>(std::log10(minT), std::log10(maxT),N,T);
+    T=nsc::util::logspace<LD>(std::log10(minT), std::log10(maxT),N);
     
     std::cout<<"T[GeV]\th_eff\tg_eff\tdh_effdT[GeV^-1]\tdg_effdT[GeV^-1]\tdh\t";
     std::cout<<"H[GeV]\ts[GeV^3]\n";

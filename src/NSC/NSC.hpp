@@ -48,7 +48,7 @@ namespace nsc{
     };
 
     template<class LD>
-    Cosmo<LD>  RadPhi<LD>::plasma(cosmo_PATH,0,nsc::Cosmo<LD>::mP);    
+    Cosmo<LD> RadPhi<LD>::plasma(cosmo_PATH,0,nsc::Cosmo<LD>::mP);    
 }
 
 #endif

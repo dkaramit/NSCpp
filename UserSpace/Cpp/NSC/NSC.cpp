@@ -2,8 +2,7 @@
 #include <iomanip> 
 #include <cmath> 
 #include <string> 
-#include"src/NSC/NSCSolve.hpp"
-#include"src/util/timeit.hpp"
+#include"NSCpp.hpp"
 
 
 #define printResults
