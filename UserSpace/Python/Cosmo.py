@@ -6,17 +6,17 @@ from os import path as osPath
 sysPath.append(osPath.join(osPath.dirname(__file__), '../../src'))
 
 #load the module
-import interfacePy.Cosmo as Cosmo
+from interfacePy import Cosmo 
 
-
+cosmo=Cosmo('../../src/data/eos2020.dat',0,1e5)
 
 for T in logspace(-5,5,50):
     print(
         'T=',T,'GeV\t',
-        'H=',Cosmo.Hubble(T),'GeV\t',
-        'h_eff=',Cosmo.heff(T),'\t',
-        'g_eff=',Cosmo.geff(T),'\t',
-        's=',Cosmo.s(T),'GeV^3\t',
+        'H=',cosmo.Hubble(T),'GeV\t',
+        'h_eff=',cosmo.heff(T),'\t',
+        'g_eff=',cosmo.geff(T),'\t',
+        's=',cosmo.s(T),'GeV^3\t',
     )
 
 
@@ -32,8 +32,8 @@ if False:
     sub = fig.add_subplot(1,1,1)
 
     T=logspace(-5,5,500)
-    gt=[Cosmo.geff(i) for i in T]
-    ht=[Cosmo.heff(i) for i in T]
+    gt=[cosmo.geff(i) for i in T]
+    ht=[cosmo.heff(i) for i in T]
 
     sub.plot(T,gt,linestyle='--',c='xkcd:red',label=r"$g_{\rm eff} (T)$")
     sub.plot(T,ht,linestyle=':',c='xkcd:black',label=r"$h_{\rm eff} (T)$")
@@ -59,8 +59,8 @@ if False:
     sub = fig.add_subplot(1,1,1)
 
     T=logspace(-5,5,500)
-    dg=[Cosmo.dgeffdT (i) for i in T]
-    dh=[Cosmo.dheffdT(i) for i in T]
+    dg=[cosmo.dgeffdT (i) for i in T]
+    dh=[cosmo.dheffdT(i) for i in T]
 
     sub.plot(T,dg,linestyle='--',c='xkcd:red',label=r"$\dfrac{d g_{\rm eff}}{dT} (T)$")
     sub.plot(T,dh,linestyle=':',c='xkcd:black',label=r"$\dfrac{d h_{\rm eff}}{dT} (T)$")
@@ -84,7 +84,7 @@ if False:
     sub = fig.add_subplot(1,1,1)
 
     T=logspace(-5,5,500)
-    dht=[Cosmo.dh(i) for i in T]
+    dht=[cosmo.dh(i) for i in T]
     sub.plot(T,dht,linestyle='-',c='xkcd:black') 
     sub.set_xlabel(r'$T ~ [{\rm GeV}]$')
     sub.set_ylabel(r'$\delta_h = 1 + \dfrac{1}{3} \dfrac{d \log h_{\rm eff} }{d \log T}$')

@@ -31,12 +31,12 @@ exec: check
 
 #shared libraries that can be used from python
 lib/libCosmo.so: $(Cosmopy_cpp) $(Cosmo_Headers) $(Static_Funcs) $(SPLINE_Headers) 
-	$(CC) -o $@ $< -fPIC -shared $(FLG) -DLONG=$(LONGpy)
+	$(CC) -o $@ $< -fPIC -shared $(FLG) -DLONGpy=$(LONGpy)
 
 lib/libNSC.so: $(NSCpy_Cpp) $(NSCSolve_Headers) $(NSC_Headers)\
 			   $(Cosmo_Headers) $(Static_Funcs)\
 			   $(Ros_Headers) $(RKF_Headers) $(SPLINE_Headers)   
-	$(CC) -o $@ $< -fPIC -shared $(FLG) -DLONG=$(LONGpy) -DMETHOD=$(METHOD) -DSOLVER=$(SOLVER)
+	$(CC) -o $@ $< -fPIC -shared $(FLG) -DLONGpy=$(LONGpy) -DMETHOD=$(METHOD) -DSOLVER=$(SOLVER)
 
  
 

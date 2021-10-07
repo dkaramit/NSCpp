@@ -7,7 +7,8 @@ sysPath.append(osPath.join(osPath.dirname(__file__), '../../src'))
 
 #load the module
 from interfacePy.NSC import NSC 
-from interfacePy.Cosmo import Hubble,rhoR
+from interfacePy.Cosmo import Cosmo
+
 
 
 TEND=1e-2

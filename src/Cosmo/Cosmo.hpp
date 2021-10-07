@@ -7,14 +7,13 @@
 #include<cmath>
 #include<string>
 
-#include"src/SimpleSplines/Interpolation.hpp"
+#include "src/SimpleSplines/Interpolation.hpp"
 
 namespace nsc{    
     template<class LD>
     class Cosmo {
+        private:
         using VecLD=std::vector<LD>;
-        
-        protected:
         CubicSpline<LD> h,g;
         VecLD Ttab,htab,gtab;
         LD TMin, TMax, hMin, hMax, gMin, gMax;
@@ -27,7 +26,7 @@ namespace nsc{
         constexpr static  LD relicDM_obs=0.12; //DM relic abandance today
         constexpr static LD mP=1.22e19;//Planck mass
 
-        Cosmo(std::string path, LD minT=0, LD maxT=nsc::Cosmo<LD>::mP){    
+        Cosmo(std::string path, LD minT, LD maxT){    
             /*
             path is the path of the data
             minT (maxT) the minimum (maximum) T you need for the interpolation
@@ -42,17 +41,23 @@ namespace nsc{
             if(not data_file.good()) {
                 std::cerr << path << " does not exist.";
                 std::cerr <<" Please make sure to provide a valid path for the Cosmo datafile";
-                std::cerr <<" in NSCpp/Definitions.mk\n"; 
+                std::cerr <<" in nsc/Definitions.mk\n"; 
                 exit(1);
             }
 
+            // std::cout<<TMax<<"\n";
+            // std::cout<<TMin<<"\n";
+            // std::cout<<nsc::Cosmo<LD>::mP<<"\n";
             while (not data_file.eof()){
                 data_file>>T;
                 data_file>>heff;
                 data_file>>geff;
+
                 
                 
                 if(T>=minT and T<=maxT){
+                    
+                    //if there is an empty line theta does not change, so do skip it.
 
                     Ttab.push_back(T);
                     htab.push_back(heff);
