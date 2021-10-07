@@ -8,12 +8,12 @@
 
 
 // macros for the numeric type
-#ifndef LONG
-    #define LONG 
+#ifndef LONGpy
+    #define LONGpy 
 #endif
 
 #ifndef LD
-    #define LD LONG double
+    #define LD LONGpy double
 #endif
 
 #define Cast(BE) static_cast<nsc::NSC<LD,SOLVER,METHOD<LD>>*>(BE)
