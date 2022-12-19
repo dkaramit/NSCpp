@@ -1,0 +1,53 @@
+This is BibTeX, Version 0.99d (TeX Live 2019/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: NSCpp.aux
+The style file: JHEP.bst
+Database file #1: refs.bib
+Warning--I didn't find a database entry for "harris2020array"
+Warning--I didn't find a database entry for "RANG2015128"
+Warning--I didn't find a database entry for "RangAngermann2005"
+Warning--I didn't find a database entry for "DORMAND198019"
+Warning--I didn't find a database entry for "Saikawa:2020swg"
+Warning--I didn't find a database entry for "Borsanyi:2016ksw"
+You've used 2 entries,
+            2195 wiz_defined-function locations,
+            530 strings with 3904 characters,
+and the built_in function-call counts, 277 in all, are:
+= -- 20
+> -- 8
+< -- 0
++ -- 4
+- -- 2
+* -- 11
+:= -- 45
+add.period$ -- 2
+call.type$ -- 2
+change.case$ -- 2
+chr.to.int$ -- 0
+cite$ -- 2
+duplicate$ -- 10
+empty$ -- 41
+format.name$ -- 2
+if$ -- 67
+int.to.chr$ -- 0
+int.to.str$ -- 2
+missing$ -- 0
+newline$ -- 9
+num.names$ -- 2
+pop$ -- 16
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 8
+stack$ -- 0
+substring$ -- 0
+swap$ -- 0
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 2
+width$ -- 3
+write$ -- 16
+(There were 6 warnings)

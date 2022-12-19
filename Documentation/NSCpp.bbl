@@ -1,0 +1,13 @@
+\providecommand{\href}[2]{#2}\begingroup\raggedright\begin{thebibliography}{1}
+
+\bibitem{NaBBODES}
+D.~Karamitros, {\it {\href{https://github.com/dkaramit/NaBBODES}{NaBBODES}: Not
+  a Black Box Ordinary Differential Equation Solver in {C++}}},  2019.
+
+\bibitem{SimpleSplines}
+D.~Karamitros, {\it
+  {\href{https://github.com/dkaramit/SimpleSplines}{SimpleSplines}: A
+  header-only library for linear and cubic spline interpolation in {C++}}},
+  2021.
+
+\end{thebibliography}\endgroup

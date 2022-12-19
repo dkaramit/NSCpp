@@ -1,0 +1,452 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+
+
+\usepackage{slashed}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{multicol}
+\usepackage{authblk}
+
+\renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+
+
+
+\include{macros}
+
+
+
+%%%%%%%-----------------------Rules-----------------------%%%%%%%
+% 1. Put any new macros in macros.tex.
+
+% 2. Section should start with:
+	%\section{This is a section}\label{sec:Intro}
+	%\setcounter{equation}{0}
+
+% 3. labels for Figs should start with fig:, for equations should start with eq:, for sections with sec:, etc.
+%%%%%%%--------------------------------------------------%%%%%%%
+
+
+
+
+\author[ ]{Karamitros Dimitrios}
+\affil[ ]{\em School of Physics and Astronomy, The University of Manchester,
+	Manchester M13 9PL, United Kingdom}
+\affil[ ]{\textit{E-mail: } \href{mailto:dimitrios.karamitros@manchester.ac.uk}{\color{blue}{dimitrios.karamitros@manchester.ac.uk}}}
+	
+	
+\title{{\tt NSCpp}: Non-Standard Cosmologies in {\tt C++}}
+\begin{document}
+
+\maketitle
+
+
+\begin{abstract}
+\end{abstract}
+
+{\bf Program summary:}
+
+{\sl 
+	Program title: \nsc.
+	
+	Developer's respository link: \href{https://github.com/dkaramit/NSCpp}{https://github.com/dkaramit/NSCpp}.
+	
+	Programming language: \CPP and \PY.
+	
+	Licensing provisions: MIT license.
+	
+	Nature of problem:
+	
+	Solution method: Embedded Runge-Kutta for the numerical integration of the equation of motion. The user may choose between explicit and Rosenborck methods, or implement their own Butcher tableau. For the various interpolations, the library uses cubic splines. 
+	
+	Restrictions: 
+}
+
+%\newpage
+\tableofcontents
+%\newpage
+
+
+
+
+\section{Introduction}\label{sec:intro}
+\setcounter{equation}{0}
+
+\section{Physics background}\label{sec:Physics}
+\setcounter{equation}{0}
+
+
+\subsection{Notation}\label{sec:notation}
+
+
+
+\section{\nsc usage}\label{sec:first_steps}
+\setcounter{equation}{0}
+%
+The latest stable version of \nsc is available at \href{https://github.com/dkaramit/NSCpp/tree/stable}{\tt github.com/dkaramit/NSCpp/tree/stable}, which can also be obtained by running:~\footnote{Instructions on how {\tt git} can be installed can be found in \href{https://github.com/git-guides/install-git}{https://github.com/git-guides/install-git}. }
+%
+\begin{lstlisting}
+	git clone -b stable https://github.com/dkaramit/NSCpp.git
+\end{lstlisting}
+
+
+It is important to note that \nsc relies on {\tt NaBBODES}~\cite{NaBBODES} and {\tt SimpleSplines}~\cite{SimpleSplines}. These are two libraries developed independently, and in order to get \nsc with the latest version of these libraries, one needs to run following commands
+%
+\begin{lstlisting}
+	git clone https://github.com/dkaramit/NSCpp.git
+	cd NSCpp
+	git submodule init
+	git submodule update --remote
+\end{lstlisting}
+%
+This downloads the {\tt master} branch of \nsc; and {\tt NaBBODES}~\cite{NaBBODES} and {\tt SimpleSplines}~\cite{SimpleSplines} as submodules. This guaranties that \nsc uses the most updated version of these libraries, although it may not be stable. 
+
+
+
+Once everything is downloaded successfully, we can go inside the \nsc directory, and run \run{bash configure.sh} and \run{make}.  The {\tt bash} script {\tt configure.sh}, just writes some paths to some files, formats the data files provided in an acceptable format (in section~\ref{sec:input} the format is explained), and makes some directories.
+%
+The {\tt makefile} is responsible for compiling some examples and checks, as well as the shared libraries that needed for the \PY interface.  If everything runs successfully, there should be two new directories {\tt exec} and {\tt lib}. Inside {\tt exec}, there are several executables that ready to run, in order to ensure that the code runs (\eg no segmentation fault occurs). 
+
+Although there are various options available at compile-time, we first discuss how \nsc can be used, in order for the role of these options to be clear. 
+
+
+\subsection{First steps}\label{sec:First_examples} 
+
+
+\begin{cpp}
+	#include"src/NSC/NSCSolve.hpp"
+\end{cpp}
+%
+Notice that if the this {\tt .cpp} file is not in the root directory of \nsc, we need to compile it using the flag {\tt -Ipath-to-root}, "path-to-root" the relative path to the root directory of \nsc; \eg if the {\tt .cpp} is in the {\tt MiMeS/UserSpace/Cpp/NSC} directory, this flag should be {\tt -I../../../}.
+
+
+\paragraph{Setting up the solver}
+
+%
+\begin{cpp}
+    nsc::NSC<LD,SOLVER,METHOD<LD>> BE(TEND,c,Ti,ratio,umax,TSTOP,
+		initial_step_size,minimum_step_size, maximum_step_size, 
+		absolute_tolerance, relative_tolerance, beta,
+		fac_max, fac_min, maximum_No_steps);
+\end{cpp}
+%
+Here, \cppin{LD} should be the numeric type to be used; it is recommended to use \cppin{long double}, but other choices are also available as we discuss later. Moreover \cppin{Solver} and \cppin{Method} depend on the type of Runge-Kutta (RK) the user chooses. The available choices are shown in table\ref{tab:template-arguments}. 
+
+The various parameters are as follows:
+%
+\begin{enumerate}
+	\item 
+	\item 
+	\item {\tt umax }: If $u>${\tt umax} the integration stops (remember that $u=\log(a/a_i)$). Typically, this should be a large number ($\sim 1000$), in order to avoid stopping the integration before the axion begins to evolve  adiabatically.    
+	\item {\tt TSTOP}: If the temperature drops below this, integration stops. 
+	
+	\item {\tt initial\_stepsize} (optional): Initial step the solver takes. 
+	
+	\item {\tt maximum\_stepsize} (optional): This limits the step-size to an upper limit. 
+	\item {\tt minimum\_stepsize} (optional): This limits the step-size to a lower limit. 
+	
+	\item {\tt absolute\_tolerance} (optional): Absolute tolerance of the RK solver
+	
+	\item {\tt relative\_tolerance} (optional): Relative tolerance of the RK solver.
+	
+	\item {\tt beta} (optional): Controls how agreesive the adaptation is. Generally, it should be around but less than 1.
+	
+	\item {\tt fac\_max},  {\tt fac\_min} (optional): The stepsize does not increase more than fac\_max, and less than fac\_min. 
+	This ensures a better stability. Ideally, {\tt fac\_max}$=\infty$ and {\tt fac\_min}$=0$, but in reality one must 
+	tweak them in order to avoid instabilities.
+	
+	\item {\tt maximum\_No\_steps} (optional): Maximum steps the solver can take. Quits if this number is reached even if integration
+	is not finished. 
+\end{enumerate}
+
+%
+\begin{cpp}
+	BE.solveNSC();
+\end{cpp}
+
+
+
+\subsubsection{Using \\nsc in \PY}\label{sec:begin_py}
+%
+The modules for the \PY interface are located in {\tt NSCpp/src/interfacePy}. Although the usage of the classes is similar to the \CPP case, it is worth showing explicitly how the \PY interface works. One should keep in mind that the various template arguments discussed in the \CPP case have to be chosen at compile-time. That is, for the \PY interface, one needs to choose the numeric type, and RK method to be used when the shared libraries are compiled. This is done by assigning the relevant variable in {\nsc/Definitions.mk} before running \run{make}. The various options are discussed in section~\ref{sec:options}, and outlined in table~\ref{tab:compile_time-options}.
+
+ 
+The two relevant classes are defined in the modules {\tt interfacePy.AxionMass} and {\tt interfacePy.Axion}, and can be loaded in a \PY script as 
+%
+\begin{py}
+	from sys import path as sysPath
+	sysPath.append('path_to_src')
+	from interfacePy.NSC import NSC 
+\end{py}
+%
+It is important that {\tt 'path\_to\_src'} provides the relative path to the {\tt NSCpp/src} directory. For example, if the script is located in {\tt NSCpp/UserSpace/Python}, {\tt 'path\_to\_src'} should be {\tt '../../src'}.
+
+\paragraph{The solver}
+%
+We can define an {\tt NSC} instance as follows 
+%
+\begin{py}
+	BE=NSC(TEND,c,Ti,ratio,umax,TSTOP,
+		   initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, 
+		   relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
+\end{py}
+%
+Here the input parameters are the same as in the \CPP case, and outlined in table~\ref{tab:NSC-input}. Moreover, the usage of the class can be found by running \pyin{?NSC} after loading the module. 
+
+
+Using the defined variable ({\tt BE} in this example), we can simply run  
+%
+\begin{py}
+	BE.solveNSC()
+\end{py}
+%
+in order to solve the BEs. In contrast to the \CPP implementation, this only gives us access to the points where the behaviour changes; the corresponding variables are {\tt BE.TE1,BE.TE2,BE.TD1,BE.TD2}. In order to get the evolution of the densities, we need to run 
+%
+\begin{py}
+	BE.getPoints()
+\end{py}
+%
+This will make \pyin{numpy}~\cite{harris2020array} arrays that contain the $\ddots$ Moreover, we can run the following
+%
+\begin{py}
+	BE.getErrors()
+\end{py}
+
+
+
+\section{Assumptions and user input}\label{sec:assumptions}
+\setcounter{equation}{0}
+%
+\subsection{Restrictions}\label{sec:restrictions}
+
+\subsection{Options at Compile-time}\label{sec:options}
+%
+The user has a number of options regarding different aspects for the code. If \nsc is used without using the available makefiles, then they must use the correct values for the various template arguments, explained in Appendix~\ref{app:classes}.  The various choices we for the shared libraries used by the \PY interface are given in {\tt \nsc/Definitions.mk} while the corresponding options for the \CPP examples are in the {\tt Definitions.mk} files inside the subdirectories of {\tt \nsc/UserSpace/Cpp}. The options correspond to different variables, which are
+%
+\begin{enumerate}
+	\item {\tt rootDir}: The relative path of root directory of \nsc.  
+	%
+	\item {\tt LONG}: This sets the numeric types for the \CPP examples. It should be either {\tt long} or omitted. If omitted, the type of the numeric values is \cppin{double} (double precision). On the other hand, if {\tt LONG=long},  the type is  \cppin{long double}. Generally, using \cppin{double} should be enough. For the sake of numerical stability, however, it is advised to always use {\tt LONG=long}, as it a safer option. The reason is that the axion angle redshifts, and can become very small, which introduces ``rounding errors". Moreover, if the parameters {\tt absolute\_tolerance} or {\tt absolute\_tolerance} are chosen to be below $\sim 10^{-8}$, then double precision numbers may not be enough, and {\tt LONG=long} is preferable.  This choice comes at the cost of speed; double precision operations are usually preformed much faster. It is important to note that {\tt LONG} defines a macro with the same name (in the \CPP examples), which then defines the macro (again in the \CPP examples) as {\tt \#define LD LONG double}. The macro \cppin{LD}, then is used as the corresponding template argument in the various classes. We point out again that if one chooses not to use the {\tt makefile} files, the template arguments need to be known at compile-time. So the user has to define them in the code. 
+	%
+	\item {\tt LONGpy}: the same as {\tt LONG}, but for the \PY interface. One should keep in mind thtat this cannot be changed inside \PY scripts. It just instructs \pyin{ctypes} what numeric type to use. Since the preferred way to compile the shared libraries is via running \run{make} in the root directory of \nsc, this variable needs to be defined inside  {\tt \nsc/Definitions.mk}. By default, this variable is set to {\tt long}, since this is the most stable choice in general.  
+	%
+	\item {\tt SOLVER}: \nsc uses the ordinary differential equation (ODE) integrators of ref.~\cite{NaBBODES}. Currently, there are two available choices; {\tt Rosenbrock} and {\tt RKF}. The former is a general embedded Rosenbrock implementation and it is used if {\tt SOLVER=1}, while the latter is a general explicit embedded Runge-Kutta implementation and can be chosen by using {\tt SOLVER=2} (a brief description of how these algorithms are implemented can be found in Appendix~\ref{app:RK}). By default inside the {\tt Definitions.mk} files {\tt SOLVER=1}, because the axion EOM tends to oscillate rapidly. However, in some cases, a high order explicit method may also work. Note that this variable defines a macro that is then used as the second template argument of the \cppin{mimes::Axion<LD,Solver,Method>} class. The preferred way to do it in the shared libraries is via the {\tt \nsc/Definitions.mk} file, however, the user if free to compile everything in a different way. In this case, the  various {\tt Definitions.mk} files, are not being used, and the user must define the relevant arguments in the code where \nsc is used.
+	%
+	\item {\tt METHOD}: Depending on the type of solver, there are some available methods.~\footnote{It is worth mentioning that {\tt NaBBODES} is built in order to be a template for all possible Rosenbrock and explicit Runge-Kutta embedded methods, and one can provide their own Butcher tableau if they want to use another method, as shown in Appendix~\ref{app:RK}.}  
+	\begin{itemize}
+		\item 	For {\tt SOLVER=1}, the available methods are 
+		{\tt METHOD=RODASPR2} and {\tt METHOD=ROS34PW2}. The {\tt RODASPR2} choice is a fourth order Rosenbrock-Wanner method (more information can be found in ref.~\cite{RANG2015128}). The {ROS34PW2} choice corresponds to a third order Rosenbrock-Wanner method~\cite{RangAngermann2005}. 
+		%
+		\item 	For {\tt SOLVER=2}, the only reliable method available in {\tt NaBBODES} is the Dormand-Prince~\cite{DORMAND198019} chosen if {\tt METHOD=DormandPrince}, which is an explicit Runge-Kutta method of seventh order.
+	\end{itemize}
+	This variable defines a macro (with the same name) that is passed as the third template parameter of \cppin{mimes::Axion<LD,Solver,Method>} (\ie \cppin{METHOD<LD>} in the place of \cppin{Method}). 
+	%
+	If the compilation is not done via the {\tt makefile} files, the user must define the relevant template arguments in the code.
+	%
+	\item {\tt CC}: The \CPP compiler that one chooses to use. The default option is {\tt CC=g++}, which is the {\tt GNU} \CPP compiler, and is available for all systems. Another option is to use the {\tt clang} compiler, which is chosen by {\tt CC=clang -lstdc++}. \nsc is mostly tested using {\tt g++}, but {\tt clang} also seems to work (and the resulting executables are sometimes faster), but the user has to make sure that their version of the compiler of choice supports the \CPP17 standard, otherwise \nsc probably will not work.
+	%
+	\item {\tt OPT}: Optimization level of the compiler. By default, this is {\tt OPT=O3}, which produces executables that are marginally faster than {\tt OPT=O1} and {\tt OPT=O2}, but significantly faster than {\tt OPT=O0}. There is another choice, {\tt OPT=Ofast}, but it can cause various numerical instabilities, and is generally considered dangerous -- although we have not observed any problems when running \nsc. 
+\end{enumerate}
+%
+It is important to note, once again, that the variables that correspond to template arguments must be known at compile time. Thus, if the compilation is done without the help of the various {\tt makefile} files, the template arguments must be given, otherwise compilation will fail.~\footnote{In \CPP the template arguments are part of the definition of a class; if the template arguments are not known, the class is not even constructed.} For example, the choice {\tt LONG=long}, {\tt SOLVER=1}, and {\tt METHOD=RODASPR2} will be used to compile the shared libraries (and \CPP example in {\tt \nsc/UserSpace/Cpp/NSC}) with \cppin{nsc::NSC<long double,1,RODASPR2<long double>>}. 
+
+
+\subsection{User input}\label{sec:input}
+%
+\subsubsection{Compile-time input}\label{sec:compile_time_input} 
+%
+\paragraph{Files} \nsc requires files that provide data for the relativistic degrees of freedom (RDOF) of the plasma, and the anharmonic factor. Although \nsc is shipped with the standard model RDOF found in~\cite{Saikawa:2020swg}, and a few points for $f(\thetamax)$ introduced in \eqs{eq:anharmonic_f}, the user is free change them via the corresponding variables in {\tt \nsc/Paths.mk}. Moreover, there is a set of data for the QCD axion mass as calculated in ref.\cite{Borsanyi:2016ksw}.
+%
+The variables pointing to these data files are {\tt cosmoDat}, {\tt axMDat}, and {\tt anFDat}, for the RDOF, axion mass, and the anharmonic factor; respectively.
+
+The format of the files has to be the following:
+%
+\begin{itemize}
+	\item The RDOF data must be given in three columns; $T$ (in $\GeV$), $\heff$, and $\geff$.
+	%
+	\item The axion mass data must be given in two columns; $T$ (in $\GeV$), $\chi$ (in $\GeV^4$). Here, $\chi$ is defined as in \eqs{eq:axion_mass_def}. 
+	The user can provide a function instead of data for the axion mass, by leaving the  {\tt axMDat} variable empty. 
+	%
+	\item The data for the anharmonic factor must be give in two columns   $\thetamax$ $f(\thetamax)$; with increasing $\thetamax$.
+\end{itemize}
+%
+The paths to these files should be given at compile time. That is, once {\tt Paths.mk} changes, we must run \run{bash configure.sh} and then \run{\tt make} in order to make sure that they will be used. The user can change the content of the data files (without changing their paths), in order to use them without compiling \nsc again. However, the user has to make sure that all the files are sorted so that the values of first column increase (with no duplicates or empty lines). In order to ensure this, it is advised to run \run{bash FormatFile.sh path-to-file} (in Appendix~\ref{app:util} there are some details on {\tt MiMeS/src/FormatFile.sh}), in order to format the file (that should exist in \run{path-to-file}) so that it complies with the requirements of \nsc.
+
+These paths are stored as strings in {\tt \nsc/src/misc\_dir/path.hpp} at compile-time (they are defined as {\tt constexpr}), and can be accessed once this header file is included. The corresponding variables are {\tt cosmo\_PATH}, {\tt chi\_PATH}, and {\tt anharmonic\_PATH}, for the path to data file of the plasma quantities, $\chi(T)$, and $f(\thetamax)$; respectively. Although, the axion mass data file may be omitted -- since the axion mass is defined by the user, the variable {\tt chi\_PATH} is still useful if the axion mass is defined via a data file, as it is automatically converted to an absolute path.~\footnote{Absolute paths have the advantage to be accessible from everywhere else in the system. Thus, executables that seek the corresponding files can be called and copied easily.}
+
+
+
+
+
+
+
+
+\section{Acknowledgements}
+%
+The author acknowledges support by the Lancaster–Manchester–Sheffield Consortium for Fundamental Physics, under STFC research grant ST/T001038/1.
+
+
+\section{Summary}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% APPENDICES
+%\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setcounter{section}{0}
+\section*{Appendix}
+\appendix
+
+\renewcommand{\theequation}{\Alph{section}.\arabic{equation}}
+\setcounter{equation}{0}  % reset counter
+%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+\section{\CPP classes}\label{app:classes}
+\setcounter{equation}{0}
+
+
+\section{\nsc~  \PY interface}\label{app:modules}
+\setcounter{equation}{0}
+
+
+\section{Quick guide to the user input}\label{app:usr_input}
+\setcounter{equation}{0}
+We present tables..., with the various available run-time inputs, required files, and template arguments. In table~\ref{tab:compile_time-options} we show the available compile-time options, that can be used when compiling using the various {\tt makefile} files. 
+%
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{l l}
+		\hline\\[-0.4cm]
+		\multicolumn{2}{c}{\bf User run-time input for solving the BEs.}  \\
+		\hline\\[-0.4cm]
+
+
+		{\tt TSTOP} & Once $T<${\tt TSTOP}, integration stops. Typical value: $10^{-4}~\GeV$.\\
+		\hline\\[-0.4cm]
+
+		{\tt initial\_stepsize} &  Initial step-size of the solver. Default value: $10^{-2}$.\\ 
+		\hline\\[-0.4cm]
+
+		{\tt minimum\_stepsize} & Lower limit of the step-size. Default value:  $10^{-8}$.\\
+		\hline\\[-0.4cm]
+
+		{\tt maximum\_stepsize} & Upper limit of the step-size. Default value:  $10^{-2}$.\\
+		\hline\\[-0.4cm]
+
+		{\tt absolute\_tolerance} & \multirow{1}{12cm}{Absolute tolerance of the RK solver.  Default value:  $10^{-8}$.}\\\\
+		\hline\\[-0.4cm]
+
+		{\tt relative\_tolerance} & \multirow{1}{12cm}{Relative tolerance of the RK solver.  Default value:  $10^{-8}$.}\\\\
+		\hline\\[-0.4cm]
+		
+		{\tt beta} & \multirow{1}{12cm}{Aggressiveness of the adaptation strategy.  Default value:  $0.9$.}\\\\
+		\hline\\[-0.4cm]
+
+		{\tt fac\_max}, {\tt fac\_min} &\multirow{1}{12cm}{The step-size does not change more than {\tt fac\_max} and less than {\tt fac\_min} within a trial step . Default values: $1.2$ and $0.8$, respectively.} \\ \\ \\ 
+		\hline\\[-0.4cm]
+		
+		{\tt maximum\_No\_steps} & \multirow{1}{12cm}{If integration needs more than {\tt maximum\_No\_steps} integration stops. Default value: $10^7$.}\\\\
+		\hline\\[-0.4cm]
+	\end{tabular}
+	\caption{Table of the constructor arguments of the \cppin{nsc::NSC<LD,Solver,Method>} class.}
+	\label{tab:NSC-input}
+\end{table}
+
+		
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{l l}
+		\multicolumn{2}{c}{\bf Required data files, with corresponding variables in {\tt \nsc/Paths.mk}.}  \\
+		\hline\\[-0.4cm]
+	
+		{\tt cosmoDat}& \multirow{1}{12cm}{Relative path to data file with $T$ (in $\GeV$), $\heff$, $\geff$. If the path changes one must run
+		{\tt bash configure.sh} and {\tt make}.}\\\\		
+		\hline\\[-0.4cm]
+
+	\end{tabular}
+	\caption{Paths to the required data files. Variables defined in the {\tt \nsc/Paths.mk} files, and used when running {\tt bash configure.sh} in the root directory of \nsc.}
+\label{tab:input}
+\end{table}
+
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{l l}
+		\multicolumn{2}{c}{\bf Template arguments.}  \\
+		\hline\\[-0.4cm]
+		
+		{\tt LD}& \multirow{1}{12cm}{This template argument appears in all classes of \nsc. The preferred choice is \cppin{long double}. However, in many cases \cppin{double} can be used. The user should be careful, as the later can lead to an inaccurate result; especially for low tolerances, and small values of $\theta$.}\\\\\\\\		
+		\hline\\[-0.4cm]
+		
+		{\tt Solver}& \multirow{1}{12cm}{This is the second template argument of the \cppin{nsc::NSC<LD,Solver,Method>} class. The available choices are {\tt Solver}=$1$ for Rosenbrock method, and {\tt Solver}=$2$ for explicit RK method.}\\\\\\\\
+		\hline\\[-0.4cm]
+		
+		{\tt Method}& \multirow{1}{12cm}{The third template argument of the \cppin{nsc::NSC<LD,Solver,Method>} class. Its value depends on the choice of \cppin{Solver}; For {\tt Solver}=$1$, {\tt Method} can be either \cppin{RODASPR2<LD>} (fourth order) or \cppin{ROS34PW2<LD>} (third order). For {\tt Solver}=$2$, {\tt Method} can only be \cppin{DormandPrince<LD>} (seventh order). Notice that the definitions of the various method classes, also need a template argument,\cppin{LD}, that must be the same as the first template argument of the \cppin{nsc::NSC<LD,Solver,Method>} class. If one defines their own Butcher table, then they would have to follow their definitions and assumptions.}\\\\\\\\\\\\\\\\\\
+		\hline
+	\end{tabular}
+	\caption{Template arguments of the various \nsc classes.}
+	\label{tab:template-arguments}
+\end{table}
+
+
+
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{l l}
+		\multicolumn{2}{c}{\bf User compile-time options. Variables in the various {\tt Definitions.mk} files.}  \\
+		\hline\\[-0.4cm]
+
+		{\tt rootDir}& \multirow{1}{12cm}{The relative path of root directory of \nsc. Relevant only when compiling using {\tt make}. Available in all {\tt Definitions.mk}.}\\\\		
+		\hline\\[-0.4cm]
+		
+		{\tt LONG}& \multirow{1}{12cm}{{\tt long} for \cppin{long double} or empty for \cppin{double}. This is defines a macro in the source files of the various \CPP examples. Available in {\tt Definitions.mk} inside the various subdirectories of {\tt \nsc/UserSpace/Cpp}.}\\\\\\\\		
+		\hline\\[-0.4cm]
+
+		{\tt LONGpy}& \multirow{1}{12cm}{{\tt long} or empty. Same as {\tt LONG}, applies in the \PY modules. Available in {\tt \nsc/Definitions.mk}.}\\\\		
+		\hline\\[-0.4cm]
+
+		{\tt SOLVER}& \multirow{1}{12cm}{In order to use a Rosenbrock method {\tt SOLVER}=$1$. For explicit RK method, {\tt SOLVER}=$2$. This defines a macro that is passes as the second template argument of \cppin{mimes::Axion<LD,Solver,Method>}.  The corresponding variable in {\tt \nsc/Definitions.mk} applies to the \PY modules. The variable in {\tt \nsc/UserSpace/Cpp/NSC/Definitions.mk} applies to the example in the same directory.}\\\\\\\\\\\\\\		
+		\hline\\[-0.4cm]
+
+		{\tt METHOD}& \multirow{1}{12cm}{Depending on the solver, this variable should name one of its available methods. For {\tt SOLVER}=$1$, {\tt METHOD}={\tt RODASPR2}(fourth order) or {\tt ROS34PW2}(third order). For {\tt SOLVER}=$2$, {\tt METHOD}={\tt DormandPrince }(seventh order). There is a macro ({\tt METHOD}) used by the shared library {\tt \nsc/lib/libNSC.so}. The corresponding variable in {\tt \nsc/Definitions.mk} applies to the \PY modules. The variable in {\tt \nsc/UserSpace/Cpp/NSC/Definitions.mk} applies to the example in that directory.}\\\\\\\\\\\\\\\\
+		 		
+		\hline\\[-0.4cm]
+		
+		\multicolumn{2}{c}{\bf Compiler options}  \\
+		\hline\\[-0.4cm]
+		
+		{\tt CC} &  \multirow{1}{12cm}{The preferred \CPP compiler ({\tt g++} by default). Corresponding variable in all {\tt Definitions.mk} files.} \\\\
+		\hline\\[-0.4cm]
+		
+		{\tt OPT} &  \multirow{1}{12cm}{Available options are {\tt OPT}={\tt O1}, {\tt O2}, {\tt O3} (be default). This variable defines the optimization level of the compiler. The variable can be changed in all {\tt Definitions.mk} files. In the root directory of \nsc, the optimization level applies to the python modules (\ie the shared libraries), while in the subdirectories of {\tt \nsc/UserSpace/Cpp} it only applies to example inside them.}   \\\\\\\\\\\\
+		\hline\\[-0.4cm]
+
+	\end{tabular}
+	\caption{User compile-time input and options. These are available in the various {\tt Definitions.mk} files, which are used when compiling using {\tt make}.}
+	\label{tab:compile_time-options}
+\end{table}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagebreak
+\bibliography{refs}{}
+\bibliographystyle{JHEP}                        
+
+\end{document}
