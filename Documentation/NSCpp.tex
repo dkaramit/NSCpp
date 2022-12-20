@@ -64,9 +64,9 @@
 	
 	Licensing provisions: MIT license.
 	
-	Nature of problem:
+	Nature of problem: 
 	
-	Solution method: Embedded Runge-Kutta for the numerical integration of the equation of motion. The user may choose between explicit and Rosenborck methods, or implement their own Butcher tableau. For the various interpolations, the library uses cubic splines. 
+	Solution method: Embedded Runge-Kutta for the numerical integration of the system of differential equations. The user may choose between explicit and Rosenborck methods, or implement their own Butcher tableau. For the various interpolations, the library uses cubic splines. 
 	
 	Restrictions: 
 }
@@ -81,13 +81,60 @@
 \section{Introduction}\label{sec:intro}
 \setcounter{equation}{0}
 
-\section{Physics background}\label{sec:Physics}
+\section{Evolution equations}\label{sec:equations}
 \setcounter{equation}{0}
+
+In order to model a non-standard cosmological history, we assume that the Universe at early was dominated by two components; the plasma and a fluid ($\Phi$) with an equation of state
+%
+\begin{equation}
+	p_{\Phi} = (c/3-1) \rhoPhi \;,
+	\label{eq:EOS}
+\end{equation}  
+%
+with $c$ a constant. 
+
+Since the contribution to the energy budget of the Universe of such fluid is severely constraint at temperatures lower than $T \sim \mathcal{O}(10)~\MeV$, $\Phi$ must lose energy to the plasma. We model this by introducing a constant energy loss rate, $\GammaPhi$. The equations that describe the evolution of both components is
+%
+\begin{align}
+	\dfrac{d\sR}{dt} &= -3 \, H  \, \sR + \dfrac{\GammaPhi}{T} \, \rhoPhi \label{eq:dsdt} \\ 
+	\dfrac{d\rhoPhi}{dt} &= - c \, H \, \rhoPhi - \GammaPhi \, \rhoPhi \label{eq:drhoPhidt } \;,
+\end{align}
+%
+with $\sR$ the entropy density of the plasma, and $H$ the Hubble parameter of the Universe. 
 
 
 \subsection{Notation}\label{sec:notation}
 
+In order to solve this system of equations, we change the integration variable to 
+%
+\begin{equation}
+	u=\log\frac{a}{\ai}\;,	
+	\label{eq:u_def}
+\end{equation}
+%
+with $a$ the scale factor of the Universe, and $\ai$ its value at some initial time. The initial condition can now be chosen at $\ui=0$, corresponding to $T=\Ti$ and an initial value for $\rhoPhi=\rhoPhii$. 
 
+We can reparametrise the temperature of hte plasma and the energy density of $\Phi$ as 
+%
+\begin{align}
+	T(u) &= \Ti  \, \fR(u) \, e^{-u}  \label{eq:fR_def} \\ 
+	\rhoPhi(u) &= \rhoPhii \, \fPhi(u) \label{eq:fPhi_def} \, e^{-cu}\;,
+\end{align}
+%
+with $\fR(u)$ and $\fPhi$ functions of $u$ that obey the equations
+%
+\begin{align}
+	\dfrac{d\log \fR }{du} &=  1- \lrb{1- \dfrac{\GammaPhi}{H} \, \dfrac{\rhoPhi}{3HTs}  } \dh  \label{eq:dlogfRdu} \\ 
+	\dfrac{d\log\fPhi}{du} &= -\dfrac{\GammaPhi}{H} \label{eq:dlogfPhidu } \;,
+\end{align}
+%
+with 
+\begin{equation}
+	\dh = 1+ \dfrac{1}{3} \dfrac{d\log\heff}{d\log T}\;.
+	\label{eq:dh_def}
+\end{equation}
+%
+Notice that  for $\GammaPhi=0$ and $\dh=1$, $\fR=\fPhi=1$. These are the equations that \nsc actually solves. 
 
 \section{\nsc usage}\label{sec:first_steps}
 \setcounter{equation}{0}
@@ -239,7 +286,7 @@ The user has a number of options regarding different aspects for the code. If \n
 	%
 	\item {\tt LONGpy}: the same as {\tt LONG}, but for the \PY interface. One should keep in mind thtat this cannot be changed inside \PY scripts. It just instructs \pyin{ctypes} what numeric type to use. Since the preferred way to compile the shared libraries is via running \run{make} in the root directory of \nsc, this variable needs to be defined inside  {\tt \nsc/Definitions.mk}. By default, this variable is set to {\tt long}, since this is the most stable choice in general.  
 	%
-	\item {\tt SOLVER}: \nsc uses the ordinary differential equation (ODE) integrators of ref.~\cite{NaBBODES}. Currently, there are two available choices; {\tt Rosenbrock} and {\tt RKF}. The former is a general embedded Rosenbrock implementation and it is used if {\tt SOLVER=1}, while the latter is a general explicit embedded Runge-Kutta implementation and can be chosen by using {\tt SOLVER=2} (a brief description of how these algorithms are implemented can be found in Appendix~\ref{app:RK}). By default inside the {\tt Definitions.mk} files {\tt SOLVER=1}, because the axion EOM tends to oscillate rapidly. However, in some cases, a high order explicit method may also work. Note that this variable defines a macro that is then used as the second template argument of the \cppin{mimes::Axion<LD,Solver,Method>} class. The preferred way to do it in the shared libraries is via the {\tt \nsc/Definitions.mk} file, however, the user if free to compile everything in a different way. In this case, the  various {\tt Definitions.mk} files, are not being used, and the user must define the relevant arguments in the code where \nsc is used.
+	\item {\tt SOLVER}: \nsc uses the ordinary differential equation (ODE) integrators of ref.~\cite{NaBBODES}. Currently, there are two available choices; {\tt Rosenbrock} and {\tt RKF}. The former is a general embedded Rosenbrock implementation and it is used if {\tt SOLVER=1}, while the latter is a general explicit embedded Runge-Kutta implementation and can be chosen by using {\tt SOLVER=2} (a brief description of how these algorithms are implemented can be found in Apendix of ref.\cite{Karamitros:2021nxi}). By default inside the {\tt Definitions.mk} files {\tt SOLVER=1}, because the axion EOM tends to oscillate rapidly. However, in some cases, a high order explicit method may also work. Note that this variable defines a macro that is then used as the second template argument of the \cppin{mimes::Axion<LD,Solver,Method>} class. The preferred way to do it in the shared libraries is via the {\tt \nsc/Definitions.mk} file, however, the user if free to compile everything in a different way. In this case, the  various {\tt Definitions.mk} files, are not being used, and the user must define the relevant arguments in the code where \nsc is used.
 	%
 	\item {\tt METHOD}: Depending on the type of solver, there are some available methods.~\footnote{It is worth mentioning that {\tt NaBBODES} is built in order to be a template for all possible Rosenbrock and explicit Runge-Kutta embedded methods, and one can provide their own Butcher tableau if they want to use another method, as shown in Appendix~\ref{app:RK}.}  
 	\begin{itemize}
@@ -264,24 +311,11 @@ It is important to note, once again, that the variables that correspond to templ
 %
 \subsubsection{Compile-time input}\label{sec:compile_time_input} 
 %
-\paragraph{Files} \nsc requires files that provide data for the relativistic degrees of freedom (RDOF) of the plasma, and the anharmonic factor. Although \nsc is shipped with the standard model RDOF found in~\cite{Saikawa:2020swg}, and a few points for $f(\thetamax)$ introduced in \eqs{eq:anharmonic_f}, the user is free change them via the corresponding variables in {\tt \nsc/Paths.mk}. Moreover, there is a set of data for the QCD axion mass as calculated in ref.\cite{Borsanyi:2016ksw}.
-%
-The variables pointing to these data files are {\tt cosmoDat}, {\tt axMDat}, and {\tt anFDat}, for the RDOF, axion mass, and the anharmonic factor; respectively.
+\paragraph{Files} \nsc requires files that provide data for the relativistic degrees of freedom (RDOF) of the plasma. Although \nsc is shipped with the standard model RDOF found in~\cite{Saikawa:2020swg}, the user can use their prefered tabulated ones, by providing a file and writing its path to the {\tt cosmoDat} file. The format of the file has to be: $T$ (in $\GeV$), $\heff$, and $\geff$.
 
-The format of the files has to be the following:
-%
-\begin{itemize}
-	\item The RDOF data must be given in three columns; $T$ (in $\GeV$), $\heff$, and $\geff$.
-	%
-	\item The axion mass data must be given in two columns; $T$ (in $\GeV$), $\chi$ (in $\GeV^4$). Here, $\chi$ is defined as in \eqs{eq:axion_mass_def}. 
-	The user can provide a function instead of data for the axion mass, by leaving the  {\tt axMDat} variable empty. 
-	%
-	\item The data for the anharmonic factor must be give in two columns   $\thetamax$ $f(\thetamax)$; with increasing $\thetamax$.
-\end{itemize}
-%
-The paths to these files should be given at compile time. That is, once {\tt Paths.mk} changes, we must run \run{bash configure.sh} and then \run{\tt make} in order to make sure that they will be used. The user can change the content of the data files (without changing their paths), in order to use them without compiling \nsc again. However, the user has to make sure that all the files are sorted so that the values of first column increase (with no duplicates or empty lines). In order to ensure this, it is advised to run \run{bash FormatFile.sh path-to-file} (in Appendix~\ref{app:util} there are some details on {\tt MiMeS/src/FormatFile.sh}), in order to format the file (that should exist in \run{path-to-file}) so that it complies with the requirements of \nsc.
+The path to this file should be given at compile time. That is, once {\tt Paths.mk} changes, we must run \run{bash configure.sh} and then \run{\tt make} in order to make sure that they will be used. The user can change the content of the data files (without changing their paths), in order to use them without compiling \nsc again. However, the user has to make sure that all the files are sorted so that the values of first column increase (with no duplicates or empty lines). In order to ensure this, it is advised to run \run{bash FormatFile.sh path-to-file} (in Appendix~\ref{app:util} there are some details on {\tt MiMeS/src/FormatFile.sh}), in order to format the file (that should exist in \run{path-to-file}) so that it complies with the requirements of \nsc.
 
-These paths are stored as strings in {\tt \nsc/src/misc\_dir/path.hpp} at compile-time (they are defined as {\tt constexpr}), and can be accessed once this header file is included. The corresponding variables are {\tt cosmo\_PATH}, {\tt chi\_PATH}, and {\tt anharmonic\_PATH}, for the path to data file of the plasma quantities, $\chi(T)$, and $f(\thetamax)$; respectively. Although, the axion mass data file may be omitted -- since the axion mass is defined by the user, the variable {\tt chi\_PATH} is still useful if the axion mass is defined via a data file, as it is automatically converted to an absolute path.~\footnote{Absolute paths have the advantage to be accessible from everywhere else in the system. Thus, executables that seek the corresponding files can be called and copied easily.}
+This path is stored as ({\tt constexpr}) string in {\tt \nsc/src/misc\_dir/path.hpp} at compile-time, and can be accessed once this header file is included. The corresponding variable is {\tt cosmo\_PATH}.
 
 
 

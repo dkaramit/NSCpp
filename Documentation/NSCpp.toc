@@ -1,19 +1,19 @@
 \contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
-\contentsline {section}{\numberline {2}Physics background}{2}{section.2}%
+\contentsline {section}{\numberline {2}Evolution equations}{2}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Notation}{2}{subsection.2.1}%
 \contentsline {section}{\numberline {3}{\tt NSCpp}\xspace usage}{2}{section.3}%
-\contentsline {subsection}{\numberline {3.1}First steps}{2}{subsection.3.1}%
-\contentsline {paragraph}{Setting up the solver}{2}{lstlisting.-4}%
-\contentsline {subsubsection}{\numberline {3.1.1}Using \\nsc in {\tt python}\xspace }{3}{subsubsection.3.1.1}%
-\contentsline {paragraph}{The solver}{3}{section*.3}%
-\contentsline {section}{\numberline {4}Assumptions and user input}{4}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Restrictions}{4}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Options at Compile-time}{4}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}User input}{5}{subsection.4.3}%
-\contentsline {subsubsection}{\numberline {4.3.1}Compile-time input}{5}{subsubsection.4.3.1}%
-\contentsline {paragraph}{Files}{5}{section*.4}%
+\contentsline {subsection}{\numberline {3.1}First steps}{3}{subsection.3.1}%
+\contentsline {paragraph}{Setting up the solver}{3}{lstlisting.-4}%
+\contentsline {subsubsection}{\numberline {3.1.1}Using \\nsc in {\tt python}\xspace }{4}{subsubsection.3.1.1}%
+\contentsline {paragraph}{The solver}{4}{section*.3}%
+\contentsline {section}{\numberline {4}Assumptions and user input}{5}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Restrictions}{5}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Options at Compile-time}{5}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}User input}{6}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}Compile-time input}{6}{subsubsection.4.3.1}%
+\contentsline {paragraph}{Files}{6}{section*.4}%
 \contentsline {section}{\numberline {5}Acknowledgements}{6}{section.5}%
-\contentsline {section}{\numberline {6}Summary}{6}{section.6}%
-\contentsline {section}{\numberline {A}{\tt C++}\xspace classes}{6}{appendix.A}%
-\contentsline {section}{\numberline {B}{\tt NSCpp}\xspace \nobreakspace {} {\tt python}\xspace interface}{6}{appendix.B}%
-\contentsline {section}{\numberline {C}Quick guide to the user input}{6}{appendix.C}%
+\contentsline {section}{\numberline {6}Summary}{7}{section.6}%
+\contentsline {section}{\numberline {A}{\tt C++}\xspace classes}{7}{appendix.A}%
+\contentsline {section}{\numberline {B}{\tt NSCpp}\xspace \nobreakspace {} {\tt python}\xspace interface}{7}{appendix.B}%
+\contentsline {section}{\numberline {C}Quick guide to the user input}{7}{appendix.C}%

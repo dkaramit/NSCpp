@@ -10,4 +10,9 @@ D.~Karamitros, {\it
   header-only library for linear and cubic spline interpolation in {C++}}},
   2021.
 
+\bibitem{Karamitros:2021nxi}
+D.~Karamitros, {\it {MiMeS: Misalignment mechanism solver}},  {\em Comput.
+  Phys. Commun.} {\bf 275} (2022) 108311,
+  [\href{http://arxiv.org/abs/2110.12253}{{\tt arXiv:2110.12253}}].
+
 \end{thebibliography}\endgroup
