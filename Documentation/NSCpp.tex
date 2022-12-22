@@ -66,7 +66,7 @@
 	
 	Nature of problem: 
 	
-	Solution method: Embedded Runge-Kutta for the numerical integration of the system of differential equations. The user may choose between explicit and Rosenborck methods, or implement their own Butcher tableau. For the various interpolations, the library uses cubic splines. 
+	Solution method: Embedded Runge-Kutta for the numerical integration of the system of differential equations. The user may choose between explicit and Rosenborck methods. There are several of Butcher tableaux already implemented, but the user can implement their own. For the interpolations of the relativistic degrees of freedom, the library uses cubic splines. 
 	
 	Restrictions: 
 }
@@ -80,6 +80,19 @@
 
 \section{Introduction}\label{sec:intro}
 \setcounter{equation}{0}
+
+There is another code, built specifically for the evolution of cosmic relics in matted dominated Universe, {\tt EvoEMD}~\cite{Dutra:2021phm}. \nsc is different because the evolution of the temperature of the plasma is computed by manipulating the equation that describes the evolution of the entropy density, while {\tt EvoEMD} solves
+%
+\begin{equation}
+	\dfrac{d\rhoR}{dt} = -4H\rhoR + \dots \;,
+	\label{eq:EvoMD}
+\end{equation}
+%
+which relies on the approximation $\rhoR \approx 3/4 \, sT$ that does not hold in general. Also, \nsc allows the user to consider different equations of state for the fluid, $\Phi$. 
+%
+As we will explain later \nsc obeys the same design principles as \mimes; \ie the general usage of both are almost identical, \nsc only needs a \CPP compiler that supports the {\tt c++17} standard and no other external dependences, and there will always be dedicated versions of the underline numerical libraries~\cite{NaBBODES,SimpleSplines} guaranteed to work with the current version of \nsc.
+
+
 
 \section{Evolution equations}\label{sec:equations}
 \setcounter{equation}{0}
@@ -139,14 +152,13 @@ Notice that  for $\GammaPhi=0$ and $\dh=1$, $\fR=\fPhi=1$. These are the equatio
 \section{\nsc usage}\label{sec:first_steps}
 \setcounter{equation}{0}
 %
-The latest stable version of \nsc is available at \href{https://github.com/dkaramit/NSCpp/tree/stable}{\tt github.com/dkaramit/NSCpp/tree/stable}, which can also be obtained by running:~\footnote{Instructions on how {\tt git} can be installed can be found in \href{https://github.com/git-guides/install-git}{https://github.com/git-guides/install-git}. }
+The \nsc and its underline numerical libraries are in continuous improvement. The safest choice for a user that is not involved in its development is to get the stable version from \href{https://github.com/dkaramit/NSCpp/tree/stable}{\tt github.com/dkaramit/NSCpp/tree/stable}. This can be done by running:~\footnote{The {\tt git} utility can be installed by following \href{https://github.com/git-guides/install-git}{https://github.com/git-guides/install-git}.}
 %
 \begin{lstlisting}
-	git clone -b stable https://github.com/dkaramit/NSCpp.git
+	git clone -b stable https://github.com/dkaramit/NSCpp
 \end{lstlisting}
 
-
-It is important to note that \nsc relies on {\tt NaBBODES}~\cite{NaBBODES} and {\tt SimpleSplines}~\cite{SimpleSplines}. These are two libraries developed independently, and in order to get \nsc with the latest version of these libraries, one needs to run following commands
+\nsc relies on {\tt NaBBODES}~\cite{NaBBODES} and {\tt SimpleSplines}~\cite{SimpleSplines}, which are developed independently. In order to get \nsc with the latest version of these libraries, one needs to run following commands
 %
 \begin{lstlisting}
 	git clone https://github.com/dkaramit/NSCpp.git
@@ -155,15 +167,16 @@ It is important to note that \nsc relies on {\tt NaBBODES}~\cite{NaBBODES} and {
 	git submodule update --remote
 \end{lstlisting}
 %
-This downloads the {\tt master} branch of \nsc; and {\tt NaBBODES}~\cite{NaBBODES} and {\tt SimpleSplines}~\cite{SimpleSplines} as submodules. This guaranties that \nsc uses the most updated version of these libraries, although it may not be stable. 
+These commands download the {\tt master} branch of \nsc, with the latest versions of {\tt NaBBODES} and {\tt SimpleSplines}. All versions that are not labelled as stable must be treated with caution, as they may not work as indented. 
 
-
-
-Once everything is downloaded successfully, we can go inside the \nsc directory, and run \run{bash configure.sh} and \run{make}.  The {\tt bash} script {\tt configure.sh}, just writes some paths to some files, formats the data files provided in an acceptable format (in section~\ref{sec:input} the format is explained), and makes some directories.
+Regardless of the choice one makes, by executing \run{bash configure.sh}, \nsc will be available for usage within a \CPP program. This {\tt bash} script, writes some paths in some files, formats the data for the RDOF in an acceptable format (see~\ref{sec:input}), and creates some directories that will be useful later.
 %
-The {\tt makefile} is responsible for compiling some examples and checks, as well as the shared libraries that needed for the \PY interface.  If everything runs successfully, there should be two new directories {\tt exec} and {\tt lib}. Inside {\tt exec}, there are several executables that ready to run, in order to ensure that the code runs (\eg no segmentation fault occurs). 
+In order to use it inside \PY, \run{make lib} must also be ran,  which will compile shared libraries that needed for the \PY interface.
 
-Although there are various options available at compile-time, we first discuss how \nsc can be used, in order for the role of these options to be clear. 
+\nsc already comes with several examples in \CPP and \PY, which can be found in the {\tt \nsc/UserSpace} directory. In order to compile the \CPP examples, one just has to run  \run{make examples} in the root directory of \nsc or {\tt make} inside the directory of each \CPP program.
+
+
+There is also an option to compile some test programs using {\tt make check}, which will create executables inside {\tt exec}. These can then be executed, in order to ensure that the code actually works; \eg no segmentation fault occurs. 
 
 
 \subsection{First steps}\label{sec:First_examples} 
@@ -222,7 +235,7 @@ The various parameters are as follows:
 
 
 
-\subsubsection{Using \\nsc in \PY}\label{sec:begin_py}
+\subsubsection{Using \nsc in \PY}\label{sec:begin_py}
 %
 The modules for the \PY interface are located in {\tt NSCpp/src/interfacePy}. Although the usage of the classes is similar to the \CPP case, it is worth showing explicitly how the \PY interface works. One should keep in mind that the various template arguments discussed in the \CPP case have to be chosen at compile-time. That is, for the \PY interface, one needs to choose the numeric type, and RK method to be used when the shared libraries are compiled. This is done by assigning the relevant variable in {\nsc/Definitions.mk} before running \run{make}. The various options are discussed in section~\ref{sec:options}, and outlined in table~\ref{tab:compile_time-options}.
 
