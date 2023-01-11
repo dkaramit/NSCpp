@@ -8,7 +8,6 @@
 #define printResults
 // #define printPoints
 // #define printError
-// #define printRelevant //prints what you need for MiMeS
 
 
 // macros for the solver
@@ -108,24 +107,9 @@ int main(int argc, char **argv){
     // print all the points
     #ifdef printPoints
     std::cout<<"---------------------points:---------------------\n";
-    std::cout<<"a/a_i\tT [GeV]\trho_Phi [GeV^4]\tlogH^2"<<std::endl;
+    std::cout<<"u\tT [GeV]\trho_Phi [GeV^4]"<<std::endl;
     for(size_t i=0; i<BE.pointSize; ++i ){
-        for(int j=0; j<4; ++j){
-            std::cout<<std::setprecision(16)<<BE.points[i][j];
-            if(j==3){std::cout<<"\n";}else{std::cout<<"\t";}
-        }
-    }
-    #endif
-
-
-    #ifdef printRelevant
-    for(size_t i=0; i<BE.pointSize; ++i ){
-
-            std::cout<<std::setprecision(16)
-            <<std::log(BE.points[i][0])<<"\t"
-            <<BE.points[i][1]<<"\t"
-            <<BE.points[i][3]<<"\n";
-            
+        std::cout<<std::setprecision(16)<<BE.u[i]<<"\t"<<BE.T[i]<<"\t"<<BE.rhoPhi[i]<<"\n";
     }
     #endif
 

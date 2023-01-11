@@ -8,7 +8,7 @@ from os import path as osPath
 
 sysPath.append(osPath.join(osPath.dirname(__file__), '../../'))
 
-from misc_dir.path import _PATH_
+from misc_dir.path import rootDir
 from misc_dir.type import cdouble
 
 cint=c_int
@@ -16,7 +16,7 @@ void_p=c_void_p
 
 
 #load the library
-NSClib = CDLL(_PATH_+'/lib/libNSC.so')
+NSClib = CDLL(rootDir+'/lib/libNSC.so')
 
 NSClib.INIT.argtypes= cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble, cint
 NSClib.INIT.restype = void_p
@@ -40,7 +40,7 @@ NSClib.getErrors.restype = None
 NSClib.getSize.argtypes= void_p,
 NSClib.getSize.restype = cint
 
-NSClib.getPoints.argtypes=POINTER(cdouble),POINTER(cdouble),POINTER(cdouble),POINTER(cdouble),void_p
+NSClib.getPoints.argtypes=POINTER(cdouble),POINTER(cdouble),POINTER(cdouble),void_p
 NSClib.getPoints.restype=None
 
 
@@ -57,7 +57,7 @@ class NSC:
                     self.aE1, self.aE2, self.aD1, self.aD2
         
         getPoints(): this stores the points of integration for a/a_i, T (in GeV), \\rho_Phi (in GeV^4), and log H in 
-                        the numpy arrays self.a_ai, self.T, self.rhoPhi, self.logH
+                        the numpy arrays self.u, self.T, self.rhoPhi
 
         setParams(TEND, c, Ti, ratio, umax, TSTOP): set the parameters of the NSC without rebuilding the 
                                             interpolations. Once this is ran, all the other member variables are reset
@@ -103,10 +103,9 @@ class NSC:
                         absolute_tolerance, relative_tolerance, beta,
                         fac_max, fac_min, maximum_No_steps)
     
-        self.a_ai=[]
+        self.u=[]
         self.T=[]
         self.rhoPhi=[]
-        self.logH=[]
         self.TE1=Ti
         self.TE2=Ti
         self.TD1=Ti
@@ -122,10 +121,9 @@ class NSC:
         NSClib.DEL(self.voidpNSC) #don't forget to deallocated the pointer
         del self.voidpNSC
         
-        del self.a_ai
+        del self.u
         del self.T
         del self.rhoPhi
-        self.logH
         
         del self.TE1
         del self.TE2
@@ -139,10 +137,9 @@ class NSC:
     def setParams(self,TEND, c, Ti, ratio, umax, TSTOP):
         '''set the parameters of the NSC without rebuilding the interpolations'''
         NSClib.setParams(TEND, c, Ti, ratio, umax, TSTOP,self.voidpNSC)
-        self.a_ai=[]
+        self.u=[]
         self.T=[]
         self.rhoPhi=[]
-        self.logH=[]
         self.TE1=Ti
         self.TE2=Ti
         self.TD1=Ti
@@ -181,17 +178,15 @@ class NSC:
         You must have ran self.solve() before. 
         '''
         Arr = cdouble * NSClib.getSize(self.voidpNSC) 
-        self.a_ai=Arr()
+        self.u=Arr()
         self.T=Arr()
         self.rhoPhi=Arr()
-        self.logH=Arr()
 
-        NSClib.getPoints(self.a_ai, self.T, self.rhoPhi, self.logH, self.voidpNSC)
+        NSClib.getPoints(self.u, self.T, self.rhoPhi, self.voidpNSC)
         
-        self.a_ai=np_array(list(self.a_ai))
+        self.u=np_array(list(self.u))
         self.T=np_array(list(self.T))
         self.rhoPhi=np_array(list(self.rhoPhi))
-        self.logH=np_array(list(self.logH))
         
     def getErrors(self):
         '''

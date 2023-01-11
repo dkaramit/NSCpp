@@ -226,15 +226,15 @@ Notice that if this file is not in the root directory of \nsc, we need to compil
 In order to solve \eqs{eq:dlogfRdu,eq:dlogfPhidu}, we first need to choose values for all parameter relevant to the system and, optionally, the ODE solver. This can be done by introducing
 %
 \begin{cpp}
-    nsc::NSC<LD,SOLVER,METHOD<LD>> BE(TEND,c,Ti,ratio,umax,TSTOP,
-														initial_step_size,minimum_step_size, 
+    nsc::NSC<LD,SOLVER,METHOD<LD>> BE(TEND, c, Ti, ratio, umax, TSTOP,
+														initial_step_size, minimum_step_size, 
 														maximum_step_size, absolute_tolerance, 
 														relative_tolerance, beta, fac_max, 
 														fac_min, maximum_No_steps
 														);
 \end{cpp}
 %
-Here, \cppin{LD} should be the numeric type to be used; it is recommended to use \cppin{double} or \cppin{long double}. Moreover \cppin{Solver} and \cppin{Method} depend on the type of Runge-Kutta (RK) the user chooses. The available choices are shown in table\ref{tab:template-arguments}. 
+Here, \cppin{LD} should be the numeric type to be used; it is recommended to use \cppin{double} or \cppin{long double}. Moreover \cppin{Solver} and \cppin{Method} depend on the type of Runge-Kutta (RK) the user chooses. The available choices are shown in Table~\ref{tab:template-arguments}. 
 
 The various parameters are as follows:
 %
@@ -299,8 +299,8 @@ The string {\tt 'path\_to\_src'} must be the relative path to the {\tt NSCpp/src
 We can define an {\tt NSC} instance as follows 
 %
 \begin{py}
-	BE=NSC(TEND,c,Ti,ratio,umax,TSTOP,
-		     initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, 
+	BE=NSC(TEND, c, Ti, ratio, umax, TSTOP,
+		     initial_step_size, minimum_step_size, maximum_step_size, absolute_tolerance, 
 		     relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
 \end{py}
 %

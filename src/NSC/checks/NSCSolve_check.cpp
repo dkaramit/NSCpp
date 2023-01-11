@@ -68,12 +68,9 @@ int main(int argc, char **argv){
     // print all the points
     #ifdef printPoints
     std::cout<<"---------------------points:---------------------\n";
-    std::cout<<"a/a_i\tT [GeV]\trho_Phi [GeV^4]\tlogH^2"<<std::endl;
+    std::cout<<"u\tT [GeV]\trho_Phi [GeV^4]"<<std::endl;
     for(size_t i=0; i<BE.pointSize; ++i ){
-        for(int j=0; j<4; ++j){
-            std::cout<<BE.points[i][j];
-            if(j==3){std::cout<<"\n";}else{std::cout<<"\t";}
-        }
+        std::cout<<std::setprecision(16)<<BE.u[i]<<"\t"<<BE.T[i]<<"\t"<<BE.rhoPhi[i]<<"\n";
     }
     #endif
 

@@ -60,9 +60,8 @@ namespace nsc{
         public:
 
         LD TEND,c,Ti,ratio,umax,TSTOP;
-        std::vector<std::vector<LD>> points;
-        std::vector<LD> dT;
-        std::vector<LD> drhoPhi;
+        std::vector<LD> u,T,rhoPhi;
+        std::vector<LD> dT, drhoPhi;
 
         unsigned int pointSize;
         LD TE1,TE2,TD1,TD2,aE1,aE2,aD1,aD2;
@@ -143,10 +142,12 @@ namespace nsc{
 
             BE = RadPhi<LD>(Gamma, c, Ti,  rhoPhii);
 
-            points.clear();
+            u.clear();
+            T.clear();
+            rhoPhi.clear();
             dT.clear();
             drhoPhi.clear();
-            pointSize=points.size();
+            pointSize=u.size();
             TE1=Ti;
             TE2=Ti;
             TD1=Ti;
@@ -183,7 +184,11 @@ namespace nsc{
 
         
         _H=std::sqrt( (8*M_PI)/(3*Cosmo<LD>::mP*Cosmo<LD>::mP)* ( RadPhi<LD>::plasma.rhoR(Ti)   +  rhoPhii )  );
-        points.push_back(std::vector<LD>{1.,Ti,rhoPhii,std::log(_H)});
+
+
+        u.push_back(0);
+        T.push_back(Ti);
+        rhoPhi.push_back(rhoPhii);
 
         dT.push_back(0);
         drhoPhi.push_back(0);
@@ -210,12 +215,17 @@ namespace nsc{
 
             _rhoPhi = rhoPhii*std::exp(System.ynext[1]-c*_u);
             
-            _rhoR = RadPhi<LD>::plasma.rhoR(_T);
-            _H=std::sqrt( (8*M_PI)/(3*Cosmo<LD>::mP*Cosmo<LD>::mP)* ( _rhoR   +  _rhoPhi )  );
-            points.push_back(std::vector<LD>{_a,_T,_rhoPhi,std::log(_H)}); 
+
+            u.push_back(_u);
+            T.push_back(_T);
+            rhoPhi.push_back(_rhoPhi);
 
             dT.push_back(_T*std::abs(System.ynext[0] - System.ynext_star[0]));
             drhoPhi.push_back(_rhoPhi*std::abs(System.ynext[1] - System.ynext_star[1]));
+            
+            
+            _rhoR = RadPhi<LD>::plasma.rhoR(_T);
+            _H=std::sqrt( (8*M_PI)/(3*Cosmo<LD>::mP*Cosmo<LD>::mP)* ( _rhoR   +  _rhoPhi )  );
             
             if(pE==0){  if(_rhoR < _rhoPhi){ TE1 = _T; aE1 = _a; pE++;}   }//the first time \rho_R = \rho_\Phi
             if(pE==1){  if(_rhoR > _rhoPhi){ TE2 = _T; aE2 = _a; pE++;}   }//the second time \rho_R = \rho_\Phi
@@ -224,7 +234,7 @@ namespace nsc{
             if(pD==1){  if(Gamma/_H*_rhoPhi/_rhoR<4./10. ){ TD2 = _T; aD2 = _a; pD++;}   }// the second time \rho_R/H = 0.4* \rho_\Phi/\Gamma
         }
 
-        pointSize=points.size();
+        pointSize=u.size();
     };
 }
 

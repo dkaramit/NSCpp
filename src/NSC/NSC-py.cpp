@@ -45,14 +45,13 @@ extern "C"{
 
 
 
-    void getPoints(LD *a, LD *T, LD *rhoPhi, LD *logH2, void* BE){
+    void getPoints(LD *u, LD *T, LD *rhoPhi, void* BE){
         unsigned int N= (Cast(BE) -> pointSize);
 
         for(unsigned int i=0; i<N; ++i){
-            a[i]=Cast(BE) ->points[i][0];
-            T[i]=Cast(BE) ->points[i][1];
-            rhoPhi[i]=Cast(BE) ->points[i][2];
-            logH2[i]=Cast(BE) ->points[i][3];
+            u[i]=Cast(BE) ->u[i];
+            T[i]=Cast(BE) ->T[i];
+            rhoPhi[i]=Cast(BE) ->rhoPhi[i];
         }
     }
 

@@ -1,4 +1,12 @@
 #!/bin/bash
+
+if test "$1" = "License" 
+then 
+  echo -e "License:"
+  cat LICENSE
+  exit
+fi
+
 source Paths.mk
 source Definitions.mk
 
@@ -15,7 +23,7 @@ for dataFile in $cosmoDat;do
     echo "format $dataFile" 
     eval $formatF $dataFile 
   else 
-    echo  "$dataFile does not exist! Make sure that you provide valid paths in Paths.mk"
+    echo  "$dataFile does not exist! Make sure that you provide valid paths in Definitions.mk"
     exit 
   fi
 done
@@ -37,8 +45,10 @@ PathTypePy=src/misc_dir/type.py
 echo "write type in $PathTypePy"
 echo "from ctypes import c_"$LONGpy"double as cdouble" > $PathTypePy
 
-echo "define _PATH_=$PWD in $PathHeadPy"
-echo "_PATH_=\"$PWD\" "> $PathHeadPy
+echo "define rootDir=$PWD in $PathHeadPy"
+
+[  -z "$cosmoDat" ] || echo "cosmo_PATH = \"$PWD/$cosmoDat\";">$PathHeadPy
+echo "rootDir=\"$PWD\" ">> $PathHeadPy
 
 echo "write paths in $PathHead"
 
@@ -58,26 +68,14 @@ echo "constexpr const static auto rootDir = \"$PWD\";
 
 
 
-echo "Run configure.sh License in order to read the License, or read the file named LICENSE."
-if test "$1" = "License" 
-then 
-  echo -e "License:"
-  cat LICENSE
-
-  echo ""
-  echo ""
-  echo ""
-fi
 
 echo  -e "\033[1;5;35m 
-  _   _  _____  _____             
- | \ | |/ ____|/ ____|            
- |  \| | (___ | |     _ __  _ __  
- | .   |\___ \| |    | '_ \| '_ \ 
- | |\  |____) | |____| |_) | |_) |
- |_| \_|_____/ \_____| .__/| .__/ 
-                     | |   | |    
-                     |_|   |_|    
+  _   _ ____   ____            
+ | \ | / ___| / ___| _     _   
+ |  \| \___ \| |   _| |_ _| |_ 
+ | |\  |___) | |__|_   _|_   _|
+ |_| \_|____/ \____||_|   |_|  
+                               
 "
 
 
@@ -85,3 +83,4 @@ echo  -e "\033[0;97m
 You can run \"make\" to compile everything. After that, you will find several examples in UserSpace, 
 and you can run the executables in exec/ in order to see if the code actually works.
 "
+echo "Run \"bash configure.sh License\" in order to read the License, or open and read the file named LICENSE."

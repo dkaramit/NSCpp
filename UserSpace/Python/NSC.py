@@ -5,11 +5,21 @@ from sys import path as sysPath
 from os import path as osPath
 sysPath.append(osPath.join(osPath.dirname(__file__), '../../src'))
 
-#load the module
+#load the modules
+
+
+from sys import path as sysPath
+sysPath.append('../../src')
+
 from interfacePy.NSC import NSC 
-from interfacePy.Cosmo import Cosmo
+from interfacePy.Cosmo import Cosmo 
+from interfacePy.FT import FT #easy tick formatting
 
+from misc_dir.path import cosmo_PATH
+cosmo=Cosmo(cosmo_PATH,0,1e5)
 
+######## You can also do this:
+# cosmo=Cosmo('../../src/data/eos2020.dat',0,1e5)
 
 TEND=1e-2
 c=3
@@ -49,9 +59,10 @@ print(TEND,c,Ti,ratio,BE.TE1,BE.TE2,BE.TD1,BE.TD2)
 print(round(time()-_,3),file=stderr)
 
 
-if False:
+if False: # True, produces plots!
     from numpy import max as np_max
     from numpy import abs as np_abs
+    from numpy import exp as np_exp
     import matplotlib.pyplot as plt
 
     BE.getPoints()#this gives you all the points of integration
@@ -61,15 +72,15 @@ if False:
     fig.subplots_adjust(bottom=0.15, left=0.15, top = 0.9, right=0.9,wspace=0.0,hspace=0.25)
     sub = fig.add_subplot(1,1,1)
     
-    X=BE.a_ai
+    X=np_exp(BE.u)
     
-    Y=BE.rhoPhi/rhoR(BE.T[0])*BE.a_ai**4
+    Y=BE.rhoPhi/cosmo.rhoR(BE.T[0])*X**4
     sub.plot(X,Y,linestyle='--',linewidth=2,alpha=1,c='xkcd:red',label=r'$\rho_{\Phi}$')
 
     Min=Y[0]
     Max=np_max(Y)
     
-    Y=[rhoR(T)/rhoR(BE.T[0])*BE.a_ai[i]**4 for i,T in enumerate(BE.T)]
+    Y=[cosmo.rhoR(T)/cosmo.rhoR(BE.T[0])*X[i]**4 for i,T in enumerate(BE.T)]
     sub.plot(X,Y,linestyle='-',linewidth=2,alpha=1,c='xkcd:black',label=r'$\rho_{R}$')
     
     _=Y[0]
@@ -106,7 +117,7 @@ if False:
     fig.subplots_adjust(bottom=0.15, left=0.15, top = 0.9, right=0.9,wspace=0.0,hspace=0.25)
     sub = fig.add_subplot(1,1,1)
     
-    X=BE.a_ai
+    
     Y=np_abs(BE.drhoPhi/BE.rhoPhi)
     sub.plot(X,Y,linestyle='--',linewidth=2,alpha=1,c='xkcd:red',label=r'$\dfrac{\delta\rho_{\Phi}}{\rho_{\Phi}}$')
     
