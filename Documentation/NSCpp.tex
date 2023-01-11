@@ -3,7 +3,7 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage[left=2cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
 
 
 \usepackage{slashed}
@@ -39,12 +39,14 @@
 
 
 \author[ ]{Karamitros Dimitrios}
-\affil[ ]{\em School of Physics and Astronomy, The University of Manchester,
-	Manchester M13 9PL, United Kingdom}
+\affil[ ]{\em Department of Physics and Astronomy, The University of Manchester,}
+\affil[ ]{\em Manchester M13 9PL, United Kingdom}
+
+\affil[ ]{}
 \affil[ ]{\textit{E-mail: } \href{mailto:dimitrios.karamitros@manchester.ac.uk}{\color{blue}{dimitrios.karamitros@manchester.ac.uk}}}
 	
 	
-\title{{\tt NSCpp}: Non-Standard Cosmologies in {\tt C++}}
+\title{\nsc: Non-Standard Cosmologies in {\tt C++}}
 \begin{document}
 
 \maketitle
@@ -84,11 +86,11 @@
 There is another code, built specifically for the evolution of cosmic relics in matted dominated Universe, {\tt EvoEMD}~\cite{Dutra:2021phm}. \nsc is different because the evolution of the temperature of the plasma is computed by manipulating the equation that describes the evolution of the entropy density, while {\tt EvoEMD} solves
 %
 \begin{equation}
-	\dfrac{d\rhoR}{dt} = -4H\rhoR + \dots \;,
+	\dfrac{d\rhoR}{dt} = -4H\rhoR + C_{\rm EMD} \;,
 	\label{eq:EvoMD}
 \end{equation}
 %
-which relies on the approximation $\rhoR \approx 3/4 \, sT$ that does not hold in general. Also, \nsc allows the user to consider different equations of state for the fluid, $\Phi$. 
+with  $C_{\rm EMD}$ the additional matter contribution which. This equation relies on the approximation $\rhoR \approx 3/4 \, sT$ that does not hold in general. Also, \nsc allows the user to consider different equations of state for the fluid, $\Phi$. 
 %
 As we will explain later \nsc obeys the same design principles as \mimes; \ie the general usage of both are almost identical, \nsc only needs a \CPP compiler that supports the {\tt c++17} standard and no other external dependences, and there will always be dedicated versions of the underline numerical libraries~\cite{NaBBODES,SimpleSplines} guaranteed to work with the current version of \nsc.
 
@@ -106,14 +108,40 @@ In order to model a non-standard cosmological history, we assume that the Univer
 %
 with $c$ a constant. 
 
+The plasma is assumed to be in thermal equilibrium with energy and entropy densities defined as
+%
+\begin{align}
+	\sR(T)&=\dfrac{2\pi^2}{45} \,  \heff(T) \, T^3 \label{eq:s_def}\\
+	\rhoR(T)&=\dfrac{\pi^2}{30} \,  \geff(T) \, T^4 \label{eq:rho_def}
+\end{align}
+%
+
+
 Since the contribution to the energy budget of the Universe of such fluid is severely constraint at temperatures lower than $T \sim \mathcal{O}(10)~\MeV$, $\Phi$ must lose energy to the plasma. We model this by introducing a constant energy loss rate, $\GammaPhi$. The equations that describe the evolution of both components is
 %
 \begin{align}
-	\dfrac{d\sR}{dt} &= -3 \, H  \, \sR + \dfrac{\GammaPhi}{T} \, \rhoPhi \label{eq:dsdt} \\ 
-	\dfrac{d\rhoPhi}{dt} &= - c \, H \, \rhoPhi - \GammaPhi \, \rhoPhi \label{eq:drhoPhidt } \;,
+	\dfrac{d\sR(T)}{dt} &= -3 \, H(T)  \, \sR(T) + \dfrac{\GammaPhi}{T} \, \rhoPhi(T) \label{eq:dsdt} \\ 
+	\dfrac{d\rhoPhi(T)}{dt} &= - c \, H(T) \, \rhoPhi(T) - \GammaPhi \, \rhoPhi(T) \label{eq:drhoPhidt } \;,
 \end{align}
 %
-with $\sR$ the entropy density of the plasma, and $H$ the Hubble parameter of the Universe. 
+with $H$ the Hubble parameter of the Universe, given by
+%
+\begin{equation}
+	H(T) = \sqrt{\dfrac{8}{3\,m_P^2} \ \lrsb{\rhoR(T) + \rhoPhi(T)}}\;,
+	\label{eq:H_def}
+\end{equation}
+%
+with $m_P = 1.22 \times 10^{19}~\GeV$.
+ 
+
+As explained in ref.~\cite{Arias:2020qty}, we can parametrise $\GammaPhi$ in terms of the temperature that $\Phi$ would decay ($\Tend$) if the Universe was radiation dominated, as
+%
+\begin{equation}
+	\GammaPhi \equiv \HR(T=\Tend)\;,
+	\label{eq:Tend_def}
+\end{equation}
+%
+where $\HR$ the Hubble parameter for a radiation dominated Universe obtained from \eqs{eq:H_def} with $\rhoPhi=0$.
 
 
 \subsection{Notation}\label{sec:notation}
@@ -134,11 +162,11 @@ We can reparametrise the temperature of hte plasma and the energy density of $\P
 	\rhoPhi(u) &= \rhoPhii \, \fPhi(u) \label{eq:fPhi_def} \, e^{-cu}\;,
 \end{align}
 %
-with $\fR(u)$ and $\fPhi$ functions of $u$ that obey the equations
+with $\fR(u)$ and $\fPhi(u)$ functions of $u$ that obey the initial conditions $\fR(u=0)=\fPhi(u=0)=1$ and the equations
 %
 \begin{align}
 	\dfrac{d\log \fR }{du} &=  1- \lrb{1- \dfrac{\GammaPhi}{H} \, \dfrac{\rhoPhi}{3HTs}  } \dh  \label{eq:dlogfRdu} \\ 
-	\dfrac{d\log\fPhi}{du} &= -\dfrac{\GammaPhi}{H} \label{eq:dlogfPhidu } \;,
+	\dfrac{d\log\fPhi}{du} &= -\dfrac{\GammaPhi}{H} \label{eq:dlogfPhidu} \;,
 \end{align}
 %
 with 
@@ -147,18 +175,21 @@ with
 	\label{eq:dh_def}
 \end{equation}
 %
-Notice that  for $\GammaPhi=0$ and $\dh=1$, $\fR=\fPhi=1$. These are the equations that \nsc actually solves. 
+Notice that for $\GammaPhi=0$ and $\dh=1$, $\fR=\fPhi=1$. 
+
+
+\nsc solves \eqs{eq:dlogfRdu,eq:dlogfPhidu}, using as user input for $\Tend$, $c$, $\Ti$, and $r=\rhoRi/\rhoPhii$. Then, it automatically transforms them to the temperature of the plasma and the fluid energy density. From these, the user can obtain all other relevant cosmological quantities such as the Hubble parameter or the entropy density of the plasma.
 
 \section{\nsc usage}\label{sec:first_steps}
 \setcounter{equation}{0}
 %
-The \nsc and its underline numerical libraries are in continuous improvement. The safest choice for a user that is not involved in its development is to get the stable version. The preferred method~\footnote{\nsc can also be downloaded directly from \href{https://github.com/dkaramit/NSCpp/tree/stable}{\tt github.com/dkaramit/NSCpp/tree/stable}.} for downloading \nsc is by running:~\footnote{The {\tt git} utility can be installed by following \href{https://github.com/git-guides/install-git}{https://github.com/git-guides/install-git}.}
+\nsc can be obtained directly form github. The safest choice is to download the stable branch, which will always hold the latest tested version. The preferred method for downloading \nsc is by running:~\footnote{The {\tt git} utility can be installed by following \href{https://github.com/git-guides/install-git}{https://github.com/git-guides/install-git}.}
 %
 \begin{lstlisting}
 	git clone -b stable https://github.com/dkaramit/NSCpp
 \end{lstlisting}
 
-\nsc relies on {\tt NaBBODES}~\cite{NaBBODES} and {\tt SimpleSplines}~\cite{SimpleSplines}, which are developed independently. In order to get \nsc with the latest version of these libraries, one needs to run following commands
+\nsc relies on {\tt NaBBODES}~\cite{NaBBODES} and {\tt SimpleSplines}~\cite{SimpleSplines}, which are developed independently. In order to get \nsc with the latest version of these libraries, one needs to run the following commands
 %
 \begin{lstlisting}
 	git clone https://github.com/dkaramit/NSCpp.git
@@ -169,78 +200,91 @@ The \nsc and its underline numerical libraries are in continuous improvement. Th
 %
 These commands download the {\tt master} branch of \nsc, with the latest versions of {\tt NaBBODES} and {\tt SimpleSplines}. All versions that are not labelled as stable must be treated with caution, as they may not work as indented. 
 
-Regardless of the choice one makes, by executing \run{bash configure.sh}, \nsc will be available for usage within a \CPP program. This {\tt bash} script, writes some paths in some files, formats the data for the RDOF in an acceptable format (see~\ref{sec:input}), and creates some directories that will be useful later.
-%
-In order to use it inside \PY, \run{make lib} must also be ran,  which will compile shared libraries that needed for the \PY interface.
+Regardless of the choice one makes, by executing \run{bash configure.sh}, \nsc will be available for usage within a \CPP program. This {\tt bash} script, writes some paths in some files, formats the data for the RDOF in an acceptable format (see~\ref{sec:input}), and creates some directories that will be useful later. In order to call \nsc inside \PY, \run{make lib} must also be ran,  which will compile shared libraries that needed for the \PY interface.
 
-\nsc already comes with several examples in \CPP and \PY, which can be found in the {\tt \nsc/UserSpace} directory. In order to compile the \CPP examples, one just has to run  \run{make examples} in the root directory of \nsc or {\tt make} inside the directory of each \CPP program.
-
+\nsc already comes with several examples in \CPP and \PY, which can be found in the directory {\tt \nsc/UserSpace}. In order to compile the \CPP examples, one just has to run \run{make examples} in the root directory of \nsc or {\tt make} inside the directory of each \CPP program.
 
 There is also an option to compile some test programs using {\tt make check}, which will create executables inside {\tt exec}. These can then be executed, in order to ensure that the code actually works; \eg no segmentation fault occurs. 
 
+\subsection{Assumptions}
+%
+\nsc is designed to be model agnostic. It can only be used for constant $c$, in cases where there are no plasma energy leaks into the fluid. In cases that these assumptions do not hold, knowledge of the exact nature of $\Phi$ would be needed.  It is also assumed that the plasma does not fall out of thermal equilibrium between the temperatures we integrate (defined later as {\tt Ti} and {\tt TSTOP}), and its energy and entropy densities are always given by \eqs{eq:s_def,eq:rho_def}.
 
 \subsection{First steps}\label{sec:First_examples} 
-
-
+%
+Out-of-the-box, and after \run{bash configure.sh} is ran successfully, all \nsc functionality can be used in a \CPP program by including in the source file the following line:
+%
 \begin{cpp}
-	#include"src/NSC/NSCSolve.hpp"
+	#include "NSCpp.hpp"
 \end{cpp}
 %
-Notice that if the this {\tt .cpp} file is not in the root directory of \nsc, we need to compile it using the flag {\tt -Ipath-to-root}, "path-to-root" the relative path to the root directory of \nsc; \eg if the {\tt .cpp} is in the {\tt MiMeS/UserSpace/Cpp/NSC} directory, this flag should be {\tt -I../../../}.
+Notice that if this file is not in the root directory of \nsc, we need to compile it using the flag {\tt -Ipath-to-root}, "path-to-root" the relative (or absolute) path to the root directory of \nsc; \eg if the {\tt .cpp} is in the {\tt MiMeS/UserSpace/Cpp/NSC} directory, this flag should be {\tt -I../../../}. 
 
 
 \paragraph{Setting up the solver}
-
+%
+In order to solve \eqs{eq:dlogfRdu,eq:dlogfPhidu}, we first need to choose values for all parameter relevant to the system and, optionally, the ODE solver. This can be done by introducing
 %
 \begin{cpp}
     nsc::NSC<LD,SOLVER,METHOD<LD>> BE(TEND,c,Ti,ratio,umax,TSTOP,
-		initial_step_size,minimum_step_size, maximum_step_size, 
-		absolute_tolerance, relative_tolerance, beta,
-		fac_max, fac_min, maximum_No_steps);
+														initial_step_size,minimum_step_size, 
+														maximum_step_size, absolute_tolerance, 
+														relative_tolerance, beta, fac_max, 
+														fac_min, maximum_No_steps
+														);
 \end{cpp}
 %
-Here, \cppin{LD} should be the numeric type to be used; it is recommended to use \cppin{long double}, but other choices are also available as we discuss later. Moreover \cppin{Solver} and \cppin{Method} depend on the type of Runge-Kutta (RK) the user chooses. The available choices are shown in table\ref{tab:template-arguments}. 
+Here, \cppin{LD} should be the numeric type to be used; it is recommended to use \cppin{double} or \cppin{long double}. Moreover \cppin{Solver} and \cppin{Method} depend on the type of Runge-Kutta (RK) the user chooses. The available choices are shown in table\ref{tab:template-arguments}. 
 
 The various parameters are as follows:
 %
 \begin{enumerate}
-	\item 
-	\item 
-	\item {\tt umax }: If $u>${\tt umax} the integration stops (remember that $u=\log(a/a_i)$). Typically, this should be a large number ($\sim 1000$), in order to avoid stopping the integration before the axion begins to evolve  adiabatically.    
+	\item {\tt TEND}: the values of the $\Tend$ (in $\GeV$) as introduced in \eqs{eq:dsdt}. 
+	
+	\item {\tt c}: the parameter that characterises the equation of state of the fluid, defined as in \eqs{eq:EOS}.
+	
+	\item {\tt Ti}: the initial temperature (in $\GeV$) of integration. Has to be above {\tt TEND}.
+	
+	\item {\tt ratio}: the value of $\rhoR/\rhoPhi$ at {\tt Ti}. 
+	
+	\item {\tt umax }: If $u>${\tt umax} the integration stops (remember that $u=\log(a/a_i)$). It can be used to stop internation if relevant bounds (\eg~\cite{Planck:2018jri}) are violated. It is also a failsafe parameter that ensures that integration stops even in cases where the Universe expands extremely fast.
+	
 	\item {\tt TSTOP}: If the temperature drops below this, integration stops. 
 	
-	\item {\tt initial\_stepsize} (optional): Initial step the solver takes. 
+	\item {\tt initial\_stepsize} (optional): Size of the initial step the solver takes. 
 	
-	\item {\tt maximum\_stepsize} (optional): This limits the step-size to an upper limit. 
-	\item {\tt minimum\_stepsize} (optional): This limits the step-size to a lower limit. 
+	\item {\tt maximum\_stepsize} (optional): The step-size will be limited to be smaller than this number. 
 	
-	\item {\tt absolute\_tolerance} (optional): Absolute tolerance of the RK solver
+	\item {\tt minimum\_stepsize} (optional): The step-size will be limited to be larger than this number. 
+	
+	\item {\tt absolute\_tolerance} (optional): Absolute tolerance of the RK solver.
 	
 	\item {\tt relative\_tolerance} (optional): Relative tolerance of the RK solver.
 	
-	\item {\tt beta} (optional): Controls how agreesive the adaptation is. Generally, it should be around but less than 1.
+	\item {\tt beta} (optional): Aggressiveness of the adaptation process of the solver. Generally, it should be around but less than 1.
 	
-	\item {\tt fac\_max},  {\tt fac\_min} (optional): The stepsize does not increase more than fac\_max, and less than fac\_min. 
-	This ensures a better stability. Ideally, {\tt fac\_max}$=\infty$ and {\tt fac\_min}$=0$, but in reality one must 
-	tweak them in order to avoid instabilities.
+	\item {\tt fac\_max},  {\tt fac\_min} (optional): The solver will keep step-size to from increasing more than fac\_max and less than fac\_min at each iteration. This makes adaptation of the step-size more stable.
 	
-	\item {\tt maximum\_No\_steps} (optional): Maximum steps the solver can take. Quits if this number is reached even if integration
-	is not finished. 
+	\item {\tt maximum\_No\_steps} (optional): Maximum steps the solver can take. Quits if this number is reached even if the temperature is still larger than {\tt TEND}. 
 \end{enumerate}
+%
+A detailed description of the optional parameters can be found in the Appendices of ref.~\cite{Karamitros:2021nxi}.
 
+Once the parameters are chosen, the system can be solved by including:
 %
 \begin{cpp}
 	BE.solveNSC();
 \end{cpp}
-
-
+%
+After this line, the evolution of $T$ and $\rhoPhi$ is stored in \cppin{BE.T} and \cppin{BE.rhoPhi}, with each element corresponding to the value of $u$ the solver takes (stored as \cppin{BE.u}). The local errors of $T$ and $\rhoPhi$ correspond to the variables \cppin{BE.dT} and \cppin{BE.drhoPhi}. 
+%
+One can also obtain the points {\tt BE.TE1} ($\TEI$), {\tt BE.TE2} ($\TEII$), {\tt BE.TD1} ($\TDI$), {\tt BE.TD2} ($\TDII$).
 
 \subsubsection{Using \nsc in \PY}\label{sec:begin_py}
 %
-The modules for the \PY interface are located in {\tt NSCpp/src/interfacePy}. Although the usage of the classes is similar to the \CPP case, it is worth showing explicitly how the \PY interface works. One should keep in mind that the various template arguments discussed in the \CPP case have to be chosen at compile-time. That is, for the \PY interface, one needs to choose the numeric type, and RK method to be used when the shared libraries are compiled. This is done by assigning the relevant variable in {\nsc/Definitions.mk} before running \run{make}. The various options are discussed in section~\ref{sec:options}, and outlined in table~\ref{tab:compile_time-options}.
+The \PY interface modules are in the directory {\tt NSCpp/src/interfacePy}. The usage of the classes is made as similar as possible to the \CPP case. However, one should keep in mind that the various template arguments discussed in the \CPP case have to be chosen at compile-time. That is, for the \PY interface, one needs to choose the numeric type, and RK method to be used when the shared libraries are compiled. This is accomplished by assigning the relevant variables in {\nsc/Definitions.mk} before running \run{make lib}. The various options are the same as in section 4 of ref.~\cite{Karamitros:2021nxi}, and summarised in Table~\ref{tab:compile_time-options}.
 
- 
-The two relevant classes are defined in the modules {\tt interfacePy.AxionMass} and {\tt interfacePy.Axion}, and can be loaded in a \PY script as 
+The two relevant classes are defined in the module {\tt interfacePy.NSC}, and can be imported in a \PY script as 
 %
 \begin{py}
 	from sys import path as sysPath
@@ -248,7 +292,7 @@ The two relevant classes are defined in the modules {\tt interfacePy.AxionMass} 
 	from interfacePy.NSC import NSC 
 \end{py}
 %
-It is important that {\tt 'path\_to\_src'} provides the relative path to the {\tt NSCpp/src} directory. For example, if the script is located in {\tt NSCpp/UserSpace/Python}, {\tt 'path\_to\_src'} should be {\tt '../../src'}.
+The string {\tt 'path\_to\_src'} must be the relative path to the {\tt NSCpp/src} directory. For example, if the script is located in {\tt NSCpp/UserSpace/Python}, {\tt 'path\_to\_src'} should be {\tt '../../src'}.
 
 \paragraph{The solver}
 %
@@ -256,75 +300,47 @@ We can define an {\tt NSC} instance as follows
 %
 \begin{py}
 	BE=NSC(TEND,c,Ti,ratio,umax,TSTOP,
-		   initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, 
-		   relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
+		     initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, 
+		     relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
 \end{py}
 %
-Here the input parameters are the same as in the \CPP case, and outlined in table~\ref{tab:NSC-input}. Moreover, the usage of the class can be found by running \pyin{?NSC} after loading the module. 
+The input parameters are identical to the \CPP case, and outlined in Table~\ref{tab:NSC-input}. A brief description of this class can also be found by running \pyin{?NSC} after loading the module. 
 
 
-Using the defined variable ({\tt BE} in this example), we can simply run  
+Using the defined variable ({\tt BE}), we can simply run  
 %
 \begin{py}
 	BE.solveNSC()
 \end{py}
 %
-in order to solve the BEs. In contrast to the \CPP implementation, this only gives us access to the points where the behaviour changes; the corresponding variables are {\tt BE.TE1,BE.TE2,BE.TD1,BE.TD2}. In order to get the evolution of the densities, we need to run 
+in order to solve the system~\refs{eq:dlogfRdu,eq:dlogfPhidu}. In contrast to the \CPP implementation, this only gives us access to the points where the behaviour changes; the corresponding variables are  {\tt BE.TE1}, {\tt BE.TE2}, {\tt BE.TD1}, {\tt BE.TD2}. In order to get the evolution of $T$ and $\rhoPhi$, we need to run 
 %
 \begin{py}
 	BE.getPoints()
 \end{py}
 %
-This will make \pyin{numpy}~\cite{harris2020array} arrays that contain the $\ddots$ Moreover, we can run the following
+This will fill the \pyin{numpy}~\cite{harris2020array} arrays with the integration variable and the solutions; \pyin{BE.u}, \pyin{BE.T}, and \pyin{BE.rhoPhi}. The following line:
 %
 \begin{py}
 	BE.getErrors()
 \end{py}
+%
+gives access to the local errors \pyin{BE.dT} and \pyin{BE.drhoPhi}.
+
+It is essential to manually delete \pyin{BE} after it is no longer needed. The reason is that there is an underlying {\tt C}-pointer that manages the \PY interface. If the instance is reassigned without deletion, this pointer can no longer be accessed. This is a memory-leak, which can only be fixed by exiting the script. 
+%
+That is, one must simply run 
+%
+\begin{py}
+	del BE
+\end{py}  
+%
+after {\tt BE} served its purpose.
 
 
-
-\section{Assumptions and user input}\label{sec:assumptions}
-\setcounter{equation}{0}
+\subsection{Compile-time input}\label{sec:compile_time_input} 
 %
-\subsection{Restrictions}\label{sec:restrictions}
-
-\subsection{Options at Compile-time}\label{sec:options}
-%
-The user has a number of options regarding different aspects for the code. If \nsc is used without using the available makefiles, then they must use the correct values for the various template arguments, explained in Appendix~\ref{app:classes}.  The various choices we for the shared libraries used by the \PY interface are given in {\tt \nsc/Definitions.mk} while the corresponding options for the \CPP examples are in the {\tt Definitions.mk} files inside the subdirectories of {\tt \nsc/UserSpace/Cpp}. The options correspond to different variables, which are
-%
-\begin{enumerate}
-	\item {\tt rootDir}: The relative path of root directory of \nsc.  
-	%
-	\item {\tt LONG}: This sets the numeric types for the \CPP examples. It should be either {\tt long} or omitted. If omitted, the type of the numeric values is \cppin{double} (double precision). On the other hand, if {\tt LONG=long},  the type is  \cppin{long double}. Generally, using \cppin{double} should be enough. For the sake of numerical stability, however, it is advised to always use {\tt LONG=long}, as it a safer option. The reason is that the axion angle redshifts, and can become very small, which introduces ``rounding errors". Moreover, if the parameters {\tt absolute\_tolerance} or {\tt absolute\_tolerance} are chosen to be below $\sim 10^{-8}$, then double precision numbers may not be enough, and {\tt LONG=long} is preferable.  This choice comes at the cost of speed; double precision operations are usually preformed much faster. It is important to note that {\tt LONG} defines a macro with the same name (in the \CPP examples), which then defines the macro (again in the \CPP examples) as {\tt \#define LD LONG double}. The macro \cppin{LD}, then is used as the corresponding template argument in the various classes. We point out again that if one chooses not to use the {\tt makefile} files, the template arguments need to be known at compile-time. So the user has to define them in the code. 
-	%
-	\item {\tt LONGpy}: the same as {\tt LONG}, but for the \PY interface. One should keep in mind thtat this cannot be changed inside \PY scripts. It just instructs \pyin{ctypes} what numeric type to use. Since the preferred way to compile the shared libraries is via running \run{make} in the root directory of \nsc, this variable needs to be defined inside  {\tt \nsc/Definitions.mk}. By default, this variable is set to {\tt long}, since this is the most stable choice in general.  
-	%
-	\item {\tt SOLVER}: \nsc uses the ordinary differential equation (ODE) integrators of ref.~\cite{NaBBODES}. Currently, there are two available choices; {\tt Rosenbrock} and {\tt RKF}. The former is a general embedded Rosenbrock implementation and it is used if {\tt SOLVER=1}, while the latter is a general explicit embedded Runge-Kutta implementation and can be chosen by using {\tt SOLVER=2} (a brief description of how these algorithms are implemented can be found in Apendix of ref.\cite{Karamitros:2021nxi}). By default inside the {\tt Definitions.mk} files {\tt SOLVER=1}, because the axion EOM tends to oscillate rapidly. However, in some cases, a high order explicit method may also work. Note that this variable defines a macro that is then used as the second template argument of the \cppin{mimes::Axion<LD,Solver,Method>} class. The preferred way to do it in the shared libraries is via the {\tt \nsc/Definitions.mk} file, however, the user if free to compile everything in a different way. In this case, the  various {\tt Definitions.mk} files, are not being used, and the user must define the relevant arguments in the code where \nsc is used.
-	%
-	\item {\tt METHOD}: Depending on the type of solver, there are some available methods.  {\tt NaBBODES} is a library that accepts any explicit Runge-Kutta and Rosenbrock embedded methods; One can provide their own Butcher tableau. The way thi can be done in shon in the Appendix of ref.~\cite{Karamitros:2021nxi}.  
-	\begin{itemize}
-		\item 	For {\tt SOLVER=1}, the available methods are 
-		{\tt METHOD=RODASPR2} and {\tt METHOD=ROS34PW2}. The {\tt RODASPR2} choice is a fourth order Rosenbrock-Wanner method (more information can be found in ref.~\cite{RANG2015128}). The {ROS34PW2} choice corresponds to a third order Rosenbrock-Wanner method~\cite{RangAngermann2005}. 
-		%
-		\item 	For {\tt SOLVER=2}, the only reliable method available in {\tt NaBBODES} is the Dormand-Prince~\cite{DORMAND198019} chosen if {\tt METHOD=DormandPrince}, which is an explicit Runge-Kutta method of seventh order.
-	\end{itemize}
-	This variable defines a macro (with the same name) that is passed as the third template parameter of \cppin{mimes::Axion<LD,Solver,Method>} (\ie \cppin{METHOD<LD>} in the place of \cppin{Method}). 
-	%
-	If the compilation is not done via the {\tt makefile} files, the user must define the relevant template arguments in the code.
-	%
-	\item {\tt CC}: The \CPP compiler that one chooses to use. The default option is {\tt CC=g++}, which is the {\tt GNU} \CPP compiler, and is available for all systems. Another option is to use the {\tt clang} compiler, which is chosen by {\tt CC=clang -lstdc++}. \nsc is mostly tested using {\tt g++}, but {\tt clang} also seems to work (and the resulting executables are sometimes faster), but the user has to make sure that their version of the compiler of choice supports the \CPP17 standard, otherwise \nsc probably will not work.
-	%
-	\item {\tt OPT}: Optimization level of the compiler. By default, this is {\tt OPT=O3}, which produces executables that are marginally faster than {\tt OPT=O1} and {\tt OPT=O2}, but significantly faster than {\tt OPT=O0}. There is another choice, {\tt OPT=Ofast}, but it can cause various numerical instabilities, and is generally considered dangerous -- although we have not observed any problems when running \nsc. 
-\end{enumerate}
-%
-It is important to note, once again, that the variables that correspond to template arguments must be known at compile time. Thus, if the compilation is done without the help of the various {\tt makefile} files, the template arguments must be given, otherwise compilation will fail.~\footnote{In \CPP the template arguments are part of the definition of a class; if the template arguments are not known, the class is not even constructed.} For example, the choice {\tt LONG=long}, {\tt SOLVER=1}, and {\tt METHOD=RODASPR2} will be used to compile the shared libraries (and \CPP example in {\tt \nsc/UserSpace/Cpp/NSC}) with \cppin{nsc::NSC<long double,1,RODASPR2<long double>>}. 
-
-
-\subsection{User input}\label{sec:input}
-%
-\subsubsection{Compile-time input}\label{sec:compile_time_input} 
-%
-\paragraph{Files} \nsc requires files that provide data for the relativistic degrees of freedom (RDOF) of the plasma. Although \nsc is shipped with the standard model RDOF found in~\cite{Saikawa:2020swg}, the user can use their prefered tabulated ones, by providing a file and writing its path to the {\tt cosmoDat} file. The format of the file has to be: $T$ (in $\GeV$), $\heff$, and $\geff$.
+\nsc requires files that provide data for the relativistic degrees of freedom (RDOF) of the plasma. \nsc already includes the standard model RDOF found in~\cite{Saikawa:2020swg,Hindmarsh:2005ix}, but the user can use their preferred tabulated ones, by providing a file and writing its path to the {\tt Paths.mk} file. The format of the file has to be: $T$ (in $\GeV$), $\heff$, and $\geff$.
 
 The path to this file should be given at compile time. That is, once {\tt Paths.mk} changes, we must run \run{bash configure.sh} and then \run{\tt make} in order to make sure that they will be used. The user can change the content of the data files (without changing their paths), in order to use them without compiling \nsc again. However, the user has to make sure that all the files are sorted so that the values of first column increase (with no duplicates or empty lines). In order to ensure this, it is advised to run \run{bash FormatFile.sh path-to-file}, in order to format the file (in \run{path-to-file}) so that it satisfies the requirements of \nsc.
 

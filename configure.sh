@@ -15,7 +15,7 @@ for dataFile in $cosmoDat;do
     echo "format $dataFile" 
     eval $formatF $dataFile 
   else 
-    echo  "$dataFile does not exist! Make sure that you provide valid paths in Definitions.mk"
+    echo  "$dataFile does not exist! Make sure that you provide valid paths in Paths.mk"
     exit 
   fi
 done
@@ -46,7 +46,6 @@ rm -f $PathHead
 touch $PathHead
 echo "#ifndef PATHS_HEAD">>$PathHead
 echo "#define PATHS_HEAD">>$PathHead
-echo "#include<string>">>$PathHead
 echo "">>$PathHead
 
 [  -z "$cosmoDat" ] || echo "constexpr const static auto cosmo_PATH = \"$PWD/$cosmoDat\";">>$PathHead

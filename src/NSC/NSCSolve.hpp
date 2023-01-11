@@ -214,8 +214,8 @@ namespace nsc{
             _H=std::sqrt( (8*M_PI)/(3*Cosmo<LD>::mP*Cosmo<LD>::mP)* ( _rhoR   +  _rhoPhi )  );
             points.push_back(std::vector<LD>{_a,_T,_rhoPhi,std::log(_H)}); 
 
-            dT.push_back(_T*(System.ynext[0] - System.ynext_star[0]));
-            drhoPhi.push_back(_rhoPhi*(System.ynext[1] - System.ynext_star[1]));
+            dT.push_back(_T*std::abs(System.ynext[0] - System.ynext_star[0]));
+            drhoPhi.push_back(_rhoPhi*std::abs(System.ynext[1] - System.ynext_star[1]));
             
             if(pE==0){  if(_rhoR < _rhoPhi){ TE1 = _T; aE1 = _a; pE++;}   }//the first time \rho_R = \rho_\Phi
             if(pE==1){  if(_rhoR > _rhoPhi){ TE2 = _T; aE2 = _a; pE++;}   }//the second time \rho_R = \rho_\Phi
