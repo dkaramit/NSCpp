@@ -11,7 +11,7 @@ sysPath.append(osPath.join(osPath.dirname(__file__), '../../src'))
 from sys import path as sysPath
 sysPath.append('../../src')
 
-from interfacePy.NSC import NSC 
+from interfacePy.NSC import Evolution 
 from interfacePy.Cosmo import Cosmo 
 from interfacePy.FT import FT #easy tick formatting
 
@@ -47,8 +47,8 @@ maximum_No_steps=int(1e7); #maximum steps the solver can take Quits if this numb
 
 
 _=time()
-# NSC instance
-BE=NSC(TEND,c,Ti,ratio,umax,TSTOP,
+# Evolution instance
+BE=Evolution(TEND,c,Ti,ratio,umax,TSTOP,
         initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, 
         relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
 

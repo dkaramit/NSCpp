@@ -53,7 +53,7 @@ int main(int argc, char **argv){
     LD fac_min=0.8;
     unsigned int maximum_No_steps=int(1e7); //maximum steps the solver can take Quits if this number is reached even if integration is not finished.
 
-    nsc::NSC<LD,SOLVER,METHOD<LD>> BE(TEND,c,Ti,ratio,umax,TSTOP,
+    nsc::Evolution<LD,SOLVER,METHOD<LD>> BE(TEND,c,Ti,ratio,umax,TSTOP,
     initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, relative_tolerance, beta,
     fac_max, fac_min, maximum_No_steps);
 

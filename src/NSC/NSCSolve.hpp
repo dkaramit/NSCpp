@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "src/NSC/NSC.hpp"
+#include "src/NSC/RadPhi.hpp"
 
 
 //----Solver-----//
@@ -45,7 +45,7 @@ namespace nsc{
 namespace nsc{
 
     template<class LD, const int Solver, class Method>
-    class NSC{
+    class Evolution{
         using RKSolver = typename IF<Solver==1,
             Ros<Neqs, Method, Jacobian<Neqs, LD>, LD>,
             typename IF<Solver==2,RKF<Neqs, Method, LD>,void>::type>::type; 
@@ -67,8 +67,8 @@ namespace nsc{
         LD TE1,TE2,TD1,TD2,aE1,aE2,aD1,aD2;
 
         /*
-        NSC class constructor:
-        nsc::NSC(TEND,c,Ti,ratio,umax,TSTOP, initial_step_size, minimum_step_size, maximum_step_size,
+        Evolution class constructor:
+        nsc::Evolution(TEND,c,Ti,ratio,umax,TSTOP, initial_step_size, minimum_step_size, maximum_step_size,
                 absolute_tolerance, relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
         
         With:
@@ -96,7 +96,7 @@ namespace nsc{
         is not finished.
         */
 
-        NSC(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP,
+        Evolution(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP,
             LD initial_step_size=1e-2, LD minimum_step_size=1e-8, LD maximum_step_size=1e-2, 
             LD absolute_tolerance=1e-8, LD relative_tolerance=1e-8,
             LD beta=0.9, LD fac_max=1.2, LD fac_min=0.8, unsigned int maximum_No_steps=10000000){
@@ -163,7 +163,7 @@ namespace nsc{
 
 
     template<class LD, const int Solver, class Method>
-    void NSC<LD,Solver,Method>::solveNSC(){ 
+    void Evolution<LD,Solver,Method>::solveNSC(){ 
         // LD Gamma = RadPhi<LD>::plasma.Hubble(TEND) ;
         // LD rhoPhii = RadPhi<LD>::plasma.rhoR(Ti) * ratio;
 

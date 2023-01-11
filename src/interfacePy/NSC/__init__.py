@@ -1,3 +1,3 @@
-from .NSC import NSC
+from .NSC import Evolution
 
 

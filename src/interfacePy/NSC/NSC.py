@@ -46,9 +46,9 @@ NSClib.getPoints.restype=None
 
 
 
-class NSC:
+class Evolution:
     '''
-    The NSC class solves the Boltzmann equations (BEs) of the plasma coupled to a decaying fluid.
+    The Evolution class solves the Boltzmann equations (BEs) of the plasma coupled to a decaying fluid.
     
     Methods: 
         solveNSC(): solves the system of BEs. After running this,  we have:
@@ -69,8 +69,8 @@ class NSC:
            absolute_tolerance=1e-8,relative_tolerance=1e-8,
            beta=0.9,fac_max=1.2,fac_min=0.8, maximum_No_steps=int(1e7)):
         '''
-        NSC class constructor:
-        NSC(TEND,c,Ti,ratio,umax,TSTOP, initial_step_size, minimum_step_size, maximum_step_size,
+        Evolution class constructor:
+        Evolution(TEND,c,Ti,ratio,umax,TSTOP, initial_step_size, minimum_step_size, maximum_step_size,
                 absolute_tolerance, relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
         
         With:

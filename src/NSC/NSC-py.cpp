@@ -16,7 +16,7 @@
     #define LD LONGpy double
 #endif
 
-#define Cast(BE) static_cast<nsc::NSC<LD,SOLVER,METHOD<LD>>*>(BE)
+#define Cast(BE) static_cast<nsc::Evolution<LD,SOLVER,METHOD<LD>>*>(BE)
 
 extern "C"{
     void* INIT(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP, 
@@ -24,7 +24,7 @@ extern "C"{
                     LD absolute_tolerance, LD relative_tolerance,
                     LD beta, LD fac_max, LD fac_min, int maximum_No_steps){ 
         
-        return new nsc::NSC<LD,SOLVER,METHOD<LD>>(TEND, c, Ti, ratio, umax, TSTOP,
+        return new nsc::Evolution<LD,SOLVER,METHOD<LD>>(TEND, c, Ti, ratio, umax, TSTOP,
                             initial_step_size,minimum_step_size, maximum_step_size, 
                             absolute_tolerance, relative_tolerance, beta,
                             fac_max, fac_min, maximum_No_steps);
@@ -41,9 +41,6 @@ extern "C"{
     }
 
     unsigned int getSize(void* BE){ return Cast(BE) -> pointSize;}
-
-
-
 
     void getPoints(LD *u, LD *T, LD *rhoPhi, void* BE){
         unsigned int N= (Cast(BE) -> pointSize);
