@@ -65,6 +65,7 @@ namespace nsc{
 
         unsigned int pointSize;
         LD TE1,TE2,TD1,TD2,aE1,aE2,aD1,aD2;
+        nsc::Cosmo<LD> *plasma;
 
         /*
         Evolution class constructor:
@@ -77,6 +78,7 @@ namespace nsc{
         Ti, ratio: ratio = rho_Phi/rho_R at temperature Ti [GeV]. These are the initial conditions
         umax: if u>umax the integration stops (rempember that u=log(a/a_i))
         TSTOP: if the temperature drops below this, integration stops.
+        plasma: pointer to instance of Cosmo class.
         -----------Optional arguments------------------------
         initial_stepsize: initial step the solver takes.
         maximum_stepsize: This limits the sepsize to an upper limit.
@@ -96,7 +98,7 @@ namespace nsc{
         is not finished.
         */
 
-        Evolution(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP,
+        Evolution(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP, Cosmo<LD> *plasma,
             LD initial_step_size=1e-2, LD minimum_step_size=1e-8, LD maximum_step_size=1e-2, 
             LD absolute_tolerance=1e-8, LD relative_tolerance=1e-8,
             LD beta=0.9, LD fac_max=1.2, LD fac_min=0.8, unsigned int maximum_No_steps=10000000){
@@ -107,13 +109,13 @@ namespace nsc{
             this->ratio=ratio;
             this->umax=umax;
             this->TSTOP=TSTOP;
+            this->plasma=plasma;
             
-            
-            Gamma = RadPhi<LD>::plasma.Hubble(TEND) ;
-            rhoPhii = RadPhi<LD>::plasma.rhoR(Ti) * ratio;
+            Gamma = plasma->Hubble(TEND) ;
+            rhoPhii = plasma->rhoR(Ti) * ratio;
 
 
-            BE = RadPhi<LD>(Gamma, c, Ti,  rhoPhii);
+            BE = RadPhi<LD>(Gamma, c, Ti,  rhoPhii, plasma);
 
 
             this->initial_step_size=initial_step_size;
@@ -129,18 +131,19 @@ namespace nsc{
 
         void solveNSC();
 
-        void setParams(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP){
+        void setParams(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP, Cosmo<LD> *plasma){
             this->TEND=TEND;
             this->c=c;
             this->Ti=Ti;
             this->ratio=ratio;
             this->umax=umax;
             this->TSTOP=TSTOP;
+            this->plasma=plasma;
 
-            Gamma = RadPhi<LD>::plasma.Hubble(TEND) ;
-            rhoPhii = RadPhi<LD>::plasma.rhoR(Ti) * ratio;
+            Gamma = plasma->Hubble(TEND) ;
+            rhoPhii = plasma->rhoR(Ti) * ratio;
 
-            BE = RadPhi<LD>(Gamma, c, Ti,  rhoPhii);
+            BE = RadPhi<LD>(Gamma, c, Ti,  rhoPhii, plasma);
 
             u.clear();
             T.clear();
@@ -164,8 +167,6 @@ namespace nsc{
 
     template<class LD, const int Solver, class Method>
     void Evolution<LD,Solver,Method>::solveNSC(){ 
-        // LD Gamma = RadPhi<LD>::plasma.Hubble(TEND) ;
-        // LD rhoPhii = RadPhi<LD>::plasma.rhoR(Ti) * ratio;
 
         /*================================*/
         Array<LD> y0={0.,0.}; 
@@ -183,7 +184,7 @@ namespace nsc{
         int pE=0,pD=0;
 
         
-        _H=std::sqrt( (8*M_PI)/(3*Cosmo<LD>::mP*Cosmo<LD>::mP)* ( RadPhi<LD>::plasma.rhoR(Ti)   +  rhoPhii )  );
+        _H=std::sqrt( (8*M_PI)/(3*Cosmo<LD>::mP*Cosmo<LD>::mP)* ( plasma->rhoR(Ti)   +  rhoPhii )  );
 
 
         u.push_back(0);
@@ -224,7 +225,7 @@ namespace nsc{
             drhoPhi.push_back(_rhoPhi*std::abs(System.ynext[1] - System.ynext_star[1]));
             
             
-            _rhoR = RadPhi<LD>::plasma.rhoR(_T);
+            _rhoR = plasma->rhoR(_T);
             _H=std::sqrt( (8*M_PI)/(3*Cosmo<LD>::mP*Cosmo<LD>::mP)* ( _rhoR   +  _rhoPhi )  );
             
             if(pE==0){  if(_rhoR < _rhoPhi){ TE1 = _T; aE1 = _a; pE++;}   }//the first time \rho_R = \rho_\Phi

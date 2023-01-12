@@ -1,4 +1,4 @@
-from ctypes import  CDLL, c_longdouble, c_double, c_void_p, c_int, POINTER
+from ctypes import  CDLL, c_longdouble, c_double, c_char_p, c_void_p, c_int, POINTER
 from numpy import array as np_array
 
 from time import time
@@ -18,13 +18,13 @@ void_p=c_void_p
 #load the library
 NSClib = CDLL(rootDir+'/lib/libNSC.so')
 
-NSClib.INIT.argtypes= cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble, cint
+NSClib.INIT.argtypes= cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,void_p,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble, cint
 NSClib.INIT.restype = void_p
 
 NSClib.DEL.argtypes= void_p,
 NSClib.DEL.restype = None
 
-NSClib.setParams.argtypes= cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,void_p
+NSClib.setParams.argtypes= cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,void_p,void_p
 NSClib.setParams.restype = None
 
 NSClib.SOLVE.argtypes= void_p,
@@ -64,7 +64,7 @@ class Evolution:
                                             intil we run self.solveNSC().
 
     '''
-    def __init__(self, TEND,c, Ti,ratio,umax, TSTOP,
+    def __init__(self, TEND,c, Ti,ratio,umax, TSTOP, plasma,
            initial_step_size=1e-2,minimum_step_size=1e-8,maximum_step_size=1e-2, 
            absolute_tolerance=1e-8,relative_tolerance=1e-8,
            beta=0.9,fac_max=1.2,fac_min=0.8, maximum_No_steps=int(1e7)):
@@ -79,6 +79,7 @@ class Evolution:
         Ti, ratio: ratio = rho_Phi/rho_R at temperature Ti [GeV]. These are the initial conditions
         umax: if u>umax the integration stops (rempember that u=log(a/a_i))
         TSTOP: if the temperature drops below this, integration stops.
+        plasma: instance of Cosmo class.
         -----------Optional arguments------------------------
         initial_stepsize: initial step the solver takes.
         maximum_stepsize: This limits the sepsize to an upper limit.
@@ -98,7 +99,8 @@ class Evolution:
         is not finished.
         '''
         self.voidpNSC=void_p()
-        self.voidpNSC=NSClib.INIT(TEND,c,Ti,ratio,umax,TSTOP,
+        self.plasma=plasma
+        self.voidpNSC=NSClib.INIT(TEND,c,Ti,ratio,umax,TSTOP, self.plasma.pointer(),
                         initial_step_size,minimum_step_size, maximum_step_size, 
                         absolute_tolerance, relative_tolerance, beta,
                         fac_max, fac_min, maximum_No_steps)
@@ -134,9 +136,9 @@ class Evolution:
         del self.aD1
         del self.aD2
 
-    def setParams(self,TEND, c, Ti, ratio, umax, TSTOP):
-        '''set the parameters of the NSC without rebuilding the interpolations'''
-        NSClib.setParams(TEND, c, Ti, ratio, umax, TSTOP,self.voidpNSC)
+    def setParams(self,TEND, c, Ti, ratio, umax, TSTOP, plasma,):
+        '''set the parameters of the Evolution class without rebuilding the interpolations'''
+        NSClib.setParams(TEND, c, Ti, ratio, umax, TSTOP, plasma, self.voidpNSC)
         self.u=[]
         self.T=[]
         self.rhoPhi=[]

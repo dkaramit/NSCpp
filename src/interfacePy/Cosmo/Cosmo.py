@@ -89,8 +89,12 @@ class Cosmo:
         self.mP=mP
 
 
-    # def __del__(self):
-        # CosmoLib.DEL(self.voidCosmo)
+    def __del__(self):
+        CosmoLib.DEL(self.voidCosmo)
+
+    def pointer(self):
+        return self.voidCosmo
+
     def heff(self,T):
         '''h_eff at temperature T [GeV]'''
         return CosmoLib.heff(T,self.voidCosmo)

@@ -16,10 +16,10 @@ from interfacePy.Cosmo import Cosmo
 from interfacePy.FT import FT #easy tick formatting
 
 from misc_dir.path import cosmo_PATH
-cosmo=Cosmo(cosmo_PATH,0,1e5)
+plasma=Cosmo(cosmo_PATH,0,1e5)
 
 ######## You can also do this:
-# cosmo=Cosmo('../../src/data/eos2020.dat',0,1e5)
+# plasma=Cosmo('../../src/data/eos2020.dat',0,1e5)
 
 TEND=1e-2
 c=3
@@ -48,7 +48,7 @@ maximum_No_steps=int(1e7); #maximum steps the solver can take Quits if this numb
 
 _=time()
 # Evolution instance
-BE=Evolution(TEND,c,Ti,ratio,umax,TSTOP,
+BE=Evolution(TEND,c,Ti,ratio,umax,TSTOP,plasma,
         initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, 
         relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
 
@@ -59,7 +59,7 @@ print(TEND,c,Ti,ratio,BE.TE1,BE.TE2,BE.TD1,BE.TD2)
 print(round(time()-_,3),file=stderr)
 
 
-if False: # True, produces plots!
+if True: # True, produces plots!
     from numpy import max as np_max
     from numpy import abs as np_abs
     from numpy import exp as np_exp
@@ -74,13 +74,13 @@ if False: # True, produces plots!
     
     X=np_exp(BE.u)
     
-    Y=BE.rhoPhi/cosmo.rhoR(BE.T[0])*X**4
+    Y=BE.rhoPhi/plasma.rhoR(BE.T[0])*X**4
     sub.plot(X,Y,linestyle='--',linewidth=2,alpha=1,c='xkcd:red',label=r'$\rho_{\Phi}$')
 
     Min=Y[0]
     Max=np_max(Y)
     
-    Y=[cosmo.rhoR(T)/cosmo.rhoR(BE.T[0])*X[i]**4 for i,T in enumerate(BE.T)]
+    Y=[plasma.rhoR(T)/plasma.rhoR(BE.T[0])*X[i]**4 for i,T in enumerate(BE.T)]
     sub.plot(X,Y,linestyle='-',linewidth=2,alpha=1,c='xkcd:black',label=r'$\rho_{R}$')
     
     _=Y[0]
@@ -140,3 +140,4 @@ if False: # True, produces plots!
 
 #run the destructor
 del BE
+del plasma

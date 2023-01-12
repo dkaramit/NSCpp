@@ -1,4 +1,5 @@
 #include"src/NSC/NSCSolve.hpp"
+#include"src/Cosmo/Cosmo.hpp"
 
 // macros for the solver
 #ifndef SOLVER
@@ -19,12 +20,12 @@
 #define Cast(BE) static_cast<nsc::Evolution<LD,SOLVER,METHOD<LD>>*>(BE)
 
 extern "C"{
-    void* INIT(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP, 
+    void* INIT(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP, void *plasma,
                     LD initial_step_size, LD minimum_step_size, LD maximum_step_size, 
                     LD absolute_tolerance, LD relative_tolerance,
                     LD beta, LD fac_max, LD fac_min, int maximum_No_steps){ 
         
-        return new nsc::Evolution<LD,SOLVER,METHOD<LD>>(TEND, c, Ti, ratio, umax, TSTOP,
+        return new nsc::Evolution<LD,SOLVER,METHOD<LD>>(TEND, c, Ti, ratio, umax, TSTOP, static_cast<nsc::Cosmo<LD>*>(plasma),
                             initial_step_size,minimum_step_size, maximum_step_size, 
                             absolute_tolerance, relative_tolerance, beta,
                             fac_max, fac_min, maximum_No_steps);
@@ -32,8 +33,8 @@ extern "C"{
 
     void DEL(void* BE){  delete Cast(BE) ; }
     
-    void setParams(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP, void* BE){
-        Cast(BE)->setParams(TEND, c, Ti, ratio, umax, TSTOP);
+    void setParams(LD TEND, LD c, LD Ti, LD ratio, LD umax, LD TSTOP, void *plasma, void* BE){
+        Cast(BE)->setParams(TEND, c, Ti, ratio, umax, TSTOP, static_cast<nsc::Cosmo<LD>*>(plasma));
     }
 
     void SOLVE(void* BE){ 
