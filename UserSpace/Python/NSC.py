@@ -59,7 +59,7 @@ print(TEND,c,Ti,ratio,BE.TE1,BE.TE2,BE.TD1,BE.TD2)
 print(round(time()-_,3),file=stderr)
 
 
-if True: # True, produces plots!
+if False: # True, produces plots!
     from numpy import max as np_max
     from numpy import abs as np_abs
     from numpy import exp as np_exp
