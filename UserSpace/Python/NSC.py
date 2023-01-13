@@ -48,11 +48,11 @@ maximum_No_steps=int(1e7); #maximum steps the solver can take Quits if this numb
 
 _=time()
 # Evolution instance
-BE=Evolution(TEND,c,Ti,ratio,umax,TSTOP,plasma,
+BE=Evolution()
+
+BE.solveNSC(TEND,c,Ti,ratio,TSTOP,umax,plasma,
         initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, 
         relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
-
-BE.solveNSC()
 
 
 print(TEND,c,Ti,ratio,BE.TE1,BE.TE2,BE.TD1,BE.TD2)
@@ -91,10 +91,10 @@ if False: # True, produces plots!
     if Max<_:
         Max=_
     
-    sub.axvline(BE.aE1,c='xkcd:gray',linestyle=':',linewidth=2)
-    sub.axvline(BE.aE2,c='xkcd:gray',linestyle=':',linewidth=2)
-    sub.axvline(BE.aD1,c='xkcd:gray',linestyle=':',linewidth=2)
-    sub.axvline(BE.aD2,c='xkcd:gray',linestyle=':',linewidth=2)
+    sub.axvline(np_exp(BE.uE1),c='xkcd:gray',linestyle=':',linewidth=2)
+    sub.axvline(np_exp(BE.uE2),c='xkcd:gray',linestyle=':',linewidth=2)
+    sub.axvline(np_exp(BE.uD1),c='xkcd:gray',linestyle=':',linewidth=2)
+    sub.axvline(np_exp(BE.uD2),c='xkcd:gray',linestyle=':',linewidth=2)
 
     sub.set_yscale('log')
     sub.set_xscale('log')
