@@ -1,4 +1,4 @@
-from ctypes import  CDLL, c_longdouble, c_double, c_char_p, c_void_p, c_int, POINTER
+from ctypes import  CDLL, c_longdouble, c_double, c_char_p, c_void_p, c_int, c_uint, POINTER, c_bool
 from numpy import array as np_array
 
 from time import time
@@ -12,23 +12,21 @@ from misc_dir.path import rootDir
 from misc_dir.type import cdouble
 
 cint=c_int
+cuint=c_uint
 void_p=c_void_p
 
 
 #load the library
 NSClib = CDLL(rootDir+'/lib/libNSC.so')
 
-NSClib.INIT.argtypes= cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,void_p,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble, cint
+NSClib.INIT.argtypes= None
 NSClib.INIT.restype = void_p
 
 NSClib.DEL.argtypes= void_p,
 NSClib.DEL.restype = None
 
-NSClib.setParams.argtypes= cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,void_p,void_p
-NSClib.setParams.restype = None
-
-NSClib.SOLVE.argtypes= void_p,
-NSClib.SOLVE.restype = None
+NSClib.SOLVE.argtypes= cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,void_p,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble,cdouble, cuint, void_p
+NSClib.SOLVE.restype = c_bool
 
 NSClib.getResults.argtypes= POINTER(cdouble),void_p,
 NSClib.getResults.restype = None
@@ -54,7 +52,7 @@ class Evolution:
         solveNSC(): solves the system of BEs. After running this,  we have:
                     T_{E_1},T_{E_2},T_{D_1},T_{D_2},a_{E_1},a_{E_2},a_{D_1},a_{D_2}
                     in the variables self.TE1, self.TE2, self.TD1, self.TD2, 
-                    self.aE1, self.aE2, self.aD1, self.aD2
+                    self.uE1, self.uE2, self.uD1, self.uD2
         
         getPoints(): this stores the points of integration for a/a_i, T (in GeV), \\rho_Phi (in GeV^4), and log H in 
                         the numpy arrays self.u, self.T, self.rhoPhi
@@ -64,59 +62,46 @@ class Evolution:
                                             intil we run self.solveNSC().
 
     '''
-    def __init__(self, TEND,c, Ti,ratio,umax, TSTOP, plasma,
-           initial_step_size=1e-2,minimum_step_size=1e-8,maximum_step_size=1e-2, 
-           absolute_tolerance=1e-8,relative_tolerance=1e-8,
-           beta=0.9,fac_max=1.2,fac_min=0.8, maximum_No_steps=int(1e7)):
+    def __init__(self):
         '''
-        Evolution class constructor:
-        Evolution(TEND,c,Ti,ratio,umax,TSTOP, initial_step_size, minimum_step_size, maximum_step_size,
-                absolute_tolerance, relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
-        
-        With:
-        TEND: TEND [GeV] is defined from Gamma_Phi=H_R(TEND) [H_R is the Hubble rate in RD Universe]
-        c: characterises the equation of state of Phi, with c=3(1+omega) and p=omega rho_Phi
-        Ti, ratio: ratio = rho_Phi/rho_R at temperature Ti [GeV]. These are the initial conditions
-        umax: if u>umax the integration stops (rempember that u=log(a/a_i))
-        TSTOP: if the temperature drops below this, integration stops.
-        plasma: instance of Cosmo class.
-        -----------Optional arguments------------------------
-        initial_stepsize: initial step the solver takes.
-        maximum_stepsize: This limits the sepsize to an upper limit.
-        minimum_stepsize: This limits the sepsize to a lower limit.
-        absolute_tolerance: absolute tolerance of the RK solver.
-        relative_tolerance: relative tolerance of the RK solver.
-        Note:
-        Generally, both absolute and relative tolerances should be 1e-8.
-        In some cases, however, one may need more accurate result (eg if f_a is extremely high,
-        the oscillations happen violently, and the ODE destabilizes). Whatever the case, if the
-        tolerances are below 1e-8, long doubles *must* be used.
-        beta: controls how agreesive the adaptation is. Generally, it should be around but less than 1.
-        fac_max,  fac_min: the stepsize does not increase more than fac_max, and less than fac_min.
-        This ensures a better stability. Ideally, fac_max=inf and fac_min=0, but in reality one must
-        tweak them in order to avoid instabilities.
-        maximum_No_steps: maximum steps the solver can take Quits if this number is reached even if integration
-        is not finished.
+        Evolution class default constructor       
         '''
         self.voidpNSC=void_p()
-        self.plasma=plasma
-        self.voidpNSC=NSClib.INIT(TEND,c,Ti,ratio,umax,TSTOP, self.plasma.pointer(),
-                        initial_step_size,minimum_step_size, maximum_step_size, 
-                        absolute_tolerance, relative_tolerance, beta,
-                        fac_max, fac_min, maximum_No_steps)
+        self.voidpNSC=NSClib.INIT()
     
+
         self.u=[]
         self.T=[]
         self.rhoPhi=[]
-        self.TE1=Ti
-        self.TE2=Ti
-        self.TD1=Ti
-        self.TD2=Ti
-        self.aE1=1
-        self.aE2=1
-        self.aD1=1
-        self.aD2=1
+        self.dT=[]
+        self.drhoPhi=[]
+        
+        self.TE1=0
+        self.TE2=0
+        self.TD1=0
+        self.TD2=0
+        self.uE1=0
+        self.uE2=0
+        self.uD1=0
+        self.uD2=0
 
+        self.check_run=False
+
+    def reset(self):
+        self.u=[]
+        self.T=[]
+        self.rhoPhi=[]
+        self.dT=[]
+        self.drhoPhi=[]
+        
+        self.TE1=0
+        self.TE2=0
+        self.TD1=0
+        self.TD2=0
+        self.uE1=0
+        self.uE2=0
+        self.uD1=0
+        self.uD2=0
 
     def __del__(self):
         '''destructor'''
@@ -126,39 +111,65 @@ class Evolution:
         del self.u
         del self.T
         del self.rhoPhi
+        del self.dT
+        del self.drhoPhi
         
         del self.TE1
         del self.TE2
         del self.TD1
         del self.TD2
-        del self.aE1
-        del self.aE2
-        del self.aD1
-        del self.aD2
+        del self.uE1
+        del self.uE2
+        del self.uD1
+        del self.uD2
 
-    def setParams(self,TEND, c, Ti, ratio, umax, TSTOP, plasma,):
-        '''set the parameters of the Evolution class without rebuilding the interpolations'''
-        NSClib.setParams(TEND, c, Ti, ratio, umax, TSTOP, plasma, self.voidpNSC)
-        self.u=[]
-        self.T=[]
-        self.rhoPhi=[]
-        self.TE1=Ti
-        self.TE2=Ti
-        self.TD1=Ti
-        self.TD2=Ti
-        self.aE1=1
-        self.aE2=1
-        self.aD1=1
-        self.aD2=1
-
-
-    def solveNSC(self):
+    def solveNSC(self, TEND,c, Ti,ratio, TSTOP, umax, plasma,
+           initial_step_size=1e-2,minimum_step_size=1e-8,maximum_step_size=1e-2, 
+           absolute_tolerance=1e-8,relative_tolerance=1e-8,
+           beta=0.9,fac_max=1.2,fac_min=0.8, maximum_No_steps=int(1e7)):
         '''
-        solve the system (returns the time it took to finish).
+        Solve the system (returns wheather the integration completed successfully and the time it took to finish).       
         After this is finished, we get TE1, TE2, TD1,and TD2. In order to get the entire evolution
-        run getPoints.'''
+        run getPoints.
+        
+        Usage:
+        solveNSC(TEND, c, Ti, ratio, TSTOP, umax, initial_step_size, minimum_step_size, maximum_step_size,
+                absolute_tolerance, relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
+
+        With:
+        TEND: TEND [GeV] is defined from Gamma_Phi=H_R(TEND) [H_R is the Hubble rate in RD Universe]
+        c: characterises the equation of state of Phi, with c=3(1+omega) and p=omega rho_Phi
+        Ti, ratio: ratio = rho_Phi/rho_R at temperature Ti [GeV]. These are the initial conditions
+        TSTOP: if the temperature drops below this, integration stops.
+        umax: if u>umax the integration stops (rempember that u=log(a/a_i))
+        plasma: instance of Cosmo class.
+        -----------Optional arguments------------------------
+        initial_stepsize: initial step the solver takes.
+        maximum_stepsize: This limits the sepsize to an upper limit.
+        minimum_stepsize: This limits the sepsize to a lower limit.
+        absolute_tolerance: absolute tolerance of the RK solver.
+        relative_tolerance: relative tolerance of the RK solver.
+        Note:
+        Generally, both absolute and relative tolerances should be 1e-8.
+        In some cases, however, one may need more accurate result. Whatever the case, if the
+        tolerances are below 1e-8, long doubles *must* be used.
+        beta: controls how agreesive the adaptation is. Generally, it should be around but less than 1.
+        fac_max,  fac_min: the stepsize does not increase more than fac_max, and less than fac_min.
+        This ensures a better stability. Ideally, fac_max=inf and fac_min=0, but in reality one must
+        tweak them in order to avoid instabilities.
+        maximum_No_steps: maximum steps the solver can take Quits if this number is reached even if integration
+        is not finished.
+
+        '''
+        self.plasma=plasma
         time0=time()
-        NSClib.SOLVE(self.voidpNSC)
+        if self.check_run:
+            self.reset()
+
+        success=NSClib.SOLVE(TEND,c,Ti,ratio,TSTOP,umax, self.plasma.pointer(),
+                        initial_step_size,minimum_step_size, maximum_step_size, 
+                        absolute_tolerance, relative_tolerance, beta,
+                        fac_max, fac_min, maximum_No_steps,self.voidpNSC)
         ArrP = cdouble * 8 
         points=ArrP()
 
@@ -167,12 +178,14 @@ class Evolution:
         self.TE2=points[1]
         self.TD1=points[2]
         self.TD2=points[3]
-        self.aE1=points[4]
-        self.aE2=points[5]
-        self.aD1=points[6]
-        self.aD2=points[7]
+        self.uE1=points[4]
+        self.uE2=points[5]
+        self.uD1=points[6]
+        self.uD2=points[7]
+        
+        self.check_run=True
 
-        return time()-time0
+        return success, time()-time0
 
     def getPoints(self):
         '''

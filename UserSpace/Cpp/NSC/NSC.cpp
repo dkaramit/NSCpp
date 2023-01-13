@@ -102,6 +102,7 @@ int main(int argc, char **argv){
                     .fac_max=fac_max, .fac_min=fac_min, .maximum_No_steps=maximum_No_steps
                 });
 
+
     #ifdef printResults
     std::cout<<std::setprecision(16)
     <<TEND<<"\t"<<c<<"\t"<<Ti<<"\t"<<ratio<<"\t"<<BE.TE1<<"\t"<<BE.TE2<<"\t"<<BE.TD1<<"\t"<<BE.TD2<<"\n";

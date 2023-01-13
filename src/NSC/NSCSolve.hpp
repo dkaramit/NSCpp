@@ -101,20 +101,20 @@ namespace nsc{
         Evolution& operator=(Evolution &&)=delete;
 
         /*
-        solveNSC: solves teh system of equations for NSC. It returns true if the integration seems to have completed correctly.
+        solveNSC: solves teh system of equations for NSC. It returns true if the integration seems to have completed correctly (ie last step was taken at a temperature T<TSTOP).
         
         With:
         TEND: TEND [GeV] is defined from Gamma_Phi=H_R(TEND) [H_R is the Hubble rate in RD Universe]
         c: characterises the equation of state of Phi, with c=3(1+omega) and p=omega rho_Phi
         Ti, ratio: ratio = rho_Phi/rho_R at temperature Ti [GeV]. These are the initial conditions
         TSTOP: if the temperature drops below this, integration stops.
-        umax: if u>umax the integration stops (rempember that u=log(a/a_i)). If u<=umax, then integration stopped at (or below) TSTOP, which means that integration is completed.
+        umax: if u>umax the integration stops (rempember that u=log(a/a_i)).
         plasma: pointer to instance of Cosmo class.
         -----------Optional arguments------------------------
         Either a solverArgs instance or a initialized using "Designated initializers"
         For example you can use it as 
 
-        BE.solveNSC(TEND,c,Ti,ratio,umax,TSTOP,&plasma,
+        BE.solveNSC(TEND,c,Ti,ratio,TSTOP,umax,&plasma,
                 {
                     .initial_step_size=1e-2, .minimum_step_size=1e-5, .maximum_step_size=1e-2,
                     .absolute_tolerance=1e-3, .relative_tolerance=1e-3, .beta=0.95, 
@@ -239,7 +239,7 @@ namespace nsc{
         pointSize=u.size();
         check_run=true;
 
-        return _u<=umax;
+        return _T<=TSTOP;
     };
 }
 
