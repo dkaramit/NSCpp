@@ -22,7 +22,7 @@
 #endif
 
 int main(){
-    static nsc::Cosmo<LD> cosmo(cosmo_PATH,1e-5,1e4);
+    static nsc::Cosmo<LD> cosmo(cosmo_PATH,0,nsc::Cosmo<LD>::mP);
 
     #ifdef printDiff
     {
@@ -37,11 +37,9 @@ int main(){
             data_file>>heff;
             data_file>>geff;
 
-
             std::cout<<++i<<"\t"<<T<<"\t"<<std::abs((heff-cosmo.heff(T))/heff)<<"\t"<<std::abs((geff-cosmo.geff(T))/geff)<<"\n";
 
             if(data_file.eof()){data_file.close();break;}
-
         }
     }
     #endif

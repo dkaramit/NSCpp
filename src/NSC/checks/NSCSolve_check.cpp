@@ -56,14 +56,14 @@ int main(int argc, char **argv){
 
     nsc::Cosmo<LD> plasma(cosmo_PATH,0,nsc::Cosmo<LD>::mP);
 
-    nsc::Evolution<LD,SOLVER,METHOD<LD>> BE(TEND,c,Ti,ratio,umax,TSTOP,&plasma,
-    initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, relative_tolerance, beta,
-    fac_max, fac_min, maximum_No_steps);
+    nsc::Evolution<LD,SOLVER,METHOD<LD>> BE;
 
-
-    BE.solveNSC(); //solve the system. 
-
-
+    BE.solveNSC(TEND, c, Ti, ratio, TSTOP, umax, &plasma,
+                {
+                    .initial_step_size=initial_step_size, .minimum_step_size=minimum_step_size, .maximum_step_size=maximum_step_size,
+                    .absolute_tolerance=absolute_tolerance, .relative_tolerance=relative_tolerance, .beta=beta, 
+                    .fac_max=fac_max, .fac_min=fac_min, .maximum_No_steps=maximum_No_steps
+                });
 
     std::cout<<std::setprecision(5)
     <<TEND<<"\t"<<c<<"\t"<<Ti<<"\t"<<ratio<<"\t"<<BE.TE1<<"\t"<<BE.TE2<<"\t"<<BE.TD1<<"\t"<<BE.TD2<<"\n";

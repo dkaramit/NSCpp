@@ -16,8 +16,15 @@ namespace nsc{
         LD Gamma, c;
         LD Ti, rhoPhii;
     public:
+        
         RadPhi()=default;
         ~RadPhi()=default;
+        RadPhi(const RadPhi &)=default;
+        RadPhi(RadPhi &&)=default;
+        RadPhi& operator=(const RadPhi &)=default;
+        RadPhi& operator=(RadPhi &&)=default;
+
+        
         Cosmo<LD> *plasma;
         
         RadPhi(LD Gamma, LD c, LD Ti,  LD rhoPhii, Cosmo<LD> *plasma){

@@ -59,10 +59,9 @@ int main(int argc, char **argv){
 
         return 1;
     }
-    //timeit.sh adds some overhead. Alternatively, you can use
-    // nsc::Timer _time_; 
-    // The _time_ instance  prints the time the program took in stderr.  
 
+    nsc::Timer _time_; 
+    // The _time_ instance  prints the time the program took in stderr.  
 
     int ar=0;
 
@@ -91,14 +90,17 @@ int main(int argc, char **argv){
     LD fac_min=atof(argv[++ar]);
     unsigned int maximum_No_steps=atoi(argv[++ar]); //maximum steps the solver can take Quits if this number is reached even if integration is not finished.
     
+
     nsc::Cosmo<LD> plasma(cosmo_PATH,0,nsc::Cosmo<LD>::mP);
 
-    nsc::Evolution<LD,SOLVER,METHOD<LD>> BE(TEND,c,Ti,ratio,umax,TSTOP,&plasma,
-    initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, relative_tolerance, beta,
-    fac_max, fac_min, maximum_No_steps);
+    nsc::Evolution<LD,SOLVER,METHOD<LD>> BE;
 
-    BE.solveNSC();
-
+    BE.solveNSC(TEND, c, Ti, ratio, TSTOP, umax, &plasma,
+                {
+                    .initial_step_size=initial_step_size, .minimum_step_size=minimum_step_size, .maximum_step_size=maximum_step_size,
+                    .absolute_tolerance=absolute_tolerance, .relative_tolerance=relative_tolerance, .beta=beta, 
+                    .fac_max=fac_max, .fac_min=fac_min, .maximum_No_steps=maximum_No_steps
+                });
 
     #ifdef printResults
     std::cout<<std::setprecision(16)
