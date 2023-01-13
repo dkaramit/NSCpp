@@ -200,7 +200,7 @@ Notice that for $\GammaPhi=0$ and $\dh=1$, $\fR=\fPhi=1$.
 %
 These commands download the {\tt master} branch of \nsc, with the latest versions of {\tt NaBBODES} and {\tt SimpleSplines}. All versions that are not labelled as stable must be treated with caution, as they may not work as indented. 
 
-Regardless of the choice one makes, by executing \run{bash configure.sh}, \nsc will be available for usage within a \CPP program. This {\tt bash} script, writes some paths in some files, formats the data for the RDOF in an acceptable format (see~\ref{sec:input}), and creates some directories that will be useful later. In order to call \nsc inside \PY, \run{make lib} must also be ran,  which will compile shared libraries that needed for the \PY interface.
+By executing \run{bash configure.sh}, \nsc will be available for usage within a \CPP program. This {\tt bash} script, paths in some files, formats the data for the RDOF in an acceptable format, and creates some directories that will be useful later. In order to call \nsc inside \PY, \run{make lib} must also be ran,  which will compile shared libraries that needed for the \PY interface.
 
 \nsc already comes with several examples in \CPP and \PY, which can be found in the directory {\tt \nsc/UserSpace}. In order to compile the \CPP examples, one just has to run \run{make examples} in the root directory of \nsc or {\tt make} inside the directory of each \CPP program.
 
@@ -218,25 +218,44 @@ Out-of-the-box, and after \run{bash configure.sh} is ran successfully, all \nsc 
 	#include "NSCpp.hpp"
 \end{cpp}
 %
-Notice that if this file is not in the root directory of \nsc, we need to compile it using the flag {\tt -Ipath-to-root}, "path-to-root" the relative (or absolute) path to the root directory of \nsc; \eg if the {\tt .cpp} is in the {\tt MiMeS/UserSpace/Cpp/NSC} directory, this flag should be {\tt -I../../../}. 
+Notice that if this file is not in the root directory of \nsc, we need to compile it using the flag {\tt -Ipath-to-root}, "path-to-root" the relative (or absolute) path to the root directory of \nsc; \eg if the {\tt .cpp} is in the {\tt NSCpp/UserSpace/Cpp/NSC} directory, this flag should be {\tt -I../../../}. 
 
 
 \paragraph{Setting up the solver}
 %
-In order to solve \eqs{eq:dlogfRdu,eq:dlogfPhidu}, we first need to choose values for all parameter relevant to the system and, optionally, the ODE solver. This can be done by introducing
+The class responsible for dealing with the system~\refs{eq:dlogfRdu,eq:dlogfPhidu}, is the \cppin{nsc::Evolution<LD,SOLVER,METHOD>}. In order to begin, we declare an instance of this class as
 %
 \begin{cpp}
-    nsc::Evolution<LD,SOLVER,METHOD<LD>> BE(TEND, c, Ti, ratio, umax, TSTOP,
-														initial_step_size, minimum_step_size, 
-														maximum_step_size, absolute_tolerance, 
-														relative_tolerance, beta, fac_max, 
-														fac_min, maximum_No_steps
-														);
+    nsc::Evolution<LD,SOLVER,METHOD<LD>> BE;
 \end{cpp}
 %
 Here, \cppin{LD} should be the numeric type to be used; it is recommended to use \cppin{double} or \cppin{long double}. Moreover \cppin{Solver} and \cppin{Method} depend on the type of Runge-Kutta (RK) the user chooses. The available choices are shown in Table~\ref{tab:template-arguments}. 
 
-The various parameters are as follows:
+The evolution of the Universe depends on the evolution of the plasma, which is encoded in the class \cppin{nsc::Cosmo<LD>}. An instance of this class is declared as 
+%
+\begin{cpp}
+	nsc::Cosmo<LD> plasma('path_to_data', minT, maxT);
+\end{cpp}
+%
+Here, \cppin{'path_to_data'} is the (relative of absolute) path to a file with tabulated data  of the relativsit degrees of freedom of the plasma . It is assumed that the file has three columns with: $T$ in $\GeV$, $\heff$, and $\geff$. The temperature given in this file have to increase monotonically, otherwise the the program exits with error core $1$.~\footnote{\nsc already includes the standard model RDOF found in~\cite{Saikawa:2020swg} in the directory {\tt NSCpp/src/data}.} If a path is provided in the {\tt NSCpp/Paths.mk} file before \run{bash configure.sh} is ran, there will be a global (constant) variable called \cppin{cosmo_PATH} which can be used after  {\tt NSCpp.hpp} is included.
+%
+The arguments \pyin{minT} and \pyin{maxT} dictate the temperatures between which $\geff$ and $\heff$ will be interpolated. For temperatures beyond these, both  $\geff$ and $\heff$  are assumed to be constant. A detailed description of this class can be found in the Appendix of ref.~\cite{Karamitros:2021nxi}.  
+
+
+The system can be solved by including:
+%
+\begin{cpp}
+	BE.solveNSC(TEND, c, Ti, ratio, TSTOP, umax, &plasma,
+				 	 {
+					 .initial_step_size=initial_step_size, .minimum_step_size=minimum_step_size,
+					 .maximum_step_size=maximum_step_size, .absolute_tolerance=absolute_tolerance, 
+					 .relative_tolerance=relative_tolerance, .beta=beta, 
+					 .fac_max=fac_max, .fac_min=fac_min, .maximum_No_steps=maximum_No_steps
+					 }
+					);
+\end{cpp}
+%
+The various parameters are:
 %
 \begin{enumerate}
 	\item {\tt TEND}: the values of the $\Tend$ (in $\GeV$) as introduced in \eqs{eq:dsdt}. 
@@ -247,15 +266,17 @@ The various parameters are as follows:
 	
 	\item {\tt ratio}: the value of $\rhoR/\rhoPhi$ at {\tt Ti}. 
 	
-	\item {\tt umax }: If $u>${\tt umax} the integration stops (remember that $u=\log(a/a_i)$). It can be used to stop internation if relevant bounds (\eg~\cite{Planck:2018jri}) are violated. It is also a failsafe parameter that ensures that integration stops even in cases where the Universe expands extremely fast.
-	
 	\item {\tt TSTOP}: If the temperature drops below this, integration stops. 
+	
+	\item {\tt umax }: If $u>${\tt umax} the integration stops. It can be used to stop internation if relevant bounds (\eg~\cite{Planck:2018jri}) are violated. It is also a failsafe parameter that ensures that integration stops even in cases where the Universe expands extremely fast.
+	
+	\item {\tt plasma }: A pointer to an instance of the \cppin{Cosmo} class.
 	
 	\item {\tt initial\_stepsize} (optional): Size of the initial step the solver takes. 
 	
-	\item {\tt maximum\_stepsize} (optional): The step-size will be limited to be smaller than this number. 
+	\item {\tt minimum\_stepsize} (optional): The step-size will be limited to be above number. 
 	
-	\item {\tt minimum\_stepsize} (optional): The step-size will be limited to be larger than this number. 
+	\item {\tt maximum\_stepsize} (optional): The step-size will be limited to be below number. 
 	
 	\item {\tt absolute\_tolerance} (optional): Absolute tolerance of the RK solver.
 	
@@ -268,17 +289,14 @@ The various parameters are as follows:
 	\item {\tt maximum\_No\_steps} (optional): Maximum steps the solver can take. Quits if this number is reached even if the temperature is still larger than {\tt TEND}. 
 \end{enumerate}
 %
-A detailed description of the optional parameters can be found in the Appendices of ref.~\cite{Karamitros:2021nxi}.
+A detailed description of the  effect of the various optional parameters on the operation of the ODE solver can be found in the Appendices of ref.~\cite{Karamitros:2021nxi}. Notice that the optional parameter are passed using aggregation.~\footnote{This means that all arguments inside {\tt \{...\}} define a temporary an instance of a \cppin{struct} that simply holds these arguments.} 
 
-Once the parameters are chosen, the system can be solved by including:
+
+This function returns \cppin{true} (\cppin{false}) if the temperature reached \cppin{TSTOP} for $u<=$\cppin{umax}, which can be used to test whether the integration completed successfully.
 %
-\begin{cpp}
-	BE.solveNSC();
-\end{cpp}
+After this line, the evolution of $T$ and $\rhoPhi$ is stored in \cppin{BE.T} and \cppin{BE.rhoPhi}, with each element corresponding to the value of $u$ the solver takes (accessed as \cppin{BE.u}). The local errors of $T$ and $\rhoPhi$ correspond to the variables \cppin{BE.dT} and \cppin{BE.drhoPhi}. 
 %
-After this line, the evolution of $T$ and $\rhoPhi$ is stored in \cppin{BE.T} and \cppin{BE.rhoPhi}, with each element corresponding to the value of $u$ the solver takes (stored as \cppin{BE.u}). The local errors of $T$ and $\rhoPhi$ correspond to the variables \cppin{BE.dT} and \cppin{BE.drhoPhi}. 
-%
-One can also obtain the points {\tt BE.TE1} ($\TEI$), {\tt BE.TE2} ($\TEII$), {\tt BE.TD1} ($\TDI$), {\tt BE.TD2} ($\TDII$).
+One can also obtain the points {\tt BE.TE1} ($\TEI$), {\tt BE.TE2} ($\TEII$), {\tt BE.TD1} ($\TDI$), {\tt BE.TD2} ($\TDII$). The corresponding values of $u$ are {\tt BE.uE1}, {\tt BE.uE2}, {\tt BE.uD1}, {\tt BE.uD2}.
 
 \subsubsection{Using \nsc in \PY}\label{sec:begin_py}
 %
@@ -299,21 +317,29 @@ The string {\tt 'path\_to\_src'} must be the relative path to the {\tt NSCpp/src
 We can define an {\tt Evolution} instance as follows 
 %
 \begin{py}
-	BE=Evolution(TEND, c, Ti, ratio, umax, TSTOP,
-		     initial_step_size, minimum_step_size, maximum_step_size, absolute_tolerance, 
-		     relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
+	BE=Evolution()
 \end{py}
-%
-The input parameters are identical to the \CPP case, and outlined in Table~\ref{tab:NSC-input}. A brief description of this class can also be found by running \pyin{?NSC} after loading the module. 
 
+An instance of the \pyin{Cosmo} class is declared as 
+%
+\begin{cpp}
+	plasma=Cosmo('path_to_data', minT, maxT)
+\end{cpp}
+%
+The arguments are the same as in \CPP.
 
-Using the defined variable ({\tt BE}), we can simply run  
+The system, them, is solved by running:
 %
-\begin{py}
-	BE.solveNSC()
-\end{py}
+\begin{cpp}
+	BE.solveNSC(TEND, c, Ti, ratio, TSTOP, umax, plasma,
+						initial_step_size, minimum_step_size, maximum_step_size, absolute_tolerance, 
+						relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
+					  )
+\end{cpp}
 %
-in order to solve the system~\refs{eq:dlogfRdu,eq:dlogfPhidu}. In contrast to the \CPP implementation, this only gives us access to the points where the behaviour changes; the corresponding variables are  {\tt BE.TE1}, {\tt BE.TE2}, {\tt BE.TD1}, {\tt BE.TD2}. In order to get the evolution of $T$ and $\rhoPhi$, we need to run 
+The arguments are identical to the \CPP case, outlined in Table~\ref{tab:NSC-input}, but the instance of \pyin{Cosmo} (\pyin{plasma}) is passed by value. A brief description of this function can also be found by running \pyin{?BE.solveNSC} after loading the module. This function returns \cppin{true} (\cppin{false}) if the temperature reached \cppin{TSTOP} for $u<=$\cppin{umax}, and the time it took to execute it in seconds.
+%
+In contrast to the \CPP implementation, this only gives us access to the points where the behaviour changes; the corresponding variables are {\tt BE.TE1}, {\tt BE.TE2}, {\tt BE.TD1}, {\tt BE.TD2}, {\tt BE.uE1}, {\tt BE.uE2}, {\tt BE.uD1}, and {\tt BE.uD2}. In order to get the evolution of $T$ and $\rhoPhi$, we need to run 
 %
 \begin{py}
 	BE.getPoints()
@@ -340,7 +366,6 @@ after {\tt BE} served its purpose.
 
 \subsection{Compile-time input}\label{sec:compile_time_input} 
 %
-\nsc requires files that provide data for the relativistic degrees of freedom (RDOF) of the plasma. \nsc already includes the standard model RDOF found in~\cite{Saikawa:2020swg,Hindmarsh:2005ix}, but the user can use their preferred tabulated ones, by providing a file and writing its path to the {\tt Paths.mk} file. The format of the file has to be: $T$ (in $\GeV$), $\heff$, and $\geff$.
 
 The path to this file should be given at compile time. That is, once {\tt Paths.mk} changes, we must run \run{bash configure.sh} and then \run{\tt make} in order to make sure that they will be used. The user can change the content of the data files (without changing their paths), in order to use them without compiling \nsc again. However, the user has to make sure that all the files are sorted so that the values of first column increase (with no duplicates or empty lines). In order to ensure this, it is advised to run \run{bash FormatFile.sh path-to-file}, in order to format the file (in \run{path-to-file}) so that it satisfies the requirements of \nsc.
 
@@ -383,7 +408,7 @@ The author acknowledges support by the Lancaster–Manchester–Sheffield Consor
 \setcounter{equation}{0}
 
 
-\section{\nsc~  \PY interface}\label{app:modules}
+\section{\PY interface}\label{app:modules}
 \setcounter{equation}{0}
 
 
