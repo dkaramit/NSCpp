@@ -11,7 +11,14 @@
 \usepackage{graphicx}
 \usepackage{caption}
 \usepackage{float}
-\usepackage{subcaption}
+
+\usepackage{cite}
+
+
+\usepackage[labelformat=simple]{subcaption}
+\renewcommand\thesubfigure{(\alph{subfigure})}
+\captionsetup[figure]{format=plain, font={sl}}
+
 \usepackage{multirow}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{multicol}
@@ -83,6 +90,11 @@
 \section{Introduction}\label{sec:intro}
 \setcounter{equation}{0}
 
+
+
+Several non-standard cosmological scenarios have been studied in the literature (\eg refs.~\cite{Vilenkin:1982wt,Coughlan:1983ci,Ratra:1987rm,McDonald:1989jd,Giudice:2000ex,Gardner:2004in,DEramo:2017gpl,Redmond:2017tja,DEramo:2017ecx,Dalianis:2018afb,Hardy:2018bph,Bernal:2018kcw,Arias:2019uol,Allahverdi:2019jsc,Bernal:2019mhf,Cosme:2020mck,Bernal:2020bfj,Arias:2020qty,Arias:2021rer,Barman:2021ifu,Dienes:2021woi,Banerjee:2022fiw}). Reviews on the implications of such components can be found in refs.~\cite{Tsujikawa:2013fta,Allahverdi:2020bys}.
+
+
 There is another code, built specifically for the evolution of cosmic relics in matted dominated Universe, {\tt EvoEMD}~\cite{Dutra:2021phm}. \nsc is different because the evolution of the temperature of the plasma is computed by manipulating the equation that describes the evolution of the entropy density, while {\tt EvoEMD} solves
 %
 \begin{equation}
@@ -121,7 +133,7 @@ Since the contribution to the energy budget of the Universe of such fluid is sev
 %
 \begin{align}
 	\dfrac{d\sR(T)}{dt} &= -3 \, H(T)  \, \sR(T) + \dfrac{\GammaPhi}{T} \, \rhoPhi(T) \label{eq:dsdt} \\ 
-	\dfrac{d\rhoPhi(T)}{dt} &= - c \, H(T) \, \rhoPhi(T) - \GammaPhi \, \rhoPhi(T) \label{eq:drhoPhidt } \;,
+	\dfrac{d\rhoPhi(T)}{dt} &= - c \, H(T) \, \rhoPhi(T) - \GammaPhi \, \rhoPhi(T) \label{eq:drhoPhidt} \;,
 \end{align}
 %
 with $H$ the Hubble parameter of the Universe, given by
@@ -180,6 +192,36 @@ Notice that for $\GammaPhi=0$ and $\dh=1$, $\fR=\fPhi=1$.
 
 \nsc solves \eqs{eq:dlogfRdu,eq:dlogfPhidu}, using as user input for $\Tend$, $c$, $\Ti$, and $r=\rhoRi/\rhoPhii$. Then, it automatically transforms them to the temperature of the plasma and the fluid energy density. From these, the user can obtain all other relevant cosmological quantities such as the Hubble parameter or the entropy density of the plasma.
 
+
+
+The solution of the system~\refs{eq:dsdt,eq:drhoPhidt} and its implications is studied in the literature (\eg refs.~\cite{Vilenkin:1982wt,Coughlan:1983ci,Ratra:1987rm,McDonald:1989jd,Giudice:2000ex,Gardner:2004in,DEramo:2017gpl,Redmond:2017tja,DEramo:2017ecx,Dalianis:2018afb,Hardy:2018bph,Bernal:2018kcw,Arias:2019uol,Allahverdi:2019jsc,Bernal:2019mhf,Cosme:2020mck,Bernal:2020bfj,Arias:2020qty,Arias:2021rer,Barman:2021ifu,Dienes:2021woi,Banerjee:2022fiw}). The radiation-fluid system changes qualitative behaviour as the Universe expands. \nsc closely follows the notation of ref.~\cite{Arias:2020qty}, which identifies (at most) four points where this behaviour changes; $\EI$, $\DI$, $\EII$, and $\DII$. The point $\EI$ ($\EII$) is defined when $\rhoPhi=\rhoR$ for the first (second) time. The point $\DI$ ($\DII$) is defined as the point at which $\lrsb{ (\Hend/H) \, (\rhoPhi/\rhoR) }$ exceeds (drops below) $40\%$; \ie before $\DI$ and after $\DII$ the energy deposition form the fluid to the plasma has a rate less than $10\%$ of the free dilution rate of $\rhoR$.
+
+There are two qualitatively different cases shown in \Figs{fig:evolution_examples}. 
+%
+In \Figs{fig:EMD}, we show the evolution of the comoving energy densities of radiation and $\Phi$ as functions of $u$ for $\Tend=10^{-2}~\GeV$, $c=3$, $\Ti=10^7~\GeV$, and $r=10^{-2}$. In \Figs{fig:EKD}, we show the evolution of these quantities for $\Tend=10^{4}~\GeV$, $c=6$, $\Ti=10^7~\GeV$, and $r=10^{8}$. 
+%
+These two figures correspond to the two quantitatively typical behaviours we expect for $c<4$ and $c>4$. In the former, $\Phi$ starts as a subdominant component with increasing energy contribution, until it decays away. In the latter,  $\Phi$ dominates initially, with a monotonically decreasing contribution to the energy budget of the Universe. In this case, the Universe will become radiation dominated regardless of even if $\GammaPhi$, but if $\rhoPhi$ and $\GammaPhi$ are large enough the energy of the plasma will increse.  Notice that for $c>4$, There is only one point of equality between $\rhoR$ and $\rhoPhi$, which we call $\EI$ as this is the naming conversion in \nsc.
+%
+\begin{center}
+	\begin{figure}[t!]
+		\begin{subfigure}{0.5\textwidth}
+			\includegraphics[width=1\textwidth]{figs/EMD.pdf}
+			\caption{}
+			\label{fig:EMD}
+		\end{subfigure}
+		\begin{subfigure}{0.5\textwidth}
+			\includegraphics[width=1\textwidth]{figs/EKD.pdf}
+			\caption{}
+			\label{fig:EKD}
+		\end{subfigure}
+		\caption{}
+		\label{fig:evolution_examples}
+	\end{figure}
+\end{center}
+
+
+
+
 \section{\nsc usage}\label{sec:first_steps}
 \setcounter{equation}{0}
 %
@@ -210,7 +252,7 @@ There is also an option to compile some test programs using {\tt make check}, wh
 %
 \nsc is designed to be model agnostic. It can only be used for constant $c$, in cases where there are no plasma energy leaks into the fluid. In cases that these assumptions do not hold, knowledge of the exact nature of $\Phi$ would be needed.  It is also assumed that the plasma does not fall out of thermal equilibrium between the temperatures we integrate (defined later as {\tt Ti} and {\tt TSTOP}), and its energy and entropy densities are always given by \eqs{eq:s_def,eq:rho_def}.
 
-\subsection{First steps}\label{sec:First_examples} 
+\subsection{Using \nsc}\label{sec:Cpp_usage} 
 %
 Out-of-the-box, and after \run{bash configure.sh} is ran successfully, all \nsc functionality can be used in a \CPP program by including in the source file the following line:
 %
@@ -220,10 +262,8 @@ Out-of-the-box, and after \run{bash configure.sh} is ran successfully, all \nsc 
 %
 Notice that if this file is not in the root directory of \nsc, we need to compile it using the flag {\tt -Ipath-to-root}, "path-to-root" the relative (or absolute) path to the root directory of \nsc; \eg if the {\tt .cpp} is in the {\tt NSCpp/UserSpace/Cpp/NSC} directory, this flag should be {\tt -I../../../}. 
 
-
-\paragraph{Setting up the solver}
-%
-The class responsible for dealing with the system~\refs{eq:dlogfRdu,eq:dlogfPhidu}, is the \cppin{nsc::Evolution<LD,SOLVER,METHOD>}. In order to begin, we declare an instance of this class as
+ 
+The class that deals with the system~\refs{eq:dlogfRdu,eq:dlogfPhidu}, is the \cppin{nsc::Evolution<LD,SOLVER,METHOD>}. In order to begin, we declare an instance of this class as
 %
 \begin{cpp}
     nsc::Evolution<LD,SOLVER,METHOD<LD>> BE;
@@ -264,7 +304,7 @@ The various parameters are:
 	
 	\item {\tt Ti}: the initial temperature (in $\GeV$) of integration. Has to be above {\tt TEND}.
 	
-	\item {\tt ratio}: the value of $\rhoR/\rhoPhi$ at {\tt Ti}. 
+	\item {\tt ratio}: the value of $\rhoPhi/\rhoR$ at {\tt Ti}. 
 	
 	\item {\tt TSTOP}: If the temperature drops below this, integration stops. 
 	
@@ -298,7 +338,7 @@ After this line, the evolution of $T$ and $\rhoPhi$ is stored in \cppin{BE.T} an
 %
 One can also obtain the points {\tt BE.TE1} ($\TEI$), {\tt BE.TE2} ($\TEII$), {\tt BE.TD1} ($\TDI$), {\tt BE.TD2} ($\TDII$). The corresponding values of $u$ are {\tt BE.uE1}, {\tt BE.uE2}, {\tt BE.uD1}, {\tt BE.uD2}.
 
-\subsubsection{Using \nsc in \PY}\label{sec:begin_py}
+\subsection{Using \nsc in \PY}\label{sec:py_usage}
 %
 The \PY interface modules are in the directory {\tt NSCpp/src/interfacePy}. The usage of the classes is made as similar as possible to the \CPP case. However, one should keep in mind that the various template arguments discussed in the \CPP case have to be chosen at compile-time. That is, for the \PY interface, one needs to choose the numeric type, and RK method to be used when the shared libraries are compiled. This is accomplished by assigning the relevant variables in {\nsc/Definitions.mk} before running \run{make lib}. The various options are the same as in section 4 of ref.~\cite{Karamitros:2021nxi}, and summarised in Table~\ref{tab:compile_time-options}.
 
@@ -312,8 +352,7 @@ The two relevant classes are defined in the module {\tt interfacePy.NSC}, and ca
 %
 The string {\tt 'path\_to\_src'} must be the relative path to the {\tt NSCpp/src} directory. For example, if the script is located in {\tt NSCpp/UserSpace/Python}, {\tt 'path\_to\_src'} should be {\tt '../../src'}.
 
-\paragraph{The solver}
-%
+
 We can define an {\tt Evolution} instance as follows 
 %
 \begin{py}
@@ -353,30 +392,15 @@ This will fill the \pyin{numpy}~\cite{harris2020array} arrays with the integrati
 %
 gives access to the local errors \pyin{BE.dT} and \pyin{BE.drhoPhi}.
 
-It is essential to manually delete \pyin{BE} after it is no longer needed. The reason is that there is an underlying {\tt C}-pointer that manages the \PY interface. If the instance is reassigned without deletion, this pointer can no longer be accessed. This is a memory-leak, which can only be fixed by exiting the script. 
+It is essential to manually delete both \pyin{BE} and \pyin{plasma} after they are no longer needed. The reason is that there are underlying {\tt C}-pointers that manage the \PY interface for each instance of the classes. If the instances are reassigned without deletion, this pointers can no longer be accessed. This is a memory-leak, which can only be fixed by exiting the script. 
 %
 That is, one must simply run 
 %
 \begin{py}
-	del BE
+	del BE, plasma
 \end{py}  
 %
 after {\tt BE} served its purpose.
-
-
-\subsection{Compile-time input}\label{sec:compile_time_input} 
-%
-
-The path to this file should be given at compile time. That is, once {\tt Paths.mk} changes, we must run \run{bash configure.sh} and then \run{\tt make} in order to make sure that they will be used. The user can change the content of the data files (without changing their paths), in order to use them without compiling \nsc again. However, the user has to make sure that all the files are sorted so that the values of first column increase (with no duplicates or empty lines). In order to ensure this, it is advised to run \run{bash FormatFile.sh path-to-file}, in order to format the file (in \run{path-to-file}) so that it satisfies the requirements of \nsc.
-
-This path is stored as ({\tt constexpr}) string in {\tt \nsc/src/misc\_dir/path.hpp} at compile-time, and can be accessed once this header file is included. The corresponding variable is {\tt cosmo\_PATH}.
-
-
-
-
-
-
-
 
 \section{Acknowledgements}
 %
@@ -388,7 +412,7 @@ The author acknowledges support by the Lancaster–Manchester–Sheffield Consor
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % APPENDICES
-%\pagebreak
+\pagebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \setcounter{section}{0}
 \section*{Appendix}
@@ -397,36 +421,144 @@ The author acknowledges support by the Lancaster–Manchester–Sheffield Consor
 \renewcommand{\theequation}{\Alph{section}.\arabic{equation}}
 \setcounter{equation}{0}  % reset counter
 %%%%%%%%%%%%%%%%%%%%%%%
+In the appendix, we show a detailed description of the \cppin{Evolution} class in both \CPP and \PY. A detailed description of the \cppin{Cosmo} class as well as a basic introduction of the RK methods used can be found in ref.~\cite{Karamitros:2021nxi}.
 
 
-
-
-
-
-
-\section{\CPP classes}\label{app:classes}
+\section{\cppin{Evolution} class in \CPP}\label{app:cpp}
 \setcounter{equation}{0}
+The \cppin{Evolution} class uses the default constructors, so instances are declared trivially as shown in Section~\ref{sec:first_steps}. It has only one public member function, \cppin{solveNSC}, with signature
+%
+\begin{cpp}
+	template<class LD, const int Solver, class Method>
+	bool Evolution<LD,Solver,Method>::solveNSC(const LD &TEND, const LD &c, const LD &Ti, 
+							 const LD &ratio, const LD &TSTOP, const LD &umax, Cosmo<LD> *plasma, 
+							 const solverArgs<LD> &args={})
+\end{cpp}
+%
+All the template and required input arguments are summarised in Table~\ref{tab:solveNSC-input}. This function returns \cppin{false} if the integration stops above \cppin{TSTOP} and \cppin{true} otherwise, as a way of providing a simple consistency check. 
+%
+The optional argument, \cppin{args}, is an instance of a \cppin{struct} defined as 
+%  
+\begin{cpp}
+ 	namespace nsc{
+	 	template<class LD>
+		struct solverArgs{
+			LD initial_step_size=1e-2, minimum_step_size=1e-8, maximum_step_size=1e-2; 
+			LD absolute_tolerance=1e-8, relative_tolerance=1e-8;
+			LD beta=0.9, fac_max=1.2, fac_min=0.8;
+			unsigned int maximum_No_steps=10000000;
+		};
+	}
+\end{cpp}
+%
+This helps us pass to \cppin{solveNSC} only the arguments we wish to change. For example, we can choose {\tt absolute\_tolerance=1e-11} and {\tt beta=0.8} by adding {\tt \{.absolute\_tolerance=1e-11, .beta=0.8\}} in the place of {\tt args}. This is called aggregation in \CPP, and basically allows us to use named arguments. The caveat is that we need to put the arguments in the order thy appear in the definition of \cppin{solverArgs}.
 
 
-\section{\PY interface}\label{app:modules}
+The class \cppin{Evolution} has several member variables that store the results of the solution of the system~\refs{eq:dlogfRdu,eq:dlogfPhidu}:
+%
+\begin{enumerate}
+	\item \cppin{std::vector<LD> u}: integration steps of $u$.
+	\item \cppin{std::vector<LD> T}: values of $T$ (in $\GeV$) that corresponds to every step in \cppin{u}.
+	\item \cppin{std::vector<LD> rhoPhi}: values of $\rhoPhi$ (in $\GeV^4$) that corresponds to every step in \cppin{u}.
+	\item \cppin{std::vector<LD> dT}: local integration error of $T$ (in $\GeV$) at every \cppin{u}.
+	\item \cppin{std::vector<LD> drhoPhi}: local integration error of $\rhoPhi$ (in $\GeV^4$) at every \cppin{u}.
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\item \cppin{LD TE1}: value of $\TEI$ (in $\GeV$). It is initialised at 0. If $\rhoPhi$ never reaches $\rhoR$, This variable will be equal to $\Ti$.
+	\item \cppin{LD TE2}: value of $\TEII$ (in $\GeV$). It is initialised at 0. If $\rhoPhi$ never reaches $\rhoR$ or $c>4$, this variable will be equal to $\Ti$. 
+	\item \cppin{LD TD1}: value of $\TDI$ (in $\GeV$). It is initialised at 0. If the energy injection rate never becomes more than $10\%$ of the free dilution rate of $\rhoR$, this variable obtains the value of $\Ti$.
+	\item \cppin{LD TD2}: value of $\TDII$ (in $\GeV$).It is initialised at 0. If the energy injection rate never becomes more than $10\%$ of the free dilution rate of $\rhoR$, this variable obtains the value of $\Ti$.
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	\item \cppin{LD uE1}: value of $\uEI$. It is initialised at 0. If $\rhoPhi$ never reaches $\rhoR$, This variable will be equal to $0$.
+	\item \cppin{LD uE2}: value of $\uEII$. It is initialised at 0. If $\rhoPhi$ never reaches $\rhoR$  or $c>4$, this variable will be equal to $0$.
+	\item \cppin{LD uD1}: value of $\uDI$. It is initialised at 0. If the energy injection rate never becomes more than $10\%$ of the free dilution rate of $\rhoR$, this variable obtains the value of $0$.
+	\item \cppin{LD uD2}: value of $\uDII$.It is initialised at 0. If the energy injection rate never becomes more than $10\%$ of the free dilution rate of $\rhoR$, this variable obtains the value of $0$.	
+\end{enumerate} 
+
+
+
+\section{\cppin{Evolution} class in \PY }\label{app:py}
 \setcounter{equation}{0}
+The \pyin{Evolution} class is very similar to the \CPP case. It uses the default constructor, with instances declared as shown in Section~\ref{sec:first_steps}. The pyin{solveNSC}, has signature
+%
+\begin{cpp}
+	solveNSC(TEND, c, Ti, ratio, TSTOP, umax, plasma, 
+		initial_step_size=1e-2, minimum_step_size=1e-8, maximum_step_size=1e-2, 
+		absolute_tolerance=1e-8, relative_tolerance=1e-8, beta=0.9, fac_max=1.2, fac_min=0.8,
+		maximum_No_steps=10000000)
+\end{cpp}
+%
+All the input arguments are summarised in Table~\ref{tab:solveNSC-input}. The difference between this and the \CPP version is that the {\tt plasma} argument is an instance of the \PY \cppin{Cosmo} class. 
+%
+This function returns a tuple. The first element of the returned tuple is \pyin{False} if the integration stops above \cppin{TSTOP} and \pyin{True} otherwise, while the second is the time it took to solve the system (in seconds).
+
+The member variables are the same as in \CPP, with {\tt numpy} arrays used in place of the \CPP vectors. However, solving the system using \pyin{solveNSC} does not fill the arrays with the integration steps. The member function
+%
+\begin{py}
+	getPoints()
+\end{py}
+%
+Fills the arrays {\tt u}, {\tt T}, and {\tt rhoPhi} with the integration steps.
+
+
+In order to fill the arrays with the local errors we make use of the member function
+%
+\begin{py}
+	getErrors()
+\end{py}
 
 
 \section{Quick guide to the user input}\label{app:usr_input}
 \setcounter{equation}{0}
-We present tables..., with the various available run-time inputs, required files, and template arguments. In table~\ref{tab:compile_time-options} we show the available compile-time options, that can be used when compiling using the various {\tt makefile} files. 
+In this section, we  present tables with all the inputs the various functions need.
 %
 \begin{table}[h!]
 	\centering
 	\begin{tabular}{l l}
+		
 		\hline\\[-0.4cm]
-		\multicolumn{2}{c}{\bf User run-time input for solving the BEs.}  \\
+		\multicolumn{2}{c}{\bf User input for interpolating RDOF.}  \\
+		\hline\\[-0.4cm]
+		
+		{\tt path} & \multirow{1}{12cm}{Path to a file with $T$ ($\GeV$), $\heff$, and $\geff$. The temperatures have to monotonically increase.}\\\\
+		\hline\\[-0.4cm]
+		
+		{\tt minT} & \multirow{1}{12cm}{The RDOF will be interpolated starting from the closest temperature that satisfies $T_{\rm min}\leq${\tt minT}. Below this, both $\heff$ and $\geff$ will be assumed to be their value at $T_{\rm min}$.}\\\\\\
+		\hline\\[-0.4cm]
+		
+		{\tt maxT} & \multirow{1}{12cm}{The RDOF will be interpolated up to the closest temperature that satisfies $T_{\rm max}\geq${\tt maxT}. Above this, both $\heff$ and $\geff$ will be assumed to be their value at $T_{\rm max}$.}\\\\\\
+		\hline\\[-0.4cm]
+	\end{tabular}
+	\caption{Table of the arguments of the \cppin{nsc::Cosmo<LD>} class constructor.}
+	\label{tab:Cosmo-input}
+\end{table}
+%
+\begin{table}[p]
+	\centering
+	\begin{tabular}{l l}
+		\hline\\[-0.4cm]
+		\multicolumn{2}{c}{\bf User input for solving \eqs{eq:dlogfRdu,eq:dlogfPhidu}.}  \\
+		\hline\\[-0.4cm]
+		{\tt TEND} & The value of $\Tend$ in $\GeV$.\\
+		\hline\\[-0.4cm]
+		
+		{\tt c} & Value of $c$ as defined through~\eqs{eq:EOS}.\\
+		\hline\\[-0.4cm]
+		
+		{\tt Ti} & The value of $\Ti$ in $\GeV$.\\
 		\hline\\[-0.4cm]
 
-
-		{\tt TSTOP} & Once $T<${\tt TSTOP}, integration stops. Typical value: $10^{-4}~\GeV$.\\
+		{\tt ratio} & The value of $\rhoPhi/\rhoR$ at $\Ti$.\\
 		\hline\\[-0.4cm]
 
+		{\tt plasma} & A pointer to an instance of the {\tt Cosmo} class.\\
+		\hline\\[-0.4cm]
+
+		{\tt TSTOP} & Once $T<${\tt TSTOP}, integration stops.\\
+		\hline\\[-0.4cm]
+		
+		{\tt umax } & If $u>${\tt umax} the integration stops.\\
+		\hline\\[-0.4cm]
+		
 		{\tt initial\_stepsize} &  Initial step-size of the solver. Default value: $10^{-2}$.\\ 
 		\hline\\[-0.4cm]
 
@@ -451,40 +583,25 @@ We present tables..., with the various available run-time inputs, required files
 		{\tt maximum\_No\_steps} & \multirow{1}{12cm}{If integration needs more than {\tt maximum\_No\_steps} integration stops. Default value: $10^7$.}\\\\
 		\hline\\[-0.4cm]
 	\end{tabular}
-	\caption{Table of the constructor arguments of the \cppin{nsc::NSC<LD,Solver,Method>} class.}
-	\label{tab:NSC-input}
-\end{table}
-
-		
-\begin{table}[h!]
-	\centering
-	\begin{tabular}{l l}
-		\multicolumn{2}{c}{\bf Required data files, with corresponding variables in {\tt \nsc/Paths.mk}.}  \\
-		\hline\\[-0.4cm]
-	
-		{\tt cosmoDat}& \multirow{1}{12cm}{Relative path to data file with $T$ (in $\GeV$), $\heff$, $\geff$. If the path changes one must run
-		{\tt bash configure.sh} and {\tt make}.}\\\\		
-		\hline\\[-0.4cm]
-
-	\end{tabular}
-	\caption{Paths to the required data files. Variables defined in the {\tt \nsc/Paths.mk} files, and used when running {\tt bash configure.sh} in the root directory of \nsc.}
-\label{tab:input}
+	\caption{Table of the arguments of the \cppin{nsc::Evolution<LD,Solver,Method>::solveNSC} method.}
+	\label{tab:solveNSC-input}
 \end{table}
 
 
-\begin{table}[h!]
+
+\begin{table}[p]
 	\centering
 	\begin{tabular}{l l}
 		\multicolumn{2}{c}{\bf Template arguments.}  \\
 		\hline\\[-0.4cm]
 		
-		{\tt LD}& \multirow{1}{12cm}{This template argument appears in all classes of \nsc. The preferred choice is \cppin{long double}. However, in many cases \cppin{double} can be used. The user should be careful, as the later can lead to an inaccurate result; especially for low tolerances, and small values of $\theta$.}\\\\\\\\		
+		{\tt LD}& \multirow{1}{12cm}{This template argument is the numeric type that \nsc will use. The preferred choice is \cppin{long double}. However, in many cases \cppin{double} can be used. Notice that the instance of the \cppin{Cosmo} class must use identical numeric type to the one that used by the instance of \cppin{Evolution}, in order to be able to run the \cppin{solveNSC} method.}\\\\\\\\\\		
 		\hline\\[-0.4cm]
 		
-		{\tt Solver}& \multirow{1}{12cm}{This is the second template argument of the \cppin{nsc::NSC<LD,Solver,Method>} class. The available choices are {\tt Solver}=$1$ for Rosenbrock method, and {\tt Solver}=$2$ for explicit RK method.}\\\\\\\\
+		{\tt Solver}& \multirow{1}{12cm}{This is the second template argument of the \cppin{nsc::Evolution<LD,Solver,Method>} class. The available choices are {\tt Solver}=$1$ for Rosenbrock method, and {\tt Solver}=$2$ for explicit RK method.}\\\\\\\\
 		\hline\\[-0.4cm]
 		
-		{\tt Method}& \multirow{1}{12cm}{The third template argument of the \cppin{nsc::NSC<LD,Solver,Method>} class. Its value depends on the choice of \cppin{Solver}; For {\tt Solver}=$1$, {\tt Method} can be either \cppin{RODASPR2<LD>} (fourth order) or \cppin{ROS34PW2<LD>} (third order). For {\tt Solver}=$2$, {\tt Method} can only be \cppin{DormandPrince<LD>} (seventh order). Notice that the definitions of the various method classes, also need a template argument,\cppin{LD}, that must be the same as the first template argument of the \cppin{nsc::NSC<LD,Solver,Method>} class. If one defines their own Butcher table, then they would have to follow their definitions and assumptions.}\\\\\\\\\\\\\\\\\\
+		{\tt Method}& \multirow{1}{12cm}{The third template argument of the \cppin{Evolution} class. Its value depends on the choice of \cppin{Solver}; For {\tt Solver}=$1$, {\tt Method} can be \cppin{RODASPR2<LD>} (fourth order)~\cite{RangAngermann2005}, \cppin{ROS34PW2<LD>} (third order)~\cite{RANG2015128}, \cppin{GRK4A<LD>} or \cppin{GRK4T<LD>} (fourth order)~\cite{Rentrop1979}. For {\tt Solver}=$2$, there are a few options, but the only choice that works in most cases is \cppin{DormandPrince<LD>} (fourth order)~\cite{DORMAND198019}. The {\tt Method} classes need a template argument, \cppin{LD}, which must be the same as the first template argument of the \cppin{nsc::Evolution<LD,Solver,Method>} class. If one defines their own Butcher table, they would have to follow their definitions and assumptions.}\\\\\\\\\\\\\\\\\\\\
 		\hline
 	\end{tabular}
 	\caption{Template arguments of the various \nsc classes.}
@@ -494,7 +611,7 @@ We present tables..., with the various available run-time inputs, required files
 
 
 
-\begin{table}[h!]
+\begin{table}[p]
 	\centering
 	\begin{tabular}{l l}
 		\multicolumn{2}{c}{\bf User compile-time options. Variables in the various {\tt Definitions.mk} files.}  \\
@@ -506,10 +623,10 @@ We present tables..., with the various available run-time inputs, required files
 		{\tt LONG}& \multirow{1}{12cm}{{\tt long} for \cppin{long double} or empty for \cppin{double}. This is defines a macro in the source files of the various \CPP examples. Available in {\tt Definitions.mk} inside the various subdirectories of {\tt \nsc/UserSpace/Cpp}.}\\\\\\\\		
 		\hline\\[-0.4cm]
 
-		{\tt LONGpy}& \multirow{1}{12cm}{{\tt long} or empty. Same as {\tt LONG}, applies in the \PY modules. Available in {\tt \nsc/Definitions.mk}.}\\\\		
+		{\tt LONGpy}& \multirow{1}{12cm}{{\tt long} or empty. Same as {\tt LONG}, applies to the \PY modules. Available in {\tt \nsc/Definitions.mk}.}\\\\		
 		\hline\\[-0.4cm]
 
-		{\tt SOLVER}& \multirow{1}{12cm}{In order to use a Rosenbrock method {\tt SOLVER}=$1$. For explicit RK method, {\tt SOLVER}=$2$. This defines a macro that is passes as the second template argument of \cppin{mimes::Axion<LD,Solver,Method>}.  The corresponding variable in {\tt \nsc/Definitions.mk} applies to the \PY modules. The variable in {\tt \nsc/UserSpace/Cpp/NSC/Definitions.mk} applies to the example in the same directory.}\\\\\\\\\\\\\\		
+		{\tt SOLVER}& \multirow{1}{12cm}{In order to use a Rosenbrock method {\tt SOLVER}=$1$. For explicit RK method, {\tt SOLVER}=$2$. This defines a macro that is passes as the second template argument of \cppin{nsc::Evolution<LD,Solver,Method>}.  The corresponding variable in {\tt \nsc/Definitions.mk} applies to the \PY modules. The variable in {\tt \nsc/UserSpace/Cpp/NSC/Definitions.mk} applies to the example in the same directory.}\\\\\\\\\\\\\\		
 		\hline\\[-0.4cm]
 
 		{\tt METHOD}& \multirow{1}{12cm}{Depending on the solver, this variable should name one of its available methods. For {\tt SOLVER}=$1$, {\tt METHOD}={\tt RODASPR2}(fourth order) or {\tt ROS34PW2}(third order). For {\tt SOLVER}=$2$, {\tt METHOD}={\tt DormandPrince }(seventh order). There is a macro ({\tt METHOD}) used by the shared library {\tt \nsc/lib/libNSC.so}. The corresponding variable in {\tt \nsc/Definitions.mk} applies to the \PY modules. The variable in {\tt \nsc/UserSpace/Cpp/NSC/Definitions.mk} applies to the example in that directory.}\\\\\\\\\\\\\\\\

@@ -2,6 +2,7 @@
 #define SYSTEM_RadPhi
 #include <cmath>
 #include <array>
+#include <type_traits>
 
 #include"src/Cosmo/Cosmo.hpp"
 #include "src/misc_dir/path.hpp"
@@ -13,6 +14,8 @@ namespace nsc{
 
     template<class LD>
     class RadPhi{
+        static_assert(std::is_floating_point<LD>::value, "Use only floating point numbers!");
+
         LD Gamma, c;
         LD Ti, rhoPhii;
     public:

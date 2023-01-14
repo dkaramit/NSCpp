@@ -6,6 +6,7 @@
 #include<vector>
 #include<cmath>
 #include<string>
+#include <type_traits>
 
 #include "src/SimpleSplines/Interpolation.hpp"
 
@@ -13,6 +14,8 @@ namespace nsc{
 
     template<class LD>
     class Cosmo {
+        static_assert(std::is_floating_point<LD>::value, "Use only floating point numbers!");
+
         private:
         using VecLD=std::vector<LD>;
         CubicSpline<LD> log_h,log_g;

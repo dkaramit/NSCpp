@@ -38,12 +38,11 @@ legend.frameon : False
 savefig.bbox : tight
 savefig.pad_inches : 0.05
 
-# Use serif fonts
-# font.serif : Times
+# fonts
 font.family : serif
-font.size : 17
+font.size : 24
 mathtext.fontset : dejavuserif
 
 # Use LaTeX for math formatting
 text.usetex : True
-text.latex.preamble : \usepackage{physics,amsmath} \usepackage{amssymb,bm} 
+text.latex.preamble : \usepackage{physics,amsmath} \usepackage{amssymb,bm}

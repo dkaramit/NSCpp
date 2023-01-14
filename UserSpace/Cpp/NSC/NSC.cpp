@@ -26,6 +26,7 @@
     #define LD LONG double
 #endif
 
+
 int main(int argc, char **argv){ 
 
     if(argc!=16){

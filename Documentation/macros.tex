@@ -40,8 +40,8 @@
 
 %add more keywords and styles
 \lstset{
-	emphstyle={\color{blue!80!black}}, emph={include, std, ,string,constexpr,array,vector},
-	emph=[2]{mimes,util,Axion,AxionEOM,Cosmo,AxionMass,AnharmonicFactor,Scan,ScanObs,Timer}, emphstyle=[2]{\color{red!80!black}},
+	emphstyle={\color{blue!80!black}}, emph={include,std,string,constexpr,array,vector,True,False},
+	emph=[2]{mimes,nsc,util,Evolution,Cosmo,Timer,nscSove}, emphstyle=[2]{\color{red!80!black}},
 	emph=[3]{Solver,Method,LD,METHOD,SOLVER}, emphstyle=[3]{\color{green!80!black}}
 }
 	
@@ -111,9 +111,9 @@
 \newcommand{\fR}{ f_{\rm R}\xspace}
 \newcommand{\fPhi}{f_{\Phi}\xspace}
 
-\newcommand{\sRi}{ s_{\rm R\,ini}\xspace}
-\newcommand{\rhoRi}{ \rho_{\rm R\,ini}\xspace}
-\newcommand{\rhoPhii}{ \rho_{\Phi\,{\rm ini}}\xspace}
+\newcommand{\sRi}{ s_{\rm R\,i}\xspace}
+\newcommand{\rhoRi}{ \rho_{\rm R\,i}\xspace}
+\newcommand{\rhoPhii}{ \rho_{\Phi\,{\rm i}}\xspace}
 
 
 
@@ -124,13 +124,13 @@
 \newcommand{\Ham}{ \mathcal{H}\xspace}
 
 
-\newcommand{\Ti}{ T_{\rm ini}{}\xspace}
+\newcommand{\Ti}{ T_{\rm i}{}\xspace}
 
-\newcommand{\ti}{ t_{\rm ini}{}\xspace}
+\newcommand{\ti}{ t_{\rm i}{}\xspace}
 
-\newcommand{\ui}{ u_{\rm ini}{}\xspace}
+\newcommand{\ui}{ u_{\rm i}{}\xspace}
 
-\newcommand{\ai}{ a_{\rm ini}{}\xspace}
+\newcommand{\ai}{ a_{\rm i}{}\xspace}
 
 \newcommand{\Tend}{ T_{\rm end}{}\xspace}
 
@@ -144,6 +144,16 @@
 \newcommand{\TEII}{ T_{\rm E2}{}\xspace}
 \newcommand{\TDI}{ T_{\rm D1}{}\xspace}
 \newcommand{\TDII}{ T_{\rm D2}{}\xspace}
+
+\newcommand{\uEI}{ u_{\rm E1}{}\xspace}
+\newcommand{\uEII}{ u_{\rm E2}{}\xspace}
+\newcommand{\uDI}{ u_{\rm D1}{}\xspace}
+\newcommand{\uDII}{ u_{\rm D2}{}\xspace}
+
+\newcommand{\EI}{{\rm E1}{}\xspace}
+\newcommand{\EII}{{\rm E2}{}\xspace}
+\newcommand{\DI}{{\rm D1}{}\xspace}
+\newcommand{\DII}{{\rm D2}{}\xspace}
 
 
 \newcommand{\vev}[1]{\langle #1 \rangle}

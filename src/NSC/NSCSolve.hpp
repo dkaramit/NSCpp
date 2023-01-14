@@ -3,6 +3,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <type_traits>
 
 #include "src/NSC/RadPhi.hpp"
 
@@ -78,10 +79,29 @@ namespace nsc{
         using RKSolver = typename IF<Solver==1,
             Ros<Neqs, Method, Jacobian<Neqs, LD>, LD>,
             typename IF<Solver==2,RKF<Neqs, Method, LD>,void>::type>::type; 
+        
+        static_assert(std::is_floating_point<LD>::value, "Use only floating point numbers!");
 
 
         bool check_run=false;
         
+        void reset(){
+            u.clear();
+            T.clear();
+            rhoPhi.clear();
+            dT.clear();
+            drhoPhi.clear();
+            pointSize=u.size();
+            TE1=0;
+            TE2=0;
+            TD1=0;
+            TD2=0;
+            uE1=0;
+            uE2=0;
+            uD1=0;
+            uD2=0;
+            check_run=false;
+        }
 
         public:
 
@@ -90,8 +110,6 @@ namespace nsc{
 
         unsigned int pointSize;
         LD TE1=0,TE2=0,TD1=0,TD2=0,uE1=0,uE2=0,uD1=0,uD2=0;
-        nsc::Cosmo<LD> *plasma;
-
 
         Evolution()=default;
         ~Evolution()=default;
@@ -139,23 +157,6 @@ namespace nsc{
         */
         bool solveNSC(const LD &TEND, const LD &c, const LD &Ti, const LD &ratio, const LD &TSTOP, const LD &umax,  Cosmo<LD> *plasma, const solverArgs<LD> &args={});
 
-        void reset(){
-            u.clear();
-            T.clear();
-            rhoPhi.clear();
-            dT.clear();
-            drhoPhi.clear();
-            pointSize=u.size();
-            TE1=0;
-            TE2=0;
-            TD1=0;
-            TD2=0;
-            uE1=0;
-            uE2=0;
-            uD1=0;
-            uD2=0;
-            check_run=false;
-        }
     };
 
 
@@ -229,11 +230,21 @@ namespace nsc{
 
             _H=std::sqrt( (8*M_PI)/(3*Cosmo<LD>::mP*Cosmo<LD>::mP)* ( _rhoR   +  _rhoPhi )  );
             
-            if(pE==0){  if(_rhoR < _rhoPhi){ TE1 = _T; uE1 = _u; pE++;}   }//the first time \rho_R = \rho_\Phi
-            if(pE==1){  if(_rhoR > _rhoPhi){ TE2 = _T; uE2 = _u; pE++;}   }//the second time \rho_R = \rho_\Phi
-            
+
+            /*Find the points where the behaviour changes. Notice that for c>4, there is at most one point of equality.*/
+            if(c<=4){
+                if(pE==0){  if(_rhoR < _rhoPhi){ TE1 = _T; uE1 = _u; pE++;}   }//the first time \rho_R = \rho_\Phi
+                if(pE==1){  if(_rhoR > _rhoPhi){ TE2 = _T; uE2 = _u; pE++;}   }//the second time \rho_R = \rho_\Phi
+                
+            }
+
+            if(c>4){
+                if(pE==0){  if(_rhoR > _rhoPhi){ TE1 = _T; uE1 = _u; pE++;}   }//the first time \rho_R = \rho_\Phi
+            }
+
             if(pD==0){  if(Gamma/_H*_rhoPhi/_rhoR>4./10. ){ TD1 = _T; uD1 = _u; pD++;}   }// the first time \rho_R/H = 0.4* \rho_\Phi/\Gamma
             if(pD==1){  if(Gamma/_H*_rhoPhi/_rhoR<4./10. ){ TD2 = _T; uD2 = _u; pD++;}   }// the second time \rho_R/H = 0.4* \rho_\Phi/\Gamma
+        
         }
 
         pointSize=u.size();
