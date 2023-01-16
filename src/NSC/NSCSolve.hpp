@@ -67,10 +67,15 @@ namespace nsc{
     */
     template<class LD>
     struct solverArgs{
-        LD initial_step_size=1e-2, minimum_step_size=1e-8, maximum_step_size=1e-2; 
-        LD absolute_tolerance=1e-8, relative_tolerance=1e-8;
-        LD beta=0.9, fac_max=1.2, fac_min=0.8;
-        unsigned int maximum_No_steps=10000000;
+        LD initial_step_size=1e-2;
+        LD minimum_step_size=1e-8;
+        LD maximum_step_size=1e-2; 
+        LD absolute_tolerance=1e-8;
+        LD relative_tolerance=1e-8;
+        LD beta=0.9;
+        LD fac_max=1.2;
+        LD fac_min=0.8;
+        unsigned int maximum_No_steps= static_cast<unsigned int>(1e7);
     };
 
 
@@ -82,24 +87,13 @@ namespace nsc{
         
         static_assert(std::is_floating_point<LD>::value, "Use only floating point numbers!");
 
-
         bool check_run=false;
         
         void reset(){
-            u.clear();
-            T.clear();
-            rhoPhi.clear();
-            dT.clear();
-            drhoPhi.clear();
+            u.clear();T.clear();rhoPhi.clear();
+            dT.clear();drhoPhi.clear();
             pointSize=u.size();
-            TE1=0;
-            TE2=0;
-            TD1=0;
-            TD2=0;
-            uE1=0;
-            uE2=0;
-            uD1=0;
-            uD2=0;
+            TE1=0;TE2=0;TD1=0;TD2=0;uE1=0;uE2=0;uD1=0;uD2=0;
             check_run=false;
         }
 
@@ -156,9 +150,25 @@ namespace nsc{
         is not finished.
         */
         bool solveNSC(const LD &TEND, const LD &c, const LD &Ti, const LD &ratio, const LD &TSTOP, const LD &umax,  Cosmo<LD> *plasma, const solverArgs<LD> &args={});
-
+        
+        /*Alternative definition of solveNSC without aggregation*/
+        // bool solveNSC(const LD &TEND, const LD &c, const LD &Ti, const LD &ratio, const LD &TSTOP, const LD &umax, Cosmo<LD> *plasma,
+        //               const LD &initial_step_size = 1e-2,const LD &minimum_step_size = 1e-8,
+        //               const LD &maximum_step_size = 1e-2,const LD &absolute_tolerance = 1e-8,
+        //               const LD &relative_tolerance = 1e-8,const LD &beta = 0.9,
+        //               const LD &fac_max = 1.2,const LD &fac_min = 0.8,
+        //               const unsigned int &maximum_No_steps = static_cast<unsigned int>(1e7)
+        //              ){
+        //                 return solveNSC(TEND, c, Ti, ratio, TSTOP, umax, plasma,
+        //                                 {
+        //                                     .initial_step_size=initial_step_size, .minimum_step_size=minimum_step_size,
+        //                                     .maximum_step_size=maximum_step_size, .absolute_tolerance=absolute_tolerance, 
+        //                                     .relative_tolerance=relative_tolerance, .beta=beta, 
+        //                                     .fac_max=fac_max, .fac_min=fac_min, .maximum_No_steps=maximum_No_steps
+        //                                 }                       
+        //                                );
+        //             }
     };
-
 
 
     template<class LD, const int Solver, class Method>

@@ -5,8 +5,6 @@ from sys import path as sysPath
 from os import path as osPath
 sysPath.append(osPath.join(osPath.dirname(__file__), '../../src'))
 
-#load the modules
-
 
 from sys import path as sysPath
 sysPath.append('../../src')

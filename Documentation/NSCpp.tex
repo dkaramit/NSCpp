@@ -402,6 +402,36 @@ That is, one must simply run
 %
 after {\tt BE} served its purpose.
 
+\section{Example}\label{sec:example}
+\setcounter{equation}{0}
+%
+In this section we will show an example code that solves the system of \Figs{fig:EMD} in both \CPP and \PY.
+%
+\subsection{\CPP}
+%
+In \CPP, we need to include the header file \cppin{NSCpp.hpp} from the root directory of \nsc. Then, we declare an instance of the \cppin{Evolution} class. The system is solved by calling the \cppin{solveNSC} function with the inputs described in Table~\ref{tab:solveNSC-input}. The following code can be used to solve the system~\refs{eq:dsdt,eq:drhoPhidt}. This code will print the values of $T_{\rm E_{1,2}}$ and $T_{\rm D_{1,2}}$, and all the integration points with their local errors.
+%
+\lstset{language = c++}
+\lstinputlisting{example.cpp}
+%
+Notice that if \cppin{solveNSC} returns \cppin{false}, there is an error message printed, and the code exits  with error code $1$.
+
+In this program we have used \cppin{long double} as the numeric type in all declarations, with the {\tt RODASPR2} Rosenbrock method~\cite{RangAngermann2005} for the RK solver. Assuming that this code is written in a file with name {\tt example.cpp}, we can compile it with 
+%
+\begin{bash}
+	g++ -std=c++17 -O3 -I'path_to_root' example.cpp -o example.run	
+\end{bash}
+%
+with \cppin{'path_to_root'} the root directory of \nsc. This will create an {\tt example.run} executable.
+
+\subsection{\PY}
+%
+The \PY interface of \nsc can handle same system as in the previous subsection. This is shown in the following code.
+%
+\lstset{language = python}
+\lstinputlisting{example.py}
+%
+
 \section{Acknowledgements}
 %
 The author acknowledges support by the Lancaster–Manchester–Sheffield Consortium for Fundamental Physics, under STFC research grant ST/T001038/1.
@@ -474,7 +504,20 @@ The class \cppin{Evolution} has several member variables that store the results 
 	\item \cppin{LD uD2}: value of $\uDII$.It is initialised at 0. If the energy injection rate never becomes more than $10\%$ of the free dilution rate of $\rhoR$, this variable obtains the value of $0$.	
 \end{enumerate} 
 
-
+%There is also a \cppin{solveNSC} definition without aggregation:
+%%
+%\begin{cpp}
+%	template<class LD, const int Solver, class Method>
+%	bool Evolution<LD,Solver,Method>::solveNSC(const LD &TEND, const LD &c, const LD &Ti, 
+%				const LD &ratio, const LD &TSTOP, const LD &umax, Cosmo<LD> *plasma, 
+%				const LD &initial_step_size=1e-2, const LD &minimum_step_size=1e-8, 
+%				const LD &maximum_step_size=1e-2, const LD &absolute_tolerance=1e-8, 
+%				const LD &relative_tolerance=1e-8, const LD &beta=0.9, 
+%				const LD &fac_max=1.2, const LD &fac_min=0.8,
+%				const LD &maximum_No_steps=10000000)
+%\end{cpp}
+%%
+%This function works exactly as the previous one.
 
 \section{\cppin{Evolution} class in \PY }\label{app:py}
 \setcounter{equation}{0}
@@ -482,10 +525,11 @@ The \pyin{Evolution} class is very similar to the \CPP case. It uses the default
 %
 \begin{cpp}
 	solveNSC(TEND, c, Ti, ratio, TSTOP, umax, plasma, 
-		initial_step_size=1e-2, minimum_step_size=1e-8, maximum_step_size=1e-2, 
-		absolute_tolerance=1e-8, relative_tolerance=1e-8, beta=0.9, fac_max=1.2, fac_min=0.8,
-		maximum_No_steps=10000000)
+			initial_step_size=1e-2, minimum_step_size=1e-8, maximum_step_size=1e-2, 
+			absolute_tolerance=1e-8, relative_tolerance=1e-8, beta=0.9, fac_max=1.2, fac_min=0.8,
+			maximum_No_steps=10000000)
 \end{cpp}
+
 %
 All the input arguments are summarised in Table~\ref{tab:solveNSC-input}. The difference between this and the \CPP version is that the {\tt plasma} argument is an instance of the \PY \cppin{Cosmo} class. 
 %

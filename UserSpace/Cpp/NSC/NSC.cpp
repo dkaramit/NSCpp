@@ -17,6 +17,7 @@
 #endif
 
 
+
 // macros for the numeric type
 #ifndef LONG
     #define LONG 
@@ -105,7 +106,7 @@ int main(int argc, char **argv){
 
 
     #ifdef printResults
-    std::cout<<std::setprecision(16)
+    std::cout<<std::setprecision(8)
     <<TEND<<"\t"<<c<<"\t"<<Ti<<"\t"<<ratio<<"\t"<<BE.TE1<<"\t"<<BE.TE2<<"\t"<<BE.TD1<<"\t"<<BE.TD2<<"\n";
     #endif
 
@@ -114,7 +115,7 @@ int main(int argc, char **argv){
     std::cout<<"---------------------points:---------------------\n";
     std::cout<<"u\tT [GeV]\trho_Phi [GeV^4]"<<std::endl;
     for(size_t i=0; i<BE.pointSize; ++i ){
-        std::cout<<std::setprecision(16)<<BE.u[i]<<"\t"<<BE.T[i]<<"\t"<<BE.rhoPhi[i]<<"\n";
+        std::cout<<std::setprecision(8)<<BE.u[i]<<"\t"<<BE.T[i]<<"\t"<<BE.rhoPhi[i]<<"\n";
     }
     #endif
 
@@ -123,7 +124,7 @@ int main(int argc, char **argv){
     std::cout<<"---------------------local error:---------------------\n";
     std::cout<<"dT\tdrhoPhi"<<std::endl;
     for(size_t i=0; i<BE.pointSize; ++i ){
-        std::cout<<BE.dT[i]<<"\t"<<BE.drhoPhi[i]<<"\n";
+        std::cout<<std::setprecision(8)<<BE.dT[i]<<"\t"<<BE.drhoPhi[i]<<"\n";
     }
     #endif
 
