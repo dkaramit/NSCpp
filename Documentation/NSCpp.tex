@@ -177,7 +177,7 @@ We can reparametrise the temperature of hte plasma and the energy density of $\P
 with $\fR(u)$ and $\fPhi(u)$ functions of $u$ that obey the initial conditions $\fR(u=0)=\fPhi(u=0)=1$ and the equations
 %
 \begin{align}
-	\dfrac{d\log \fR }{du} &=  1- \lrb{1- \dfrac{\GammaPhi}{H} \, \dfrac{\rhoPhi}{3HTs}  } \dh  \label{eq:dlogfRdu} \\ 
+	\dfrac{d\log \fR }{du} &=  1- 1/\dh- \dfrac{1}{3}\dfrac{\GammaPhi}{H\,\dh} \, \dfrac{\rhoPhi}{T\,s}   \label{eq:dlogfRdu} \\ 
 	\dfrac{d\log\fPhi}{du} &= -\dfrac{\GammaPhi}{H} \label{eq:dlogfPhidu} \;,
 \end{align}
 %
@@ -348,6 +348,7 @@ The two relevant classes are defined in the module {\tt interfacePy.NSC}, and ca
 	from sys import path as sysPath
 	sysPath.append('path_to_src')
 	from interfacePy.NSC import NSC 
+	from interfacePy.Cosmo import Cosmo
 \end{py}
 %
 The string {\tt 'path\_to\_src'} must be the relative path to the {\tt NSCpp/src} directory. For example, if the script is located in {\tt NSCpp/UserSpace/Python}, {\tt 'path\_to\_src'} should be {\tt '../../src'}.
@@ -426,11 +427,68 @@ with \cppin{'path_to_root'} the root directory of \nsc. This will create an {\tt
 
 \subsection{\PY}
 %
-The \PY interface of \nsc can handle same system as in the previous subsection. This is shown in the following code.
+The \PY interface of \nsc can handle same system as in the previous subsection. This is shown in the following code:
 %
 \lstset{language = python}
 \lstinputlisting{example.py}
 %
+This script is assumed to be located in a subdirectory of the root directory of \nsc, \eg inside {\tt \nsc\/UserSpace}. If it is in another directory, then only the third line should be changed to \pyin{sysPath.append('path_to_root')}, with \pyin{'path_to_root'} the path to the root directory of \nsc.
+%
+%In order to run \nsc in this example, we have already compiled the library by calling \run{make lib/libNSC.so} from the root directory of \nsc. For concreteness, the \pyin{\nsc/Definitions.mk} file at the compilation time was 
+%%
+%\lstset{language = bash}
+%\lstinputlisting{Definitions.mk}
+
+
+\subsection{Result}
+%
+In both \CPP and \PY, the results we obtain are identical, and evolution of the comoving energy densities is given by \Figs{fig:EMD}. 
+%
+\begin{center}
+	\begin{figure}[t!]
+		\begin{subfigure}{0.5\textwidth}
+			\includegraphics[width=1\textwidth]{figs/EMD_err.pdf}
+			\caption{}
+			\label{fig:EMD_err}
+		\end{subfigure}
+		\begin{subfigure}{0.5\textwidth}
+			\includegraphics[width=1\textwidth]{figs/EMD_hist.pdf}
+			\caption{}
+			\label{fig:EMD_hist}
+		\end{subfigure}
+		\caption{}
+		\label{fig:error_examples_MD}
+	\end{figure}
+\end{center}
+%
+The relative errors associated with the integration of \eqs{eq:dlogfRdu,eq:dlogfPhidu} are shown in \Figs{fig:EMD_err}. As we can see, the local errors appear to be negligible compared to the values of the corresponding quantities, but they seems to need controlling only as long as the decays of $\Phi$ are active. Once the fluid has decayed away, its relative error seems to increase, but this is only because $\rhoPhi$ almost vanishes.
+%
+In \Figs{fig:EMD_hist}, we show a histogram of the number of steps taken by the RK solver. In accordance to the increase in the errors, the number of steps increases after $\EI$, which means that the step size changes in order to regulate the integration error.
+
+
+We also show the errors and histogram corresponding to \Figs{fig:EKD}, by changing the parameters to those shown in that figure.   
+%
+\begin{center}
+	\begin{figure}[t!]
+		\begin{subfigure}{0.5\textwidth}
+			\includegraphics[width=1\textwidth]{figs/EKD_err.pdf}
+			\caption{}
+			\label{fig:EKD_err}
+		\end{subfigure}
+		\begin{subfigure}{0.5\textwidth}
+			\includegraphics[width=1\textwidth]{figs/EKD_hist.pdf}
+			\caption{}
+			\label{fig:EKD_hist}
+		\end{subfigure}
+		\caption{}
+		\label{fig:error_examples_KD}
+	\end{figure}
+\end{center}
+%
+In \Figs{fig:EKD_err,fig:EKD_hist} we can see that the errors are still small, and after $\DI$ the step size is automatically adjusted in order to keep it from increasing.
+
+Figures of errors and histogram such as \Figs{fig:error_examples_MD,fig:error_examples_KD} can be used to identify cases that the solver behaves badly. In general, these plots, however, do not provide the whole picture. One always has to use different methods and choices of the various RK parameters (\eg lower of higher values of \pyin{relative_tolerance} and \pyin{absolute_tolerance}) in order to make sure that the results are consistent. Idealy, these results should be comare aginst approximate methods such as the ones explained in detail in ref.~\cite{Arias:2020qty}.
+
 
 \section{Acknowledgements}
 %

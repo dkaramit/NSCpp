@@ -18,9 +18,9 @@ plasma=Cosmo(cosmo_PATH,0,mP)
 BE=Evolution()
 
 # solve the system
-check,time=BE.solveNSC(TEND=1e-2, c=3, Ti=1e12, ratio=1e-1, umax=500, TSTOP=1e-4, plasma=plasma,
+check,time=BE.solveNSC(TEND=1e-2, c=3, Ti=1e7, ratio=1e-2, umax=500, TSTOP=1e-4, plasma=plasma,
     initial_step_size=1e-2, minimum_step_size=1e-8, maximum_step_size=1e-2, 
-    absolute_tolerance=1e-8, relative_tolerance=1e-8, beta=0.9, fac_max=1.2, 
+    absolute_tolerance=1e-11, relative_tolerance=1e-11, beta=0.9, fac_max=1.2, 
     fac_min=0.8,maximum_No_steps=10000000)
 
 if check:

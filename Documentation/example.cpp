@@ -17,7 +17,7 @@ int main(){
     bool check=BE.solveNSC(TEND, c, Ti, ratio, TSTOP, umax, &plasma,
                 {
                     .initial_step_size=1e-2, .minimum_step_size=1e-8, .maximum_step_size=1e-2, 
-                    .absolute_tolerance=1e-8, .relative_tolerance=1e-8, .beta=0.9, 
+                    .absolute_tolerance=1e-11, .relative_tolerance=1e-11, .beta=0.9, 
                     .fac_max=1.2, .fac_min=0.8, .maximum_No_steps=10000000
                 });
     
