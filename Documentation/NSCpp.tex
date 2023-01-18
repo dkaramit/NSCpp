@@ -60,6 +60,9 @@
 
 
 \begin{abstract}
+We introduce \nsc, a \CPP library that simulates the evolution of the expansion of the Universe assuming the presence of a fluid that deposits energy to the plasma.
+%
+There is no special installation process or external dependences, and there are already example programs that can be easily modified to handle several cases. \nsc also includes \PY interface that allows calling it from \PY scripts without sacrificing its capabilities.
 \end{abstract}
 
 {\bf Program summary:}
@@ -73,11 +76,11 @@
 	
 	Licensing provisions: MIT license.
 	
-	Nature of problem: 
+	Nature of problem: Solves equations that describe the evolution of the plasma along with a fluid that decays to plasma particles in the early Universe.
 	
-	Solution method: Embedded Runge-Kutta for the numerical integration of the system of differential equations. The user may choose between explicit and Rosenborck methods. There are several of Butcher tableaux already implemented, but the user can implement their own. For the interpolations of the relativistic degrees of freedom, the library uses cubic splines. 
+	Solution method: Embedded Runge-Kutta for the numerical integration of the system of differential equations. The user can choose between explicit and Rosenborck methods. There are several of Butcher tableaux already implemented, but the user can implement their own. For the interpolations of the relativistic degrees of freedom, the library uses cubic splines. 
 	
-	Restrictions: 
+	Restrictions: The value of the pressure over the energy density of the fluid is assumed to be constant. It is also assumed that there is no energy leaking from the plasma to the fluid.
 }
 
 %\newpage
@@ -89,10 +92,17 @@
 
 \section{Introduction}\label{sec:intro}
 \setcounter{equation}{0}
+%
+The evolution of the Universe at very early times cannot be probed. However, the configuration of the various components today were influenced by its nature at very early times. Therefore, there is the possibility that  the Universe experienced a period of non-standard evolution. A deviations from the standard cosmological scenario is called non-standard cosmology (NSC). 
+%
+NSCs are in general worth studying in the context of the evolution of other components of the Universe because they can help us probe the nature of the Universe at temperatures inaccessible by direct observations (\eg of CMB). For example the study of dark matter within NSCs can open up possibilities that otherwise excluded. This means that if dark matter is observed and turns out to be excluded under the standard cosmological model, then its nature can reveal aspects of the Universe at times relevant to the dark matter production (see,~\eg~\cite{McDonald:1989jd,DEramo:2017gpl,Redmond:2017tja,DEramo:2017ecx,Bernal:2020bfj,Arias:2020qty,Arias:2021rer,Barman:2021ifu,Dienes:2021woi,Banerjee:2022fiw,Hardy:2018bph,Bernal:2018kcw,Arias:2019uol,Allahverdi:2019jsc,Bernal:2019mhf,Cosme:2020mck}). 
+%
+Several non-standard cosmological scenarios have been studied in the literature (\eg refs.~\cite{Vilenkin:1982wt,Coughlan:1983ci,Ratra:1987rm,Giudice:2000ex,Gardner:2004in,Dalianis:2018afb} with some reviews found in refs.~\cite{Tsujikawa:2013fta,Allahverdi:2020bys}, however there is no available tool that will automate the process of simulating the evolution of the Universe. \nsc is one attempt to do this by being an easy-to-use and highly modifiable \CPP code that can handle the most common NSCs. 
+%
+Since in most cases the expansion mode of the Universe is just a background, \nsc can be used to simulate it and use the results to study the evolution of other components of the Universe (\eg dark matter or lepton number) under this background. 
+%
+\nsc can be used along with \mimes~\cite{Karamitros:2021nxi}, since it can output the evolution of the temperature and Hubble parameter which can be used as an input by \mimes.
 
-
-
-Several non-standard cosmological scenarios have been studied in the literature (\eg refs.~\cite{Vilenkin:1982wt,Coughlan:1983ci,Ratra:1987rm,McDonald:1989jd,Giudice:2000ex,Gardner:2004in,DEramo:2017gpl,Redmond:2017tja,DEramo:2017ecx,Dalianis:2018afb,Hardy:2018bph,Bernal:2018kcw,Arias:2019uol,Allahverdi:2019jsc,Bernal:2019mhf,Cosme:2020mck,Bernal:2020bfj,Arias:2020qty,Arias:2021rer,Barman:2021ifu,Dienes:2021woi,Banerjee:2022fiw}). Reviews on the implications of such components can be found in refs.~\cite{Tsujikawa:2013fta,Allahverdi:2020bys}.
 
 
 There is another code, built specifically for the evolution of cosmic relics in matted dominated Universe, {\tt EvoEMD}~\cite{Dutra:2021phm}. \nsc is different because the evolution of the temperature of the plasma is computed by manipulating the equation that describes the evolution of the entropy density, while {\tt EvoEMD} solves
@@ -106,7 +116,9 @@ with  $C_{\rm EMD}$ the additional matter contribution which. This equation reli
 %
 As we will explain later \nsc obeys the same design principles as \mimes; \ie the general usage of both are almost identical, \nsc only needs a \CPP compiler that supports the {\tt c++17} standard and no other external dependences, and there will always be dedicated versions of the underline numerical libraries~\cite{NaBBODES,SimpleSplines} guaranteed to work with the current version of \nsc.
 
-
+This article is organised as follows. Section~\ref{sec:equations} is brief reminder of the system that \nsc simulates and a description of the internal notation that uses. The next section describes the usage of \nsc in general, from downloading to compiling along with a brief description of the various classes and functions available to the user. In Section~\ref{sec:example} there is a complete example written in both \CPP and \PY, and a brief mention of all the results one can output. Section~\ref{sec:summary} summarises the article and provide future prospects.
+%
+Appendices~\refs{app:cpp,app:py} describe in detail the implementation of the classes available to the user, while in Appendix~\refs{app:usr_input} there are tables that summarise all the possible options one can choose from. 
 
 \section{Evolution equations}\label{sec:equations}
 \setcounter{equation}{0}
@@ -214,7 +226,14 @@ These two figures correspond to the two quantitatively typical behaviours we exp
 			\caption{}
 			\label{fig:EKD}
 		\end{subfigure}
-		\caption{}
+		\caption{
+			%
+			({\bfseries a}) The evolution of the comoving energy densities of radiation (black) and $\Phi$ (dashed red) in the case of early matter domination ($c=3$) with $\Tend=10^{-2}~\GeV$, $\Ti=10^7~\GeV$, and $r=10^{-2}$. 
+			%
+			({\bfseries b}) The same for kination ($c=6$) with $\Tend=10^{4}~\GeV$, $\Ti=10^7~\GeV$, and $r=10^{8}$.
+			%
+			The gray vertical lines show the approximate location of the points ${\rm E_{1,2}}$ and ${\rm D_{1,2}}$.
+		} 
 		\label{fig:evolution_examples}
 	\end{figure}
 \end{center}
@@ -456,7 +475,14 @@ In both \CPP and \PY, the results we obtain are identical, and evolution of the 
 			\caption{}
 			\label{fig:EMD_hist}
 		\end{subfigure}
-		\caption{}
+		\caption{			
+			%
+			({\bfseries a}) The local integration error that corresponds to the temperature of the plasma (black) and $\rhoPhi$ (dashed red) in the case of early matter domination. 
+			%
+			({\bfseries b}) A histogram of the number of states taken by the solver at various $u$.
+			%
+			The parameters used are as in Figure~\ref{fig:EMD}.
+		}
 		\label{fig:error_examples_MD}
 	\end{figure}
 \end{center}
@@ -480,7 +506,7 @@ We also show the errors and histogram corresponding to \Figs{fig:EKD}, by changi
 			\caption{}
 			\label{fig:EKD_hist}
 		\end{subfigure}
-		\caption{}
+		\caption{Same as  Figure~\ref{fig:error_examples_MD} for the parameters of Figure~\ref{fig:EKD}.}
 		\label{fig:error_examples_KD}
 	\end{figure}
 \end{center}
@@ -490,12 +516,23 @@ In \Figs{fig:EKD_err,fig:EKD_hist} we can see that the errors are still small, a
 Figures of errors and histogram such as \Figs{fig:error_examples_MD,fig:error_examples_KD} can be used to identify cases that the solver behaves badly. In general, these plots, however, do not provide the whole picture. One always has to use different methods and choices of the various RK parameters (\eg lower of higher values of \pyin{relative_tolerance} and \pyin{absolute_tolerance}) in order to make sure that the results are consistent. Idealy, these results should be comare aginst approximate methods such as the ones explained in detail in ref.~\cite{Arias:2020qty}.
 
 
+\section{Summary}\label{sec:summary}
+%
+We have introduced \nsc, a simple library that simulates the evolution of the Universe assuming the appearance of a decaying fluid. \nsc provides several different methods to solve the radiation-fluid system and also gives access to the local integration errors, which allows the user to try different approaches and decide whether the results can be trusted.
+
+In Section~\refs{sec:equations} we have shown the equations that \nsc solve and briefly discribed the general form of the solutions we expect. We also showed explicitely the internal notation \nsc uses, which should enable others modify the code in order to meet their needs. 
+
+\nsc can be downloaded and configured following the steps in Section~\refs{sec:first_steps}. This section also broadly describes the various classes and functions that can be used by the user in both \CPP and \PY. Complete code examples in \CPP as well as \PY are shown in Section~\refs{sec:example}.
+
+\nsc has limitation as it is assumed that there is only one additional component ($\Phi$) with an equation of state of the given by~\eqs{eq:EOS}. However, \nsc will keep evolving and with each iteration it will be able to handle non-minimal cases such as the ones studied in refs.~\cite{Barman:2022tzk,Arias:2022qjt,Dienes:2021woi}). Another useful extension that will be included in the future is a module that compares against observational constraints given an inflaton model. 
+
+
+
 \section{Acknowledgements}
 %
 The author acknowledges support by the Lancaster–Manchester–Sheffield Consortium for Fundamental Physics, under STFC research grant ST/T001038/1.
 
 
-\section{Summary}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
