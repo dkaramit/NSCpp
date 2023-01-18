@@ -9,7 +9,7 @@ sysPath.append(osPath.join(osPath.dirname(__file__), '../../src'))
 from sys import path as sysPath
 sysPath.append('../../src')
 
-from interfacePy.NSC import Evolution 
+from interfacePy.Evolution import Evolution 
 from interfacePy.Cosmo import Cosmo 
 from interfacePy.FT import FT #easy tick formatting
 

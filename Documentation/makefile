@@ -1,18 +1,18 @@
 TEX=pdflatex
 BIB=bibtex
 
-FLG=-shell-escape
+FLG=-shell-escape -synctex=1
 
 figs = $(wildcard figs/*.pdf)
 
 #make the pdf
-all:  NCSpp.pdf
+all:  NSCpp.pdf
 
 #run pdflatex and bibtex (runs only if you update something in pdfs or in the tex file)
-NCSpp.pdf:  NCSpp.tex $(figs) refs.bib
+NSCpp.pdf:  NSCpp.tex $(figs) refs.bib
 	$(TEX) $(FLG) $< 
 	$(TEX) $(FLG) $< 
-	$(BIB) NCSpp || true
+	$(BIB) NSCpp || true
 	$(TEX) $(FLG) $< 
 	$(TEX) $(FLG) $< 
 
@@ -24,8 +24,8 @@ NCSpp.pdf:  NCSpp.tex $(figs) refs.bib
 	rm -f *.toc 
 	rm -f *.blg 
 clean:
-	rm -f NCSpp.pdf 
-	rm -f NCSpp.pdf
+	rm -f NSCpp.pdf 
+	rm -f NSCpp.synctex.gz
 	rm -f *.aux 
 	rm -f *.log 
 	rm -f *.out 

@@ -3,7 +3,7 @@ from sys import path as sysPath
 sysPath.append('../src')
 
 #load the NSC module
-from interfacePy.NSC import Evolution 
+from interfacePy.Evolution import Evolution 
 
 # load Cosmo and the Planck mass
 from interfacePy.Cosmo import Cosmo,mP 
