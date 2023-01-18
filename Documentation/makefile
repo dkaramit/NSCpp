@@ -23,7 +23,6 @@ NCSpp.pdf:  NCSpp.tex $(figs) refs.bib
 	rm -f *.bbl 
 	rm -f *.toc 
 	rm -f *.blg 
-	rm -rf _minted-NCSpp
 clean:
 	rm -f NCSpp.pdf 
 	rm -f NCSpp.pdf
@@ -33,5 +32,5 @@ clean:
 	rm -f *.bbl 
 	rm -f *.blg 
 	rm -f *.toc 
-	rm -rf _minted-NCSpp
+	rm -rf *.run
 	
