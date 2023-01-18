@@ -5,11 +5,19 @@ from sys import path as sysPath
 from os import path as osPath
 sysPath.append(osPath.join(osPath.dirname(__file__), '../../src'))
 
-#load the module
-from interfacePy.NSC import NSC 
-from interfacePy.Cosmo import Cosmo
 
+from sys import path as sysPath
+sysPath.append('../../src')
 
+from interfacePy.Evolution import Evolution 
+from interfacePy.Cosmo import Cosmo 
+from interfacePy.FT import FT #easy tick formatting
+
+from misc_dir.path import cosmo_PATH
+plasma=Cosmo(cosmo_PATH,0,1e5)
+
+######## You can also do this:
+# plasma=Cosmo('../../src/data/eos2020.dat',0,1e5)
 
 TEND=1e-2
 c=3
@@ -37,21 +45,22 @@ maximum_No_steps=int(1e7); #maximum steps the solver can take Quits if this numb
 
 
 _=time()
-# NSC instance
-BE=NSC(TEND,c,Ti,ratio,umax,TSTOP,
+# Evolution instance
+BE=Evolution()
+
+BE.solveNSC(TEND,c,Ti,ratio,TSTOP,umax,plasma,
         initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, 
         relative_tolerance, beta, fac_max, fac_min, maximum_No_steps)
-
-BE.solveNSC()
 
 
 print(TEND,c,Ti,ratio,BE.TE1,BE.TE2,BE.TD1,BE.TD2)
 print(round(time()-_,3),file=stderr)
 
 
-if False:
+if False: # True, produces plots!
     from numpy import max as np_max
     from numpy import abs as np_abs
+    from numpy import exp as np_exp
     import matplotlib.pyplot as plt
 
     BE.getPoints()#this gives you all the points of integration
@@ -61,15 +70,15 @@ if False:
     fig.subplots_adjust(bottom=0.15, left=0.15, top = 0.9, right=0.9,wspace=0.0,hspace=0.25)
     sub = fig.add_subplot(1,1,1)
     
-    X=BE.a_ai
+    X=np_exp(BE.u)
     
-    Y=BE.rhoPhi/rhoR(BE.T[0])*BE.a_ai**4
+    Y=BE.rhoPhi/plasma.rhoR(BE.T[0])*X**4
     sub.plot(X,Y,linestyle='--',linewidth=2,alpha=1,c='xkcd:red',label=r'$\rho_{\Phi}$')
 
     Min=Y[0]
     Max=np_max(Y)
     
-    Y=[rhoR(T)/rhoR(BE.T[0])*BE.a_ai[i]**4 for i,T in enumerate(BE.T)]
+    Y=[plasma.rhoR(T)/plasma.rhoR(BE.T[0])*X[i]**4 for i,T in enumerate(BE.T)]
     sub.plot(X,Y,linestyle='-',linewidth=2,alpha=1,c='xkcd:black',label=r'$\rho_{R}$')
     
     _=Y[0]
@@ -80,10 +89,10 @@ if False:
     if Max<_:
         Max=_
     
-    sub.axvline(BE.aE1,c='xkcd:gray',linestyle=':',linewidth=2)
-    sub.axvline(BE.aE2,c='xkcd:gray',linestyle=':',linewidth=2)
-    sub.axvline(BE.aD1,c='xkcd:gray',linestyle=':',linewidth=2)
-    sub.axvline(BE.aD2,c='xkcd:gray',linestyle=':',linewidth=2)
+    sub.axvline(np_exp(BE.uE1),c='xkcd:gray',linestyle=':',linewidth=2)
+    sub.axvline(np_exp(BE.uE2),c='xkcd:gray',linestyle=':',linewidth=2)
+    sub.axvline(np_exp(BE.uD1),c='xkcd:gray',linestyle=':',linewidth=2)
+    sub.axvline(np_exp(BE.uD2),c='xkcd:gray',linestyle=':',linewidth=2)
 
     sub.set_yscale('log')
     sub.set_xscale('log')
@@ -106,7 +115,7 @@ if False:
     fig.subplots_adjust(bottom=0.15, left=0.15, top = 0.9, right=0.9,wspace=0.0,hspace=0.25)
     sub = fig.add_subplot(1,1,1)
     
-    X=BE.a_ai
+    
     Y=np_abs(BE.drhoPhi/BE.rhoPhi)
     sub.plot(X,Y,linestyle='--',linewidth=2,alpha=1,c='xkcd:red',label=r'$\dfrac{\delta\rho_{\Phi}}{\rho_{\Phi}}$')
     
@@ -129,3 +138,4 @@ if False:
 
 #run the destructor
 del BE
+del plasma

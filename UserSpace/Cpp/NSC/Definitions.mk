@@ -18,13 +18,15 @@ SOLVER=1
 # can use the others or provide another Butcher tableu and use it.
 METHOD=RODASPR2 
 # METHOD=ROS34PW2
+# METHOD=GRK4A
+# METHOD=GRK4T
 # METHOD=ROS3w
 
 #-------------------------These are explicit RK methods: Generally NOT RECOMMENDED--------------------------#
 # SOLVER=2
 
 # DormandPrince is fairly fast. It can be better than RODASPR2 at very low tolerances 
-# because it is higher order. The other two can't even finish...
+# because it is higher order. The other two can't even finish most of the time...
 # METHOD=DormandPrince
 # METHOD=CashKarp
 # METHOD=RKF45

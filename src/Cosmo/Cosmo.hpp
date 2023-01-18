@@ -6,19 +6,30 @@
 #include<vector>
 #include<cmath>
 #include<string>
+#include <type_traits>
 
 #include "src/SimpleSplines/Interpolation.hpp"
 
 namespace nsc{    
+
     template<class LD>
     class Cosmo {
+        static_assert(std::is_floating_point<LD>::value, "Use only floating point numbers!");
+
         private:
         using VecLD=std::vector<LD>;
-        CubicSpline<LD> h,g;
-        VecLD Ttab,htab,gtab;
+        CubicSpline<LD> log_h,log_g;
+        VecLD log_Ttab,log_htab,log_gtab;
         LD TMin, TMax, hMin, hMax, gMin, gMax;
-        LD Mp;
+
         public:
+
+        Cosmo()=delete;
+        ~Cosmo()=default;
+        Cosmo(const Cosmo &)=default;
+        Cosmo(Cosmo &&)=default;
+        Cosmo& operator=(const Cosmo &)=default;
+        Cosmo& operator=(Cosmo &&)=default;
 
         constexpr static  LD T0= 2.7255 * 8.62e-14; //Today's CMB temperature in GeV
         constexpr static  LD h_hub=0.674; //dimensionless hubble parameter
@@ -31,80 +42,76 @@ namespace nsc{
             path is the path of the data
             minT (maxT) the minimum (maximum) T you need for the interpolation
             */
-            // the data are assumed to be: T  h  g
-            // the currently used data are taken from arXiv: 2005.03544 
+            // the data are assumed to be: T [GeV] h g
             
             unsigned int N=0;
             LD T,heff,geff;
             std::ifstream data_file(path,std::ios::in);
-            //quit if the file does not exist.
+            
             if(not data_file.good()) {
                 std::cerr << path << " does not exist.";
-                std::cerr <<" Please make sure to provide a valid path for the Cosmo datafile";
-                std::cerr <<" in nsc/Definitions.mk\n"; 
+                std::cerr <<" Unable to interpolate plasma relavistic degrees of freedom.\n"; 
                 exit(1);
             }
-
-            // std::cout<<TMax<<"\n";
-            // std::cout<<TMin<<"\n";
-            // std::cout<<nsc::Cosmo<LD>::mP<<"\n";
+            LD T_prev=-1;
             while (not data_file.eof()){
                 data_file>>T;
                 data_file>>heff;
                 data_file>>geff;
-
                 
                 
+                if(T==0){continue;}// T=0 is not valid
                 if(T>=minT and T<=maxT){
                     
-                    //if there is an empty line theta does not change, so do skip it.
+                    if(N>1 and T==T_prev){continue;}
 
-                    Ttab.push_back(T);
-                    htab.push_back(heff);
-                    gtab.push_back(geff);
+                    log_Ttab.push_back(std::log(T));
+                    log_htab.push_back(std::log(heff));
+                    log_gtab.push_back(std::log(geff));
 
                     N++;
                 }
+                T_prev=T;
             }
             data_file.close();
 
-            TMin=Ttab[0];
-            TMax=Ttab[N-1];
-            hMin=htab[0];
-            hMax=htab[N-1];
-            gMin=gtab[0];
-            gMax=gtab[N-1];
+            TMin=std::exp(log_Ttab[0]);
+            TMax=std::exp(log_Ttab[N-1]);
+            hMin=std::exp(log_htab[0]);
+            hMax=std::exp(log_htab[N-1]);
+            gMin=std::exp(log_gtab[0]);
+            gMax=std::exp(log_gtab[N-1]);
 
-            this->h=CubicSpline<LD>(&Ttab,&htab);
-            this->g=CubicSpline<LD>(&Ttab,&gtab);
+            this->log_h=CubicSpline<LD>(&log_Ttab,&log_htab);
+            this->log_g=CubicSpline<LD>(&log_Ttab,&log_gtab);
         }
 
         LD heff(LD T){
             if(T>=TMax){return hMax;}
             if(T<=TMin){return hMin;}
-            return h(T);
+            return std::exp(log_h(std::log(T)));
         }
 
         LD dh(LD T){
             if(T>=TMax){return 1;}
             if(T<=TMin){return 1;}
-            return 1.+1/3.*T/h(T)*h.derivative_1(T);    
+            return 1.+1/3.*log_h.derivative_1(std::log(T));    
         }
         
         LD geff(LD T){
             if(T>=TMax){return gMax;}
             if(T<=TMin){return gMin;}
-            return g(T);
+            return std::exp(log_g(std::log(T)));
         }
         LD dgeffdT(LD T){
             if(T>=TMax){return 0;}
             if(T<=TMin){return 0;}
-            return g.derivative_1(T);
+            return geff(T)/T*log_g.derivative_1(std::log(T));
         }
         LD dheffdT(LD T){
             if(T>=TMax){return 0;}
             if(T<=TMin){return 0;}
-            return h.derivative_1(T);
+            return heff(T)/T*log_h.derivative_1(std::log(T));
         }
 
         LD s(LD T){

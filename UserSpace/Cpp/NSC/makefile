@@ -16,12 +16,10 @@ NSC_Headers= $(wildcard $(rootDir)src/NSC/*.hpp)
 
 Cosmo_Headers= $(wildcard $(rootDir)src/Cosmo/Cosmo.hpp)
 
-Static_Funcs= $(wildcard $(rootDir)src/static.hpp) 
-
 all: NSC.run
 
 NSC.run: NSC.cpp\
-					$(NSC_Headers) $(Cosmo_Headers) $(Static_Funcs)\
+					$(NSC_Headers) $(Cosmo_Headers)\
 					$(Ros_Headers) $(RKF_Headers) $(SPLINE_Headers)
 
 	$(CC) -o $@ $< $(FLG) 

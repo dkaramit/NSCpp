@@ -1,0 +1,223 @@
+\usepackage{ifthen}
+\usepackage{tikz}
+\usepackage{xspace}
+%\usepackage{minted}
+\usepackage{listings}
+\usepackage[T1]{fontenc}
+
+
+
+
+
+
+%Define color environments:
+
+\newenvironment{DK}[1]{{\color{gray}Commend from D: #1}}
+
+\newenvironment{DKnew}[1]{{\color{blue}NEW from D: #1}}
+
+\newenvironment{DKres}[1]{{\color{BrickRed}RESTRUCTURED from D: #1}}
+
+
+\definecolor{mediumjunglegreen}{rgb}{0.11, 0.21, 0.18}
+\definecolor{bg}{HTML}{282828}
+
+\lstset{
+	escapeinside={?}{?},
+	basicstyle=\small\ttfamily,%
+	columns=fullflexible,%
+	keywordstyle={\color{blue!80!black}},
+	keywordstyle=[3]{\color{yellow!50!black}},%
+	numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+	numbersep=5pt,                   % how far the line-numbers are from the code
+	numberstyle=\tiny, % the style that is used for the line-number
+	commentstyle=\fontfamily{palatino}\color{purple!40!black},
+	breaklines=false,
+	frame=tb,
+	tabsize=3
+}
+%
+
+%add more keywords and styles
+\lstset{
+	emphstyle={\color{blue!80!black}}, emph={include,std,string,constexpr,array,vector,True,False},
+	emph=[2]{mimes,nsc,util,Evolution,Cosmo,Timer,nscSove}, emphstyle=[2]{\color{red!80!black}},
+	emph=[3]{Solver,Method,LD,METHOD,SOLVER}, emphstyle=[3]{\color{green!80!black}}
+}
+	
+	
+\newcommand*\cppin{\lstinline[language=c++]}
+
+\newcommand*\pyin{\lstinline[language=c++]}
+
+\lstnewenvironment{cpp}
+{\lstset{language=c++}}
+{}
+
+\lstnewenvironment{py}
+{\lstset{language=Python}}
+{}
+
+\lstnewenvironment{bash}
+{\lstset{language=Python}}
+{}
+
+\lstnewenvironment{pseudo}
+{\lstset{language=Python}}
+{}
+
+
+%\newenvironment{cpp}{\usemintedstyle{xcode}\VerbatimEnvironment\begin{minted}[frame=lines,framesep=5mm,baselinestretch=1.2,fontsize=\footnotesize,linenos,mathescape,escapeinside=??]{cpp}}{\end{minted}} 
+
+%\newenvironment{py}{\usemintedstyle{xcode}\VerbatimEnvironment\begin{minted}[frame=lines,framesep=5mm,baselinestretch=1.2,fontsize=\footnotesize,linenos,mathescape,escapeinside=??]{py}}{\end{minted}} 
+
+%\newenvironment{bash}{\usemintedstyle{xcode}\VerbatimEnvironment\begin{minted}[frame=lines,framesep=5mm,baselinestretch=1.2,fontsize=\footnotesize,linenos,mathescape]{bash}}{\end{minted}} 
+
+%in order to writ maths outside of comments put them inside ?$$?. Theta is for x^2, write ?$x^2$?.
+%\newenvironment{pseudo}{\usemintedstyle{xcode}\VerbatimEnvironment\begin{minted}[frame=lines,framesep=5mm,baselinestretch=1.2,fontsize=\footnotesize,linenos,escapeinside=??,mathescape=true]{python}}{\end{minted}} 
+
+\newenvironment{run}[1]{``{\tt #1}"\xspace}
+
+
+\newcommand{\dint}{  \displaystyle \int }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ie}{{\em i.e.}\xspace}
+\newcommand{\eg}{{\em e.g.}\xspace}
+\newcommand{\GeV}{{\rm GeV}\xspace}
+\newcommand{\TeV}{{\rm TeV}\xspace}
+\newcommand{\MeV}{{\rm MeV}\xspace}
+\newcommand{\keV}{{\rm keV}\xspace}
+
+\def\nsc{{\tt NSC++}\xspace}
+\def\mimes{{\tt MiMeS}\xspace}
+
+\newcommand{\CPP}{{\tt C++}\xspace}
+
+\newcommand{\PY}{{\tt python}\xspace}
+
+\newcommand{\JUPY}{{\tt jupyter}\xspace}
+
+\newcommand{\rhs}{RHS\xspace}
+\newcommand{\lhs}{LHS\xspace}
+
+\newcommand{\sR}{ s_{\rm R}\xspace}
+\newcommand{\HR}{ H_{\rm R}\xspace}
+\newcommand{\Hend}{ H_{\rm R,\,end}\xspace}
+\newcommand{\rhoR}{ \rho_{\rm R}\xspace}
+\newcommand{\rhoPhi}{ \rho_{\Phi}\xspace}
+\newcommand{\GammaPhi}{ \Gamma_{\Phi}\xspace}
+
+
+\newcommand{\fR}{ f_{\rm R}\xspace}
+\newcommand{\fPhi}{f_{\Phi}\xspace}
+
+\newcommand{\sRi}{ s_{\rm R\,i}\xspace}
+\newcommand{\rhoRi}{ \rho_{\rm R\,i}\xspace}
+\newcommand{\rhoPhii}{ \rho_{\Phi\,{\rm i}}\xspace}
+
+
+
+\newcommand{\geff}{ g_{\rm eff}{}\xspace}
+\newcommand{\heff}{ h_{\rm eff}{}\xspace}
+\renewcommand{\dh}{ \delta_h{}\xspace}
+
+\newcommand{\Ham}{ \mathcal{H}\xspace}
+
+
+\newcommand{\Ti}{ T_{\rm i}{}\xspace}
+
+\newcommand{\ti}{ t_{\rm i}{}\xspace}
+
+\newcommand{\ui}{ u_{\rm i}{}\xspace}
+
+\newcommand{\ai}{ a_{\rm i}{}\xspace}
+
+\newcommand{\Tend}{ T_{\rm end}{}\xspace}
+
+\newcommand{\tend}{ t_{\rm end}{}\xspace}
+
+\newcommand{\uend}{ u_{\rm end}{}\xspace}
+
+\newcommand{\aend}{ a_{\rm end}{}\xspace}
+
+\newcommand{\TEI}{ T_{\rm E1}{}\xspace}
+\newcommand{\TEII}{ T_{\rm E2}{}\xspace}
+\newcommand{\TDI}{ T_{\rm D1}{}\xspace}
+\newcommand{\TDII}{ T_{\rm D2}{}\xspace}
+
+\newcommand{\uEI}{ u_{\rm E1}{}\xspace}
+\newcommand{\uEII}{ u_{\rm E2}{}\xspace}
+\newcommand{\uDI}{ u_{\rm D1}{}\xspace}
+\newcommand{\uDII}{ u_{\rm D2}{}\xspace}
+
+\newcommand{\EI}{{\rm E1}{}\xspace}
+\newcommand{\EII}{{\rm E2}{}\xspace}
+\newcommand{\DI}{{\rm D1}{}\xspace}
+\newcommand{\DII}{{\rm D2}{}\xspace}
+
+
+\newcommand{\vev}[1]{\langle #1 \rangle}
+\newcommand{\Bvev}[1]{\Bigg\langle #1 \Bigg\rangle}
+\newcommand{\bvev}[1]{\Big\langle #1 \Big\rangle}
+
+
+
+
+\newcommand{\lrb}[1]{\left( #1 \right)}
+\newcommand{\lrsb}[1]{\left[ #1 \right]}
+\newcommand{\lrBigb}[1]{\Big( #1 \Big)}
+\newcommand{\lrBigsb}[1]{\Big[ #1 \Big]}
+\newcommand{\lrBiggb}[1]{\Bigg( #1 \Bigg)}
+\newcommand{\lrBiggsb}[1]{\Bigg[ #1 \Bigg]}
+
+\newcommand{\lrBigcb}[1]{\Big\{ #1 \Big\}}
+\newcommand{\lrBiggcb}[1]{\Bigg\{ #1 \Bigg\}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%--Begin_refs--%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcounter{NumArgs}
+
+%Define reference to an arbitrary number of equations (\eqs{label_1,label_2....,label_n} will show eqs. ref_1, ref_2, ..., and ref_n)
+\newcommand{\eqs}[1]{\setcounter{NumArgs}{0}\foreach\i in{#1}{\stepcounter{NumArgs}}%
+	\ifthenelse{\equal{\theNumArgs}{1}}{eq.~(\ref{#1})}%
+	{\ifthenelse{\equal{\theNumArgs}{2}}%
+		{eqs.~\foreach\i[count=\q]in{#1}{\ifthenelse{\equal{\q}{\theNumArgs}}{and (\ref{\i})}{(\ref{\i})~}}}%
+		{eqs.~\foreach\i[count=\q]in{#1}{\ifthenelse{\equal{\q}{\theNumArgs}}{and (\ref{\i})}{(\ref{\i}),~}}}}}
+
+
+%Define reference to an arbitrary number of equations (\Eqs{label_1,label_2....,label_n} will show Eqs. ref_1, ref_2, ..., and ref_n)
+\newcommand{\Eqs}[1]{\setcounter{NumArgs}{0}\foreach\i in{#1}{\stepcounter{NumArgs}}%
+	\ifthenelse{\equal{\theNumArgs}{1}}{Eq.~(\ref{#1})}%
+	{\ifthenelse{\equal{\theNumArgs}{2}}%
+		{Eqs.~\foreach\i[count=\q]in{#1}{\ifthenelse{\equal{\q}{\theNumArgs}}{and (\ref{\i})}{(\ref{\i})~}}}%
+		{Eqs.~\foreach\i[count=\q]in{#1}{\ifthenelse{\equal{\q}{\theNumArgs}}{and (\ref{\i})}{(\ref{\i}),~}}}}}
+
+
+%Define reference to an arbitrary number of labels (\REF{label_1,label_2....,label_n} will show ref_1, ref_2, ..., and ref_n)
+\newcommand{\refs}[1]{\setcounter{NumArgs}{0}\foreach\i in{#1}{\stepcounter{NumArgs}}%
+	\ifthenelse{\equal{\theNumArgs}{1}}{(\ref{#1})}%
+	{\ifthenelse{\equal{\theNumArgs}{2}}%
+		{\foreach\i[count=\q]in{#1}{\ifthenelse{\equal{\q}{\theNumArgs}}{and (\ref{\i})}{(\ref{\i})~}}}%
+		{\foreach\i[count=\q]in{#1}{\ifthenelse{\equal{\q}{\theNumArgs}}{and (\ref{\i})}{(\ref{\i}),~}}}}}
+
+
+
+%Define reference to an arbitrary number of figs (\Figs{label_1,label_2....,label_n} will show ref_1, ref_2, ..., and ref_n)
+\newcommand{\Figs}[1]{\setcounter{NumArgs}{0}\foreach\i in{#1}{\stepcounter{NumArgs}}%
+	\ifthenelse{\equal{\theNumArgs}{1}}{Figure~(\ref{#1})}%
+	{\ifthenelse{\equal{\theNumArgs}{2}}%
+		{Figures~\foreach\i[count=\q]in{#1}{\ifthenelse{\equal{\q}{\theNumArgs}}{and (\ref{\i})}{(\ref{\i})~}}}%
+		{Figures~\foreach\i[count=\q]in{#1}{\ifthenelse{\equal{\q}{\theNumArgs}}{and (\ref{\i})}{(\ref{\i}),~}}}}}
+
+
+
+
+%Define reference to an arbitrary number of "general reference" (\Gen{message}{label_1,label_2....,label_n} will show message.(ref_1), (ref_2), ..., and (ref_n)
+\newcommand{\Gen}[2]{\setcounter{NumArgs}{0}\foreach\i in{#2}{\stepcounter{NumArgs}}%
+	\ifthenelse{\equal{\theNumArgs}{1}}{#1.~(\ref{#2})}%
+	{\ifthenelse{\equal{\theNumArgs}{2}}%
+		{#1.~\foreach\i[count=\q]in{#2}{\ifthenelse{\equal{\q}{\theNumArgs}}{and (\ref{\i})}{(\ref{\i})~}}}%
+		{#1.~\foreach\i[count=\q]in{#2}{\ifthenelse{\equal{\q}{\theNumArgs}}{and (\ref{\i})}{(\ref{\i}),~}}}}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%--End_refs--%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

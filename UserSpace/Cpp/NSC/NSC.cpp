@@ -8,7 +8,6 @@
 #define printResults
 // #define printPoints
 // #define printError
-// #define printRelevant //prints what you need for MiMeS
 
 
 // macros for the solver
@@ -16,6 +15,7 @@
     #define SOLVER 1
     #define METHOD RODASPR2
 #endif
+
 
 
 // macros for the numeric type
@@ -26,6 +26,7 @@
 #ifndef LD
     #define LD LONG double
 #endif
+
 
 int main(int argc, char **argv){ 
 
@@ -60,10 +61,9 @@ int main(int argc, char **argv){
 
         return 1;
     }
-    //timeit.sh adds some overhead. Alternatively, you can use
-    // nsc::Timer _time_; 
-    // The _time_ instance  prints the time the program took in stderr.  
 
+    nsc::Timer _time_; 
+    // The _time_ instance  prints the time the program took in stderr.  
 
     int ar=0;
 
@@ -93,39 +93,29 @@ int main(int argc, char **argv){
     unsigned int maximum_No_steps=atoi(argv[++ar]); //maximum steps the solver can take Quits if this number is reached even if integration is not finished.
     
 
-    nsc::NSC<LD,SOLVER,METHOD<LD>> BE(TEND,c,Ti,ratio,umax,TSTOP,
-    initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, relative_tolerance, beta,
-    fac_max, fac_min, maximum_No_steps);
+    nsc::Cosmo<LD> plasma(cosmo_PATH,0,nsc::Cosmo<LD>::mP);
 
-    BE.solveNSC();
+    nsc::Evolution<LD,SOLVER,METHOD<LD>> BE;
+
+    BE.solveNSC(TEND, c, Ti, ratio, TSTOP, umax, &plasma,
+                {
+                    .initial_step_size=initial_step_size, .minimum_step_size=minimum_step_size, .maximum_step_size=maximum_step_size,
+                    .absolute_tolerance=absolute_tolerance, .relative_tolerance=relative_tolerance, .beta=beta, 
+                    .fac_max=fac_max, .fac_min=fac_min, .maximum_No_steps=maximum_No_steps
+                });
 
 
     #ifdef printResults
-    std::cout<<std::setprecision(16)
+    std::cout<<std::setprecision(8)
     <<TEND<<"\t"<<c<<"\t"<<Ti<<"\t"<<ratio<<"\t"<<BE.TE1<<"\t"<<BE.TE2<<"\t"<<BE.TD1<<"\t"<<BE.TD2<<"\n";
     #endif
 
     // print all the points
     #ifdef printPoints
     std::cout<<"---------------------points:---------------------\n";
-    std::cout<<"a/a_i\tT [GeV]\trho_Phi [GeV^4]\tlogH^2"<<std::endl;
+    std::cout<<"u\tT [GeV]\trho_Phi [GeV^4]"<<std::endl;
     for(size_t i=0; i<BE.pointSize; ++i ){
-        for(int j=0; j<4; ++j){
-            std::cout<<std::setprecision(16)<<BE.points[i][j];
-            if(j==3){std::cout<<"\n";}else{std::cout<<"\t";}
-        }
-    }
-    #endif
-
-
-    #ifdef printRelevant
-    for(size_t i=0; i<BE.pointSize; ++i ){
-
-            std::cout<<std::setprecision(16)
-            <<std::log(BE.points[i][0])<<"\t"
-            <<BE.points[i][1]<<"\t"
-            <<BE.points[i][3]<<"\n";
-            
+        std::cout<<std::setprecision(8)<<BE.u[i]<<"\t"<<BE.T[i]<<"\t"<<BE.rhoPhi[i]<<"\n";
     }
     #endif
 
@@ -134,7 +124,7 @@ int main(int argc, char **argv){
     std::cout<<"---------------------local error:---------------------\n";
     std::cout<<"dT\tdrhoPhi"<<std::endl;
     for(size_t i=0; i<BE.pointSize; ++i ){
-        std::cout<<BE.dT[i]<<"\t"<<BE.drhoPhi[i]<<"\n";
+        std::cout<<std::setprecision(8)<<BE.dT[i]<<"\t"<<BE.drhoPhi[i]<<"\n";
     }
     #endif
 

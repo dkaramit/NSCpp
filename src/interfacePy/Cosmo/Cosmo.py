@@ -7,7 +7,7 @@ from os import path as osPath
 
 sysPath.append(osPath.join(osPath.dirname(__file__), '../../'))
 
-from misc_dir.path import _PATH_
+from misc_dir.path import rootDir
 from misc_dir.type import cdouble
 
 void_p=c_void_p
@@ -16,7 +16,7 @@ char_p=c_char_p
 
 
 #load the library
-CosmoLib = CDLL(_PATH_+'/lib/libCosmo.so')
+CosmoLib = CDLL(rootDir+'/lib/libCosmo.so')
 
 CppFunc=CosmoLib.heff,CosmoLib.geff,CosmoLib.dgeffdT,CosmoLib.dheffdT,CosmoLib.dh,CosmoLib.rhoR,CosmoLib.Hubble,CosmoLib.s  
 
@@ -89,8 +89,12 @@ class Cosmo:
         self.mP=mP
 
 
-    # def __del__(self):
-        # CosmoLib.DEL(self.voidCosmo)
+    def __del__(self):
+        CosmoLib.DEL(self.voidCosmo)
+
+    def pointer(self):
+        return self.voidCosmo
+
     def heff(self,T):
         '''h_eff at temperature T [GeV]'''
         return CosmoLib.heff(T,self.voidCosmo)

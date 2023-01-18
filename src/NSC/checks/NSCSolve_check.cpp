@@ -3,6 +3,7 @@
 #include <cmath> 
 #include <string> 
 #include"src/NSC/NSCSolve.hpp"
+#include"src/Cosmo/Cosmo.hpp"
 
 
 #define printPoints
@@ -53,13 +54,16 @@ int main(int argc, char **argv){
     LD fac_min=0.8;
     unsigned int maximum_No_steps=int(1e7); //maximum steps the solver can take Quits if this number is reached even if integration is not finished.
 
-    nsc::NSC<LD,SOLVER,METHOD<LD>> BE(TEND,c,Ti,ratio,umax,TSTOP,
-    initial_step_size,minimum_step_size, maximum_step_size, absolute_tolerance, relative_tolerance, beta,
-    fac_max, fac_min, maximum_No_steps);
+    nsc::Cosmo<LD> plasma(cosmo_PATH,0,nsc::Cosmo<LD>::mP);
 
-    BE.solveNSC(); //solve the system. 
+    nsc::Evolution<LD,SOLVER,METHOD<LD>> BE;
 
-
+    BE.solveNSC(TEND, c, Ti, ratio, TSTOP, umax, &plasma,
+                {
+                    .initial_step_size=initial_step_size, .minimum_step_size=minimum_step_size, .maximum_step_size=maximum_step_size,
+                    .absolute_tolerance=absolute_tolerance, .relative_tolerance=relative_tolerance, .beta=beta, 
+                    .fac_max=fac_max, .fac_min=fac_min, .maximum_No_steps=maximum_No_steps
+                });
 
     std::cout<<std::setprecision(5)
     <<TEND<<"\t"<<c<<"\t"<<Ti<<"\t"<<ratio<<"\t"<<BE.TE1<<"\t"<<BE.TE2<<"\t"<<BE.TD1<<"\t"<<BE.TD2<<"\n";
@@ -68,12 +72,9 @@ int main(int argc, char **argv){
     // print all the points
     #ifdef printPoints
     std::cout<<"---------------------points:---------------------\n";
-    std::cout<<"a/a_i\tT [GeV]\trho_Phi [GeV^4]\tlogH^2"<<std::endl;
+    std::cout<<"u\tT [GeV]\trho_Phi [GeV^4]"<<std::endl;
     for(size_t i=0; i<BE.pointSize; ++i ){
-        for(int j=0; j<4; ++j){
-            std::cout<<BE.points[i][j];
-            if(j==3){std::cout<<"\n";}else{std::cout<<"\t";}
-        }
+        std::cout<<std::setprecision(16)<<BE.u[i]<<"\t"<<BE.T[i]<<"\t"<<BE.rhoPhi[i]<<"\n";
     }
     #endif
 

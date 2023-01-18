@@ -10,3 +10,12 @@
 UserSpace/Python/*_examplePlot.pdf
 *.xtx
 *._nscpp_
+*._NSCpp_
+*.aux 
+*.log 
+*.out 
+*.bbl 
+*.blg 
+*.synctex.gz
+*NSCpp.pdf
+*NSCpp.toc
