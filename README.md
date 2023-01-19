@@ -1,5 +1,3 @@
-<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script> <script type="module" src="https://cdn.jsdelivr.net/gh/zerodevx/zero-md@2/dist/zero-md.min.js"></script> </head> <style> @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@500&display=swap'); code {font-family: 'Source Code Pro', monospace; color: rgb(0,0,0);} </style> <body style="background-color:rgb\(255, 255, 255\)\;">
-
 # `NSC++`
 Non-Standard Cosmologies in C++
 
@@ -55,7 +53,7 @@ In [arXiv:2301.XXXXX](https://arxiv.org/abs/2301.XXXXX) you can find description
 ### `C++`
 
 
-<pre><code class="prettyprint">
+```c++
 #include<iostream>
 #include<iomanip>
 
@@ -63,7 +61,7 @@ In [arXiv:2301.XXXXX](https://arxiv.org/abs/2301.XXXXX) you can find description
 #include"NSCpp.hpp"
     
 int main(){
-    //Use cosmo_PATH to interpolate ?$\heff$? and ?$\geff$? from T=0 to T=mP.
+    //Use cosmo_PATH to interpolate heff and geff from T=0 to T=mP.
     nsc::Cosmo<long double> plasma(cosmo_PATH, 0, nsc::Cosmo<long double>::mP);
     
     //Declare Evolution instance using the Rosenbrock method RODASPR2
@@ -98,4 +96,4 @@ int main(){
     
     return 0;
 }
-</code></pre>
+```
