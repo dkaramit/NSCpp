@@ -163,7 +163,7 @@ This script can be ran after `make lib` has finished. Here we assume that the pa
 
 ## If you have trouble using the library I would be happy to help. 
 
-Contact e-mail: [dkaramit@yahoo.com](dkaramit@yahoo.com), [dimitrios.karamitros@manchester.ac.uk](dimitrios.karamitros@manchester.ac.uk).
+Contact e-mail: <dkaramit@yahoo.com>, <dimitrios.karamitros@manchester.ac.uk>.
 
 ## Citation
 
@@ -180,6 +180,5 @@ If you use `NSC++` please cite it as
 ```
 
 
-Enjoy,
-
+Enjoy,\
 Dimitris
