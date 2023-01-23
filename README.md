@@ -48,7 +48,7 @@ in the root directory of `NSC++`. Then, the `NSC++` modules can be used in a scr
 with `'path_to_src'` the path to `NSCpp/src` relative to the tocation of the script.
 
 ## Examples
-In [arXiv:2301.XXXXX](https://arxiv.org/abs/2301.XXXXX) you can find description the classes and function in detail. However, it is worth showing an example in `c++` and `python` here.  
+In [arXiv:2301.08253](https://arxiv.org/abs/2301.08253) you can find description the classes and function in detail. However, it is worth showing an example in `c++` and `python` here.  
 
 ### `C++`
 
