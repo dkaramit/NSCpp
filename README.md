@@ -169,13 +169,14 @@ Contact e-mail: <dkaramit@yahoo.com>, <dimitrios.karamitros@manchester.ac.uk>.
 
 If you use `NSC++` please cite it as 
 ```
-@article{Karamitros:,
+@article{Karamitros:2023uak,
     author = "Karamitros, Dimitrios",
     title = "{NSC++: Non-Standard Cosmologies in C++}",
-    eprint = "2301.XXXXX",
+    eprint = "2301.08253",
     archivePrefix = "arXiv",
-    primaryClass = "hep-ph",
-    year = "2022"
+    primaryClass = "astro-ph.IM",
+    month = "1",
+    year = "2023"
 }
 ```
 
