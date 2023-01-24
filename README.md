@@ -174,7 +174,7 @@ If you use `NSC++` please cite it as
     title = "{NSC++: Non-Standard Cosmologies in C++}",
     eprint = "2301.08253",
     archivePrefix = "arXiv",
-    primaryClass = "astro-ph.IM",
+    primaryClass = "astro-ph.CO",
     month = "1",
     year = "2023"
 }
