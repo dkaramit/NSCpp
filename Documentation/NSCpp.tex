@@ -59,9 +59,11 @@
 
 
 \begin{abstract}
-We introduce \nsc, a \CPP library that simulates the evolution of the plasma and a fluid that deposits energy to the plasma in the early Universe.
+We introduce \nsc, a header-only \CPP library that simulates the evolution of the plasma and a decaying fluid in the early Universe.
 %
-There is no special installation process or external dependencies, and the library comes with example programs that can be easily modified to handle several cases. \nsc also includes \PY interface that allows calling it directly from \PY scripts.
+\nsc can be used in \CPP programs or called directly from \PY scripts without significant overhead.
+%
+There is no special installation process or external dependencies. Furthermore, there are example programs that can be modified to handle several cases. 
 \end{abstract}
 
 \noindent
@@ -75,16 +77,16 @@ There is no special installation process or external dependencies, and the libra
 	Developer's respository link: \href{https://github.com/dkaramit/NSCpp}{https://github.com/dkaramit/NSCpp}.\\
 	
 %	\noindent
-	Programming language: \CPP and \PY.\\
+	Programming language: \CPP ({\tt C++17}$+$) and \PY ({\tt 3.7}$+$).\\
 	
 %	\noindent
 	Licensing provisions: MIT license.\\
 	
 %	\noindent
-	Nature of problem: Solves equations that describe the evolution of the plasma along with a fluid that increases the energy of the plasma in the early Universe.\\
+	Nature of problem: Solves equations that describe the evolution of the plasma along with a fluid that increases the entropy of the plasma during the early Universe.\\
 	
 %	\noindent
-	Solution method: Embedded Runge-Kutta for the numerical integration of the system of differential equations. The user can choose between explicit and Rosenbrock methods. There are several of Butcher tableaux already implemented, but the user can implement their own. For the interpolations of the relativistic degrees of freedom, the library uses cubic splines.\\ 
+	Solution method: Embedded Runge-Kutta for the numerical integration of the system of differential equations. The user can choose between explicit and Rosenbrock methods. There are several of Butcher tableaux already implemented, but the user can implement their own. The interpolations of the relativistic degrees of freedom is accomplished by cubic spline interpolation.\\ 
 	
 %	\noindent
 	Restrictions: The value of the pressure over the energy density and the energy loss parameter of the fluid are assumed to be constant. It is also assumed that there is no energy leaking from the plasma to the fluid.
@@ -100,36 +102,36 @@ There is no special installation process or external dependencies, and the libra
 \section{Introduction}\label{sec:intro}
 \setcounter{equation}{0}
 %
-The configuration of the various components of the Universe today was influenced by its nature at times that we cannot probe. Therefore, there is the possibility that the Universe experienced a period of non-standard evolution. Deviation from the standard cosmological scenario is called non-standard cosmology (NSC). 
+The configuration of the components of the Universe today might have been influenced by its nature at times that cannot be probed. Therefore, there is the possibility that the Universe experienced a period of non-standard evolution. A scenario that deviates from the standard cosmological case is called non-standard cosmology (NSC). 
 %
-NSCs are in general worth studying in the context of the evolution of other components of the Universe because they can help us probe the nature of the Universe at temperatures inaccessible by direct observations (\eg of CMB). For example, the study of dark matter within NSCs can allow possibilities that otherwise excluded. This means that if dark matter is observed and turns out to be excluded under the standard cosmological model, then its nature can reveal aspects of the Universe at times relevant to the dark matter production (see,~\eg~\cite{McDonald:1989jd,DEramo:2017gpl,Redmond:2017tja,DEramo:2017ecx,Bernal:2020bfj,Arias:2020qty,Arias:2021rer,Barman:2021ifu,Dienes:2021woi,Banerjee:2022fiw,Hardy:2018bph,Bernal:2018kcw,Arias:2019uol,Allahverdi:2019jsc,Bernal:2019mhf,Cosme:2020mck}). 
+NSCs in general affect the evolution of other components of the Universe, and their detailed examination can help us probe the nature of the Universe at temperatures inaccessible by direct observations (\eg of CMB). For example, the study of dark matter within NSCs can allow possibilities that are otherwise excluded. This means that if dark matter is observed and turns out to be excluded under the standard cosmological model, then its nature can reveal aspects of the Universe at times relevant to the dark matter production (see,~\eg~\cite{McDonald:1989jd,DEramo:2017gpl,Redmond:2017tja,DEramo:2017ecx,Bernal:2020bfj,Arias:2020qty,Arias:2021rer,Barman:2021ifu,Dienes:2021woi,Banerjee:2022fiw,Hardy:2018bph,Bernal:2018kcw,Arias:2019uol,Allahverdi:2019jsc,Bernal:2019mhf,Cosme:2020mck}). 
 %
-Several non-standard cosmological scenarios have been studied in the literature (\eg refs.~\cite{Vilenkin:1982wt,Coughlan:1983ci,Ratra:1987rm,Giudice:2000ex,Gardner:2004in,Dalianis:2018afb} with some reviews found in refs.~\cite{Tsujikawa:2013fta,Allahverdi:2020bys}, however there is no available tool that will automate the process of simulating the evolution of the Universe. \nsc is one attempt to do this by being an easy-to-use and highly modifiable \CPP code that can handle the most common NSCs. 
+Several non-standard cosmological scenarios have been studied in the literature (\eg refs.~\cite{Vilenkin:1982wt,Coughlan:1983ci,Ratra:1987rm,Giudice:2000ex,Gardner:2004in,Dalianis:2018afb} with some reviews found in refs.~\cite{Tsujikawa:2013fta,Allahverdi:2020bys}), however there is no available tool that will automate and standardise the simulation the evolution of the Universe. \nsc is an attempt to accomplish this by being an easy-to-use and modifiable \CPP library that can handle the most common NSCs. 
 %
 Since in most cases the expansion mode of the Universe is just a background, \nsc can be used to simulate it and use the results to study the evolution of other components of the Universe (\eg dark matter or lepton number) under this background. 
 %
 In particular, \nsc can be used along with \mimes~\cite{Karamitros:2021nxi}, since it can output the evolution of the temperature and Hubble parameter which can be used as an input by \mimes.
 
 
-There is another code, built specifically for the evolution of cosmic relics in matter dominated Universe, {\tt EvoEMD}~\cite{Dutra:2021phm}. \nsc is different because the evolution of the temperature of the plasma is computed by manipulating the equation that describes the evolution of the entropy density, while {\tt EvoEMD} solves
+We note that there is another package, built specifically for the evolution of cosmic relics in matter dominated Universe, {\tt EvoEMD}~\cite{Dutra:2021phm}. \nsc is different because the evolution of the temperature of the plasma is computed by manipulating the equation that describes the evolution of the entropy density, while {\tt EvoEMD} solves
 %
 \begin{equation}
 	\dfrac{d\rhoR}{dt} = -4H\rhoR + C_{\rm EMD} \;,
 	\label{eq:EvoMD}
 \end{equation}
 %
-with  $C_{\rm EMD}$ the additional matter contribution which. This equation relies on the approximation $\rhoR \approx 3/4 \, sT$ that does not hold in general. Also, \nsc allows the user to consider different equations of state for the fluid, $\Phi$. 
+with  $C_{\rm EMD}$ the additional matter contribution. This equation relies on the approximation $\rhoR \approx 3/4 \, sT$ that does not hold in general. Also, \nsc allows the user to consider different equations of state for the fluid, $\Phi$. 
 %
-As we will explain later \nsc obeys the same design principles as \mimes~\cite{Karamitros:2021nxi}; \ie the general usage of both are almost identical, \nsc only needs a \CPP compiler that supports the {\tt c++17} standard and no other external dependences, and there will always be dedicated versions of the underline numerical libraries~\cite{NaBBODES,SimpleSplines} guaranteed to work with the current version of \nsc. Moreover, there are multiple Runge-Kutta (RK) methods~\cite{NaBBODES} included witht he possibility to implement new ones by the user. This can help the users inspect the numerical validity of the results.
+As we explain in this article, \nsc adheres to design principles similar to \mimes~\cite{Karamitros:2021nxi}; \ie the general usage of both is almost identical, \nsc only needs a \CPP compiler that supports the {\tt c++17} standard with no other external dependences, and there will always be dedicated versions of the underline numerical libraries~\cite{NaBBODES,SimpleSplines} guaranteed to work with the current version of \nsc. Moreover, there are multiple Runge-Kutta (RK) methods~\cite{NaBBODES} included with the possibility to implement new ones by the user. This can help the users inspect the numerical validity of the results.
 
-This article is organised as follows. Section~\ref{sec:equations} is brief reminder of the system that \nsc simulates and a description of the internal notation it uses. The next section describes the usage of \nsc in general, from downloading to compiling along with a brief description of the various classes and functions available to the user. In Section~\ref{sec:example} there are complete examples written in both \CPP and \PY, and a brief mention of all the results one can output. Section~\ref{sec:summary} summarises the article and provides future directions.
+This article is organised as follows. Section~\ref{sec:equations} is brief reminder of the system that \nsc simulates and a description of the internal notation it uses. The next section describes the usage of \nsc in general, from downloading to compiling, along with a brief description of the various classes and functions available to the user. In Section~\ref{sec:example} there are complete examples written in both \CPP and \PY, and a brief mention of all the results one can output. Section~\ref{sec:summary} summarises the article and provides future directions.
 %
-Appendices~\refs{app:cpp,app:py} describe in detail the implementation of the classes available to the user, while in Appendix~\refs{app:usr_input} there are tables that summarise all the possible inputs and options one can choose from. 
+Appendices~\refs{app:cpp,app:py} describe in detail the implementation of the classes available to the user, while in Appendix~\refs{app:usr_input} there are tables that summarise all the possible inputs and options. 
 
 \section{Evolution equations}\label{sec:equations}
 \setcounter{equation}{0}
 
-In order to model a non-standard cosmological history, we assume that the Universe at early times was dominated by two components; the plasma and a fluid ($\Phi$) with an equation of state
+In order to model an NSC, we assume that the Universe at early times was dominated by two components; the plasma and a fluid ($\Phi$) with an equation of state
 %
 \begin{equation}
 	p_{\Phi} = (c/3-1) \rhoPhi \;,
@@ -138,33 +140,32 @@ In order to model a non-standard cosmological history, we assume that the Univer
 %
 with $c$ a constant. 
 
-The plasma is assumed to be in thermal equilibrium with energy and entropy densities defined as
+The plasma is assumed to be always in thermal equilibrium, with energy and entropy densities defined as
 %
 \begin{align}
 	\sR(T)&=\dfrac{2\pi^2}{45} \,  \heff(T) \, T^3 \label{eq:s_def}\\
-	\rhoR(T)&=\dfrac{\pi^2}{30} \,  \geff(T) \, T^4 \label{eq:rho_def}
+	\rhoR(T)&=\dfrac{\pi^2}{30} \,  \geff(T) \, T^4 \label{eq:rho_def} \;,
 \end{align}
 %
+where $\heff(T)$ and $\geff(T)$ count the effective relativistic degrees of freedom (RDOF) of the plasma.
 
-
-Assuming that $\Phi$ dominates for some temperature range, it must lose energy to the plasma since the contribution to the energy budget of the Universe of such fluid is severely constraint at temperatures lower than $T \sim \mathcal{O}(10)~\MeV$~\cite{Allahverdi:2020bys}. We model this by introducing a constant energy loss rate, $\GammaPhi$. The equations that describe the evolution of both components are
+If $\Phi$ dominates for some temperature range, it must lose energy to the plasma, since the contribution to the energy budget of the Universe of such fluid is severely constraint at temperatures lower than $T \sim \mathcal{O}(10)~\MeV$~\cite{Allahverdi:2020bys}. We model this by introducing a constant energy loss rate, $\GammaPhi$. The equations that describe the evolution of both components are
 %
 \begin{align}
 	\dfrac{d\sR(T)}{dt} &= -3 \, H(T)  \, \sR(T) + \dfrac{\GammaPhi}{T} \, \rhoPhi(T) \label{eq:dsdt} \\ 
 	\dfrac{d\rhoPhi(T)}{dt} &= - c \, H(T) \, \rhoPhi(T) - \GammaPhi \, \rhoPhi(T) \label{eq:drhoPhidt} \;,
 \end{align}
 %
-with $H$ the Hubble parameter of the Universe, given by
+with $H$ the Hubble parameter given by
 %
 \begin{equation}
 	H(T) = \sqrt{\dfrac{8}{3\,m_P^2} \ \lrsb{\rhoR(T) + \rhoPhi(T)}}\;,
 	\label{eq:H_def}
 \end{equation}
 %
-with $m_P = 1.22 \times 10^{19}~\GeV$.
- 
+where $m_P = 1.22 \times 10^{19}~\GeV$.
 
-Following ref.~\cite{Arias:2020qty}, we can parametrise $\GammaPhi$ in terms of the temperature that $\Phi$ would decay ($\Tend$) if the Universe was radiation dominated, as
+Following refs.~\cite{Bernal:2019mhf,Arias:2020qty}, we can parametrise $\GammaPhi$ in terms of the temperature that $\Phi$ would decay ($\Tend$) if the Universe was radiation dominated, as
 %
 \begin{equation}
 	\GammaPhi \equiv \HR(T=\Tend)\;,
@@ -183,7 +184,7 @@ In order to solve this system of equations, we change the integration variable t
 	\label{eq:u_def}
 \end{equation}
 %
-with $a$ the scale factor of the Universe, and $\ai$ its value at some initial time. The initial condition can now be chosen at $\ui=0$, corresponding to $T=\Ti$ and an initial value for $\rhoPhi=\rhoPhii$. 
+with $a$ the scale factor of the Universe, and $\ai$ its value at some initial time. The initial condition can now be chosen at $\ui=0$, corresponding to $T=\Ti$ and an initial value for $\rhoPhi=\rhoPhii$. The form of \eqs{eq:u_def} implies that the evolution of the Universe depends only on its relative scale; \ie if $\ai \neq 0$, its value does not matter.
 
 We can reparametrise the temperature of the plasma and the energy density of $\Phi$ as 
 %
@@ -205,27 +206,25 @@ with
 	\label{eq:dh_def}
 \end{equation}
 %
-Notice that for $\GammaPhi=0$ and $\dh=1$, $\fR=\fPhi=1$. These are the equations that \nsc actually solves, using as user input for $\Tend$, $c$, $\Ti$, and $r=\rhoRi/\rhoPhii$. Then, it automatically transforms them to the temperature of the plasma and the fluid energy density. From these, the user can obtain all other relevant cosmological quantities such as the Hubble parameter or the entropy density of the plasma.
+Notice that for $\GammaPhi=0$ and $\dh=1$, the functions introduced are $\fR=\fPhi=1$. These are the equations that \nsc actually solves, using as user input for $\Tend$, $c$, $\Ti$, and $r=\rhoRi/\rhoPhii$. Then, it automatically transforms them to the temperature of the plasma and the fluid energy density. From these, the user can obtain all other relevant cosmological quantities such as the Hubble parameter or the entropy density of the plasma.
 
-\nsc closely follows the notation of ref.~\cite{Arias:2020qty}, which identifies (at most) four points where the behaviour of the system changes; $\EI$, $\DI$, $\EII$, and $\DII$. The point $\EI$ ($\EII$) is defined when $\rhoPhi=\rhoR$ for the first (second) time. The point $\DI$ ($\DII$) is defined as the point at which $\lrsb{ (\Hend/H) \, (\rhoPhi/\rhoR) }$ exceeds (drops below) $40\%$; \ie before $\DI$ and after $\DII$ the energy deposition form the fluid to the plasma has a rate less than $10\%$ of the free dilution rate of $\rhoR$.
+\nsc closely follows the notation of ref.~\cite{Arias:2020qty}, identifying (at most) four points where the behaviour of the system changes; $\EI$, $\DI$, $\EII$, and $\DII$. The point $\EI$ ($\EII$) is defined when $\rhoPhi=\rhoR$ for the first (second) time. The point $\DI$ ($\DII$) is defined as the point at which $\lrsb{ (\Hend/H) \, (\rhoPhi/\rhoR) }$ exceeds (drops below) $40\%$; \ie before $\DI$ and after $\DII$ the energy loss rate form the fluid to the plasma is less than $10\%$ of the free dilution rate of $\rhoR$.
 %
-For the sake of performance, \nsc identifies these points approximately during the integration of~\eqs{eq:dlogfRdu,eq:dlogfPhidu}.  
+For the sake of performance, \nsc identifies these points approximately during the integration of~\eqs{eq:dlogfRdu,eq:dlogfPhidu}. 
 
-There are two qualitatively different cases shown in \Figs{fig:evolution_examples}. 
-%
-In \Figs{fig:EMD}, we show the evolution of the comoving energy densities of radiation and $\Phi$ as functions of $u$ for $\Tend=10^{-2}~\GeV$, $c=3$, $\Ti=10^7~\GeV$, and $r=10^{-2}$. In \Figs{fig:EKD}, we show the evolution of these quantities for $\Tend=10^{4}~\GeV$, $c=6$, $\Ti=10^7~\GeV$, and $r=10^{8}$. 
+In general, there are two cases that exhibit qualitatively different evolution, which are shown in \Figs{fig:evolution_examples}. In \Figs{fig:EMD}, we show the evolution of the comoving energy densities of radiation and $\Phi$ as functions of $u$ for $\Tend=10^{-2}~\GeV$, $c=3$, $\Ti=10^7~\GeV$, and $r=10^{-2}$. In \Figs{fig:EKD}, we show the evolution of these quantities for $\Tend=10^{4}~\GeV$, $c=6$, $\Ti=10^7~\GeV$, and $r=10^{8}$. 
 %
 These two figures correspond to the two qualitative typical behaviours we expect for $c<4$ and $c>4$. In the former, $\Phi$ increases its energy contribution, until it decays away. In the latter,  $\rhoPhi$ monotonically decreases. In this case, the Universe will become radiation dominated regardless $\GammaPhi$, but if $\rhoPhii$ and $\GammaPhi$ are large enough the energy of the plasma will increase.  Notice that for $c>4$, There can only be one point of equality between $\rhoR$ and $\rhoPhi$, which we call $\EI$ as this is the naming conversion in \nsc.
 %
 \begin{center}
 	\begin{figure}[t!]
 		\begin{subfigure}{0.5\textwidth}
-			\includegraphics[width=1\textwidth]{figs/EMD.pdf}
+			\includegraphics[width=1\textwidth]{EMD.pdf}
 			\caption{}
 			\label{fig:EMD}
 		\end{subfigure}
 		\begin{subfigure}{0.5\textwidth}
-			\includegraphics[width=1\textwidth]{figs/EKD.pdf}
+			\includegraphics[width=1\textwidth]{EKD.pdf}
 			\caption{}
 			\label{fig:EKD}
 		\end{subfigure}
@@ -247,7 +246,7 @@ These two figures correspond to the two qualitative typical behaviours we expect
 \section{\nsc usage}\label{sec:first_steps}
 \setcounter{equation}{0}
 %
-\nsc can be obtained directly form github. The safest choice is to download the stable branch, which will always hold the latest tested version. The preferred method for downloading \nsc is by running:~\footnote{The {\tt git} utility can be installed by following \href{https://github.com/git-guides/install-git}{https://github.com/git-guides/install-git}.}
+\nsc can be obtained directly form github. The safest choice is to download the ``stable'' branch, which will always be the latest tested version. The preferred method for downloading \nsc is by running:~\footnote{The {\tt git} utility can be installed by following \href{https://github.com/git-guides/install-git}{https://github.com/git-guides/install-git}.}
 %
 \begin{lstlisting}
 	git clone -b stable https://github.com/dkaramit/NSCpp
@@ -262,9 +261,9 @@ These two figures correspond to the two qualitative typical behaviours we expect
 	git submodule update --remote
 \end{lstlisting}
 %
-These commands download the {\tt master} branch of \nsc, with the latest versions of {\tt NaBBODES} and {\tt SimpleSplines}. All versions that are not labelled as stable must be treated with caution, as they may not work as properly. 
+These commands download the {\tt master} branch of \nsc, with the latest versions of {\tt NaBBODES} and {\tt SimpleSplines}. All versions that are not labelled as stable must be treated with caution, as they may not work properly. 
 
-By executing \run{bash configure.sh} in the root directory of \nsc, the library will be available for usage within a \CPP program. This {\tt bash} script, writes some paths in some files for convenience, formats the data for the RDOF in an acceptable format (if a path is given in the {\tt NSCpp/Paths.mk file}), and creates some directories that may be useful later. In order to call \nsc inside \PY, \run{make lib} must also be ran,  which will compile shared libraries that needed for the \PY interface.
+By executing \run{bash configure.sh} in the root directory of \nsc, the library will be available for usage within a \CPP program. This {\tt bash} script, writes some paths in some files for convenience, formats the data for the RDOF in an acceptable format (if a {\em relative} path is given in the {\tt NSCpp/Paths.mk file}), and creates some directories that may be useful later. In order to call \nsc inside \PY, \run{make lib} must also be ran,  which will compile shared libraries that needed for the \PY interface.
 
 \nsc already comes with several examples in \CPP and \PY, which can be found in the directory {\tt NSCpp/UserSpace}. In order to compile the \CPP examples, one just has to run \run{make examples} in the root directory of \nsc or {\tt make} inside the directory of each \CPP program.
 
@@ -272,26 +271,25 @@ There is also an option to compile some test programs using {\tt make check}, wh
 
 \subsection{Assumptions}
 %
-\nsc is designed to be model agnostic. It can only be used for constant $c$ and $\GammaPhi$, and in cases where there are no plasma energy leaks into the fluid. In cases that these assumptions do not hold, knowledge of the exact nature of $\Phi$ is generally needed.  It is also assumed that the plasma does not fall out of thermal equilibrium between the temperatures we integrate (defined later as {\tt Ti} and {\tt TSTOP}), and its energy and entropy densities are always given by \eqs{eq:s_def,eq:rho_def}.
+\nsc is designed to be as model agnostic as possible. It can only be used for constant $c$ and $\GammaPhi$, and in cases where there are no plasma energy leaks into the fluid. In cases that these assumptions do not hold, knowledge of the exact nature of $\Phi$ is generally needed.  It is also assumed that the plasma does not fall out of thermal equilibrium between the temperatures we integrate (defined later as {\tt Ti} and {\tt TSTOP}), and its energy and entropy densities are always given by \eqs{eq:s_def,eq:rho_def}.
 
 \subsection{Using \nsc}\label{sec:Cpp_usage} 
 %
-Out-of-the-box, and after \run{bash configure.sh} is ran successfully, all \nsc functionality can be used in a \CPP program by including in the source file the following line:
+Out-of-the-box, and after \run{bash configure.sh} is ran successfully, \nsc can be used in a \CPP program by including in the source file the following line:
 %
 \begin{cpp}
 	#include "NSCpp.hpp"
 \end{cpp}
 %
 Notice that if this file is not in the root directory of \nsc, we need to compile it using the flag {\tt -Ipath-to-root}, "path-to-root" the relative (or absolute) path to the root directory of \nsc; \eg if the {\tt .cpp} is in the {\tt NSCpp/UserSpace/Cpp/NSC} directory, this flag should be {\tt -I../../../}. 
-
  
 The class that deals with the system~\refs{eq:dlogfRdu,eq:dlogfPhidu}, is the \cppin{nsc::Evolution<LD,SOLVER,METHOD>}. In order to begin, we declare an instance of this class as
 %
 \begin{cpp}
-    nsc::Evolution<LD,SOLVER,METHOD> BE;
+    nsc::Evolution<LD,Solver,Method> BE;
 \end{cpp}
 %
-Here, \cppin{LD} should be the numeric type to be used; it is recommended to use \cppin{double} or \cppin{long double}. Moreover \cppin{Solver} and \cppin{Method} depend on the type of RK method the user chooses. The available choices are shown in Table~\ref{tab:template-arguments}. 
+Here, \cppin{LD} should be the numeric type to be used. Only floating point types are allowed, and it is recommended to use \cppin{double} or \cppin{long double}. Moreover \cppin{Solver} and \cppin{Method} depend on the type of RK method the user chooses. The available choices are shown in Table~\ref{tab:template-arguments}. 
 
 The evolution of the Universe depends on the evolution of the plasma, which is encoded in the class \cppin{nsc::Cosmo<LD>}. An instance of this class is declared as 
 %
@@ -442,10 +440,15 @@ Notice that if \cppin{solveNSC} returns \cppin{false}, there is an error message
 In this program we have used \cppin{long double} as the numeric type in all declarations, with the {\tt RODASPR2} Rosenbrock method~\cite{RangAngermann2005} for the RK solver. Assuming that this code is written in a file with name {\tt example.cpp}, we can compile it with 
 %
 \begin{bash}
-	g++ -std=c++17 -O3 -I'path_to_root' example.cpp -o example.run	
+	g++ -std=c++17 -O3 -lm -I'path_to_root' example.cpp -o example.run	
 \end{bash}
 %
-with \cppin{'path_to_root'} the root directory of \nsc. This will create an {\tt example.run} executable.
+or
+\begin{bash}
+	clang -lstdc++ -std=c++17 -O3 -lm -I'path_to_root' example.cpp -o example.run	
+\end{bash}
+%
+with \cppin{'path_to_root'} the root directory of \nsc. This will create the executable {\tt example.run}. Note that the variable {\tt cosmo\_PATH} is defined in {\tt NSCpp/src/misc\_dir/path.hpp}, created by {\tt NSCpp/configure.sh} if a {\em relative} path is given in {\tt NSCpp/PATHS.mk}. As This variable is the absolute path to the RDOF file, the executable can be copied to any other place in the same system.
 
 \subsection{\PY}
 %
@@ -463,12 +466,12 @@ In both \CPP and \PY, the results we obtain are identical, and evolution of the 
 %
 \begin{figure}[t]
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=1\textwidth]{figs/EMD_err.pdf}
+		\includegraphics[width=1\textwidth]{EMD_err.pdf}
 		\caption{}
 		\label{fig:EMD_err}
 	\end{subfigure}
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=1\textwidth]{figs/EMD_hist.pdf}
+		\includegraphics[width=1\textwidth]{EMD_hist.pdf}
 		\caption{}
 		\label{fig:EMD_hist}
 	\end{subfigure}
@@ -491,12 +494,12 @@ We also show the relative local errors and histogram corresponding to \Figs{fig:
 %
 \begin{figure}[t]
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=1\textwidth]{figs/EKD_err.pdf}
+		\includegraphics[width=1\textwidth]{EKD_err.pdf}
 		\caption{}
 		\label{fig:EKD_err}
 	\end{subfigure}
 	\begin{subfigure}{0.5\textwidth}
-		\includegraphics[width=1\textwidth]{figs/EKD_hist.pdf}
+		\includegraphics[width=1\textwidth]{EKD_hist.pdf}
 		\caption{}
 		\label{fig:EKD_hist}
 	\end{subfigure}
@@ -516,13 +519,13 @@ In Section~\refs{sec:equations} we have shown the equations that \nsc solve and 
 
 \nsc can be downloaded and configured following the steps in Section~\refs{sec:first_steps}. This section also broadly describes the various classes and functions that can be used by the user in both \CPP and \PY, with more details given in the Appendix. Complete code examples in \CPP as well as \PY are shown in Section~\refs{sec:example}.
 
-\nsc has limitations as it is assumed that there is only one additional component ($\Phi$) with an equation of state of the given by~\eqs{eq:EOS} and the evolution of its energy density described by~\eqs{eq:drhoPhidt}. \nsc will keep evolving and with each iteration it will be able to handle non-minimal cases such as the ones studied in refs.~\cite{Barman:2022tzk,Arias:2022qjt,Dienes:2021woi}). Another useful extension that will be included in a future version is a module that compares against observational constraints given an inflation model. 
+\nsc has limitations as it is assumed that there is only one additional component ($\Phi$) with an equation of state of the given by~\eqs{eq:EOS} and the evolution of its energy density described by~\eqs{eq:drhoPhidt}. \nsc will keep evolving and new versions will be able to handle non-minimal cases such as the ones studied in refs.~\cite{Dienes:2021woi,Ahmed:2021fvt,Barman:2022tzk,Arias:2022qjt}). Another useful extension that will be included in a future version is a module that compares against observational constraints given an inflation model. 
 
 
 
 \section{Acknowledgements}
 %
-The author acknowledges support by the Lancaster–Manchester–Sheffield Consortium for Fundamental Physics, under STFC research grant ST/T001038/1.
+This work is supported by the Lancaster–Manchester–Sheffield Consortium for Fundamental Physics, under STFC research grant ST/T001038/1.
 
 
 
@@ -566,7 +569,7 @@ The optional argument, \cppin{args}, is an instance of a \cppin{struct} defined 
 	};
 \end{cpp}
 %
-This helps us pass to \cppin{solveNSC} only the arguments we wish to change. For example, we can choose {\tt absolute\_tolerance=1e-11} and {\tt beta=0.8} by adding {\tt \{.absolute\_tolerance=1e-11, .beta=0.8\}} in the place of {\tt args}. This is called aggregation in \CPP, and basically allows us to use named arguments. The caveat is that we need to put the arguments in the order thy appear in the definition of \cppin{solverArgs}.
+This helps us pass to \cppin{solveNSC} only the arguments we wish to change. For example, we can choose {\tt absolute\_tolerance=1e-11} and {\tt beta=0.8} by adding {\tt \{.absolute\_tolerance=1e-11, .beta=0.8\}} in the place of {\tt args}. This is called aggregation in \CPP, and basically allows us to use named arguments. The caveat is that we need to put the arguments in the order thy appear in the definition of \cppin{solverArgs}. For example, using {\tt \{.beta=0.8, .absolute\_tolerance=1e-11\}} will result in a compilation error.
 
 
 The class \cppin{Evolution} has several member variables that store the results of the solution of the system~\refs{eq:dlogfRdu,eq:dlogfPhidu}:
