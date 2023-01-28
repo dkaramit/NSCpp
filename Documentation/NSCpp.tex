@@ -63,8 +63,11 @@ We introduce \nsc, a header-only \CPP library that simulates the evolution of th
 %
 \nsc can be used in \CPP programs or called directly from \PY scripts without significant overhead.
 %
-There is no special installation process or external dependencies. Furthermore, there are example programs that can be modified to handle several cases. 
+There is no special installation process or external dependencies. Furthermore, there are example programs that can be modified to handle several cases.\\ 
 \end{abstract}
+
+\noindent
+{{\bf Keywords}: Cosmology, simulation, high energy physics.}\\
 
 \noindent
 {\bf Program summary:}\\
@@ -432,8 +435,50 @@ In this section we will show an example code that solves the system of \Figs{fig
 %
 In \CPP, we need to include the header file \cppin{NSCpp.hpp} from the root directory of \nsc. Then, we declare an instance of the \cppin{Evolution} class. The system is solved by calling the \cppin{solveNSC} function with the inputs described in Table~\ref{tab:solveNSC-input}. The following code can be used to solve the system~\refs{eq:dsdt,eq:drhoPhidt}. This code will print the values of $T_{\rm E_{1,2}}$ and $T_{\rm D_{1,2}}$, and all the integration points with their local errors.
 %
-\lstset{language = c++}
-\lstinputlisting{example.cpp}
+\begin{cpp}
+#include<iostream>
+#include<iomanip>
+
+//Include everything you need from NSC++
+#include"NSCpp.hpp"
+
+int main(){
+	//Use cosmo_PATH to interpolate ?$\heff$? and ?$\geff$? from T=0 to T=mP.
+	nsc::Cosmo<long double> plasma(cosmo_PATH, 0, nsc::Cosmo<long double>::mP);
+	
+	//Declare Evolution instance using the Rosenbrock method RODASPR2
+	nsc::Evolution<long double,1,RODASPR2<long double>> BE;
+	
+	//Declare parameters
+	long double TEND=1e-2, c=3, Ti=1e7, ratio=1e-2, TSTOP=1e-4, umax=200;
+	
+	bool check=BE.solveNSC(TEND, c, Ti, ratio, TSTOP, umax, &plasma,
+				{
+					.initial_step_size=1e-2, .minimum_step_size=1e-8, .maximum_step_size=1e-2, 
+					.absolute_tolerance=1e-11, .relative_tolerance=1e-11, .beta=0.9, 
+					.fac_max=1.2, .fac_min=0.8, .maximum_No_steps=10000000
+				});
+	
+	if(check){
+		// If the solver returns true, the solver probably worked.
+		std::cout<<std::setprecision(5);
+		std::cout<<BE.TE1<<"\t"<<BE.TE2<<"\t"<<BE.TD1<<"\t"<<BE.TD2<<"\n";
+		
+		//print the results and the errors
+		for(size_t i=0; i<BE.pointSize; ++i ){
+			std::cout<<std::left<<std::setw(15)<<BE.u[i]<<std::setw(15);
+			std::cout<<std::left<<BE.T[i]<<std::setw(15)<<BE.dT[i]<<std::setw(15);
+			std::cout<<std::left<<BE.rhoPhi[i]<<std::setw(15)<<BE.drhoPhi[i]<<"\n";
+		}
+	}else{
+		// If the solver returns false, you may need a larger umax.
+		std::cerr<<"Something went wrong. Try using larger value for umax\n";
+		exit(1);
+	}
+	
+	return 0;
+}
+\end{cpp}
 %
 Notice that if \cppin{solveNSC} returns \cppin{false}, there is an error message printed, and the code exits  with error code $1$.
 
@@ -448,14 +493,56 @@ or
 	clang -lstdc++ -std=c++17 -O3 -lm -I'path_to_root' example.cpp -o example.run	
 \end{bash}
 %
-with \cppin{'path_to_root'} the root directory of \nsc. This will create the executable {\tt example.run}. Note that the variable {\tt cosmo\_PATH} is defined in {\tt NSCpp/src/misc\_dir/path.hpp}, created by {\tt NSCpp/configure.sh} if a {\em relative} path is given in {\tt NSCpp/PATHS.mk}. As This variable is the absolute path to the RDOF file, the executable can be copied to any other place in the same system.
+with \cppin{'path_to_root'} the root directory of \nsc. This will create the executable {\tt example.run}. Note that the variable {\tt cosmo\_PATH} is defined in {\tt NSCpp/src/misc\_dir/path.hpp}, created by the script {\tt NSCpp/configure.sh} if a {\em relative} path is given in {\tt NSCpp/PATHS.mk}. As This variable is the absolute path to the RDOF file, the executable can be copied to any other place in the same system.
 
 \subsection{\PY}
 %
 The \PY interface of \nsc can handle same system as in the previous subsection. This is shown in the following code:
 %
-\lstset{language = python}
-\lstinputlisting{example.py}
+\begin{py}
+# append the path to the src directory 
+from sys import path as sysPath
+sysPath.append('../src')
+
+#load the NSC module
+from interfacePy.Evolution import Evolution 
+
+# load Cosmo and the Planck mass
+from interfacePy.Cosmo import Cosmo,mP 
+
+#This gives you access to the path of the rdof file.
+from misc_dir.path import cosmo_PATH
+
+#Instance of the Cosmo class. Interpolate from T=0 to T=mP
+plasma=Cosmo(cosmo_PATH,0,mP)
+
+# Evolution instance
+BE=Evolution()
+
+# solve the system
+check,time=BE.solveNSC(TEND=1e-2, c=3, Ti=1e7, ratio=1e-2, umax=500, TSTOP=1e-4, plasma=plasma,
+				initial_step_size=1e-2, minimum_step_size=1e-8, maximum_step_size=1e-2, 
+				absolute_tolerance=1e-11, relative_tolerance=1e-11, beta=0.9, fac_max=1.2, 
+				fac_min=0.8,maximum_No_steps=10000000)
+
+if check:
+	# get points 
+	BE.getPoints()
+	# get errors
+	BE.getErrors()
+
+print(BE.TE1,BE.TE2,BE.TD1,BE.TD2)
+
+for i,u in enumerate(BE.u):
+	print(u,BE.T[i],BE.dT[i],BE.rhoPhi[i],BE.drhoPhi[i])
+else:
+	print("Something went wrong. Try using larger value for umax")
+	exit(1)
+
+#run the destructors
+del BE
+del plasma
+\end{py}
 %
 This script is assumed to be located in a subdirectory of the root directory of \nsc, \eg inside {\tt NSCpp/UserSpace}. If it is in another directory, then only the third line should be changed to \pyin{sysPath.append('path_to_root')}, with \pyin{'path_to_root'} the path to the root directory of \nsc.
 
