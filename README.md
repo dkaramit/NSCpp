@@ -48,7 +48,7 @@ in the root directory of `NSC++`. Then, the `NSC++` modules can be used in a scr
 with `'path_to_src'` the path to `NSCpp/src` relative to the tocation of the script.
 
 ## Examples
-In [arXiv:2301.XXXXX](https://arxiv.org/abs/2301.XXXXX) you can find description the classes and function in detail. However, it is worth showing an example in `c++` and `python` here.  
+In [arXiv:2301.08253](https://arxiv.org/abs/2301.08253) you can find description the classes and function in detail. However, it is worth showing an example in `c++` and `python` here.  
 
 ### `C++`
 
@@ -169,13 +169,14 @@ Contact e-mail: <dkaramit@yahoo.com>, <dimitrios.karamitros@manchester.ac.uk>.
 
 If you use `NSC++` please cite it as 
 ```
-@article{Karamitros:,
+@article{Karamitros:2023uak,
     author = "Karamitros, Dimitrios",
     title = "{NSC++: Non-Standard Cosmologies in C++}",
-    eprint = "2301.XXXXX",
+    eprint = "2301.08253",
     archivePrefix = "arXiv",
-    primaryClass = "hep-ph",
-    year = "2022"
+    primaryClass = "astro-ph.CO",
+    month = "1",
+    year = "2023"
 }
 ```
 
