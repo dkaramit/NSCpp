@@ -321,7 +321,7 @@ The system can be solved by including:
 The various parameters are:
 %
 \begin{enumerate}
-	\item {\tt TEND}: the values of the $\Tend$ (in $\GeV$) as introduced in \eqs{eq:dsdt}. 
+	\item {\tt TEND}: the values of the $\Tend$ (in $\GeV$) as introduced in \eqs{eq:dsdt}.~\footnote{Note that $\GammaPhi=0$ corresponds to $\Tend=0$.}
 	
 	\item {\tt c}: the parameter that characterises the equation of state of the fluid, defined as in \eqs{eq:EOS}.
 	
@@ -363,7 +363,7 @@ One can also obtain the points {\tt BE.TE1} ($\TEI$), {\tt BE.TE2} ($\TEII$), {\
 
 \subsection{Using \nsc in \PY}\label{sec:py_usage}
 %
-The \PY interface modules are in the directory {\tt NSCpp/src/interfacePy}. The usage of the classes is made as similar as possible to the \CPP case. However, one should keep in mind that the various template arguments discussed in the \CPP case have to be chosen at compile-time. That is, for the \PY interface, one needs to choose the numeric type and RK method to be used when the shared libraries are compiled. This is accomplished by assigning the relevant variables in {NSCpp/Definitions.mk} before running \run{bash configure.sh} and \run{make lib}. The various options are the same as in Section 4 of ref.~\cite{Karamitros:2021nxi}, and summarised in Table~\ref{tab:compile_time-options}.
+The \PY interface modules are in the directory {\tt NSCpp/src/interfacePy}. The usage of the classes is made as similar as possible to the \CPP case. However, one should keep in mind that the various template arguments discussed in the \CPP case have to be chosen at compile-time. That is, for the \PY interface, one needs to choose the numeric type and RK method to be used when the shared libraries are compiled. This is accomplished by assigning the relevant variables in {\tt NSCpp/Definitions.mk} before running \run{bash configure.sh} and \run{make lib}. The various options are the same as in Section 4 of ref.~\cite{Karamitros:2021nxi}, and summarised in Table~\ref{tab:compile_time-options}.
 
 The two relevant classes are defined in the module {\tt interfacePy}, and can be imported in a \PY script as 
 %
