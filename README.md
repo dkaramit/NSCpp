@@ -179,6 +179,7 @@ If you use `NSC++` please cite it as
     year = "2023"
 }
 ```
+##Accepted for publication in Computer Physics Communications!
 
 
 Enjoy,\
