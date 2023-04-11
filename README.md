@@ -1,6 +1,6 @@
 # `NSC++`
 Non-Standard Cosmologies in C++
-
+z
 Get the stable (recommended) version by running
 
 ```
@@ -179,7 +179,12 @@ If you use `NSC++` please cite it as
     year = "2023"
 }
 ```
+## Accepted for publication in Computer Physics Communications!
 
 
 Enjoy,\
 Dimitris
+
+# Note:
+ 
+You can use `NSC++` to produce the non-standard cosmological input that `MiMeS` needs. [`MiMeS`](https://arxiv.org/abs/2201.10886) is an axion/ALP simulator. The stable version of `MiMeS` can be found: [github.com/dkaramit/MiMeS/tree/stable](https://github.com/dkaramit/MiMeS/tree/stable).  
