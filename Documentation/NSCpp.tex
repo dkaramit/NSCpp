@@ -89,7 +89,7 @@ There is no special installation process or external dependencies. Furthermore, 
 	Nature of problem: Solves equations that describe the evolution of the plasma along with a fluid that increases the entropy of the plasma during the early Universe.\\
 	
 %	\noindent
-	Solution method: Embedded Runge-Kutta for the numerical integration of the system of differential equations. The user can choose between explicit and Rosenbrock methods. There are several of Butcher tableaux already implemented, but the user can implement their own. The interpolations of the relativistic degrees of freedom is accomplished by cubic spline interpolation.\\ 
+	Solution method: Embedded Runge-Kutta for the numerical integration of the system of differential equations. The user can choose between explicit and Rosenbrock methods. There are several of Butcher tableaux already implemented, but the user can implement their own. The interpolations of the relativistic degrees of freedom are accomplished by cubic spline interpolation.\\ 
 	
 %	\noindent
 	Restrictions: The value of the pressure over the energy density and the energy loss parameter of the fluid are assumed to be constant. It is also assumed that there is no energy leaking from the plasma to the fluid.
@@ -211,7 +211,7 @@ with
 %
 Notice that for $\GammaPhi=0$ and $\dh=1$, the functions introduced are $\fR=\fPhi=1$. These are the equations that \nsc actually solves, using as user input for $\Tend$, $c$, $\Ti$, and $r=\rhoRi/\rhoPhii$. Then, it automatically transforms them to the temperature of the plasma and the fluid energy density. From these, the user can obtain all other relevant cosmological quantities such as the Hubble parameter or the entropy density of the plasma.
 
-\nsc closely follows the notation of ref.~\cite{Arias:2020qty}, identifying (at most) four points where the behaviour of the system changes; $\EI$, $\DI$, $\EII$, and $\DII$. The point $\EI$ ($\EII$) is defined when $\rhoPhi=\rhoR$ for the first (second) time. The point $\DI$ ($\DII$) is defined as the point at which $\lrsb{ (\Hend/H) \, (\rhoPhi/\rhoR) }$ exceeds (drops below) $40\%$; \ie before $\DI$ and after $\DII$ the energy loss rate form the fluid to the plasma is less than $10\%$ of the free dilution rate of $\rhoR$.
+\nsc closely follows the notation of ref.~\cite{Arias:2020qty}, identifying (at most) four points where the behaviour of the system changes; $\EI$, $\DI$, $\EII$, and $\DII$. The point $\EI$ ($\EII$) is defined when $\rhoPhi=\rhoR$ for the first (second) time. The point $\DI$ ($\DII$) is defined as the point at which $\lrsb{ (\Hend/H) \, (\rhoPhi/\rhoR) }$ exceeds (drops below) $40\%$; \ie before $\DI$ and after $\DII$ the energy loss rate from the fluid to the plasma is less than $10\%$ of the free dilution rate of $\rhoR$.
 %
 For the sake of performance, \nsc identifies these points approximately during the integration of~\eqs{eq:dlogfRdu,eq:dlogfPhidu}. 
 
@@ -237,7 +237,7 @@ These two figures correspond to the two qualitative typical behaviours we expect
 			%
 			({\bfseries b}) The same for kination ($c=6$) with $\Tend=10^{4}~\GeV$, $\Ti=10^7~\GeV$, and $r=10^{8}$.
 			%
-			The gray vertical lines show the approximate location of the points ${\rm E_{1,2}}$ and ${\rm D_{1,2}}$.
+			The grey vertical lines show the approximate location of the points ${\rm E_{1,2}}$ and ${\rm D_{1,2}}$.
 		} 
 		\label{fig:evolution_examples}
 	\end{figure}
@@ -266,7 +266,7 @@ These two figures correspond to the two qualitative typical behaviours we expect
 %
 These commands download the {\tt master} branch of \nsc, with the latest versions of {\tt NaBBODES} and {\tt SimpleSplines}. All versions that are not labelled as stable must be treated with caution, as they may not work properly. 
 
-By executing \run{bash configure.sh} in the root directory of \nsc, the library will be available for usage within a \CPP program. This {\tt bash} script, writes some paths in some files for convenience, formats the data for the RDOF in an acceptable format (if a {\em relative} path is given in the {\tt NSCpp/Paths.mk file}), and creates some directories that may be useful later. In order to call \nsc inside \PY, \run{make lib} must also be ran,  which will compile shared libraries that needed for the \PY interface.
+By executing \run{bash configure.sh} in the root directory of \nsc, the library will be available for usage within a \CPP program. This {\tt bash} script, writes some paths in some files for convenience, formats the data for the RDOF in an acceptable format (if a {\em relative} path is given in the {\tt NSCpp/Paths.mk file}), and creates some directories that may be useful later. In order to call \nsc inside \PY, \run{make lib} must also be run,  which will compile shared libraries that needed for the \PY interface.
 
 \nsc already comes with several examples in \CPP and \PY, which can be found in the directory {\tt NSCpp/UserSpace}. In order to compile the \CPP examples, one just has to run \run{make examples} in the root directory of \nsc or {\tt make} inside the directory of each \CPP program.
 
@@ -278,7 +278,7 @@ There is also an option to compile some test programs using {\tt make check}, wh
 
 \subsection{Using \nsc}\label{sec:Cpp_usage} 
 %
-Out-of-the-box, and after \run{bash configure.sh} is ran successfully, \nsc can be used in a \CPP program by including in the source file the following line:
+Out-of-the-box, and after \run{bash configure.sh} is run successfully, \nsc can be used in a \CPP program by including in the source file the following line:
 %
 \begin{cpp}
 	#include "NSCpp.hpp"
@@ -300,7 +300,7 @@ The evolution of the Universe depends on the evolution of the plasma, which is e
 	nsc::Cosmo<LD> plasma('path_to_data', minT, maxT);
 \end{cpp}
 %
-Here, \cppin{'path_to_data'} is the (relative of absolute) path to a file with tabulated data  of the relativsit degrees of freedom of the plasma . It is assumed that the file has three columns with: $T$ in $\GeV$, $\heff$, and $\geff$. The temperature given in this file have to increase monotonically, otherwise the the program exits with error core $1$.~\footnote{\nsc already includes the standard model RDOF found in~\cite{Saikawa:2020swg} in the directory {\tt NSCpp/src/data}.} If a path is provided in the {\tt NSCpp/Paths.mk} file before \run{bash configure.sh} is ran, there will be a global (constant) variable called \cppin{cosmo_PATH} which can be used after  {\tt NSCpp.hpp} is included.
+Here, \cppin{'path_to_data'} is the (relative of absolute) path to a file with tabulated data  of the relativistic degrees of freedom of the plasma . It is assumed that the file has three columns with: $T$ in $\GeV$, $\heff$, and $\geff$. The temperature given in this file has to increase monotonically, otherwise the program exits with error core $1$.~\footnote{\nsc already includes the standard model RDOF found in~\cite{Saikawa:2020swg} in the directory {\tt NSCpp/src/data}.} If a path is provided in the {\tt NSCpp/Paths.mk} file before \run{bash configure.sh} is run, there will be a global (constant) variable called \cppin{cosmo_PATH} which can be used after  {\tt NSCpp.hpp} is included.
 %
 The arguments \pyin{minT} and \pyin{maxT} dictate the temperatures between which $\geff$ and $\heff$ will be interpolated. For temperatures beyond these, both  $\geff$ and $\heff$  are assumed to be constant. A detailed description of this class can be found in the Appendix of ref.~\cite{Karamitros:2021nxi}.  
 
@@ -352,7 +352,7 @@ The various parameters are:
 	\item {\tt maximum\_No\_steps} (optional): Maximum steps the solver can take. Quits if this number is reached even if the temperature is still larger than {\tt TEND}. 
 \end{enumerate}
 %
-A detailed description of the  effect of the various optional parameters on the operation of the ODE solver can be found in the Appendices of ref.~\cite{Karamitros:2021nxi}. Notice that the optional parameter are passed using aggregation.~\footnote{This means that all arguments inside {\tt \{...\}} define a temporary an instance of a \cppin{struct} that simply holds these arguments.} 
+A detailed description of the  effect of the various optional parameters on the operation of the ODE solver can be found in the Appendices of ref.~\cite{Karamitros:2021nxi}. Notice that the optional parameters are passed using aggregation.~\footnote{This means that all arguments inside {\tt \{...\}} define a temporary an instance of a \cppin{struct} that simply holds these arguments.} 
 
 
 The \cppin{solveNSC} function returns \cppin{true} if the temperature reached \cppin{TSTOP} for $u<=$\cppin{umax} and \cppin{false} otherwise. This can be used to test whether the integration completed successfully.
@@ -391,7 +391,7 @@ An instance of the \pyin{Cosmo} class is declared as
 %
 The arguments are the same as in \CPP.
 
-The system, them, is solved by running:
+The system, then, is solved by running:
 %
 \begin{cpp}
 	BE.solveNSC(TEND, c, Ti, ratio, TSTOP, umax, plasma,
@@ -416,7 +416,7 @@ This will fill the \pyin{numpy}~\cite{harris2020array} arrays with the integrati
 %
 gives access to the local errors \pyin{BE.dT} and \pyin{BE.drhoPhi}.
 
-It is essential to manually delete both \pyin{BE} and \pyin{plasma} if they are no longer needed or before reassigning them. The reason is that there are underlying {\tt C}-pointers that manage the \PY interface for each instance of the classes. If the instances are reassigned without deletion, this pointers can no longer be accessed. This is a memory-leak, which can only be fixed by exiting the script. 
+It is essential to manually delete both \pyin{BE} and \pyin{plasma} if they are no longer needed or before reassigning them. The reason is that there are underlying {\tt C}-pointers that manage the \PY interface for each instance of the classes. If the instances are reassigned without deletion, these pointers can no longer be accessed. This is a memory-leak, which can only be fixed by exiting the script. 
 %
 That is, one must simply run 
 %
@@ -596,7 +596,7 @@ We also show the relative local errors and histogram corresponding to \Figs{fig:
 %
 In \Figs{fig:EKD_err,fig:EKD_hist} we can see that the errors are still small, and after $\DI$ the step size is automatically adjusted in order to keep it from increasing.
 
-Figures of errors and histogram such as \Figs{fig:error_examples_MD,fig:error_examples_KD} can be used to identify cases that the solver behaves badly. In general, these plots do not provide the whole picture. It should be considered good practice to use different methods and choices of the various RK parameters (\eg lower of higher values of \pyin{relative_tolerance} and \pyin{absolute_tolerance}) in order to make sure that the results are consistent. Idealy, these results should be also compared against approximate solutions to~\eqs{eq:dlogfRdu,eq:dlogfPhidu} such as the ones explained in detail in ref.~\cite{Arias:2020qty}.
+Figures of errors and histogram such as \Figs{fig:error_examples_MD,fig:error_examples_KD} can be used to identify cases that the solver behaves badly. In general, these plots do not provide the whole picture. It should be considered good practice to use different methods and choices of the various RK parameters (\eg lower of higher values of \pyin{relative_tolerance} and \pyin{absolute_tolerance}) in order to make sure that the results are consistent. Ideally, these results should be also compared against approximate solutions to~\eqs{eq:dlogfRdu,eq:dlogfPhidu} such as the ones explained in detail in ref.~\cite{Arias:2020qty}.
 
 \section{Summary}\label{sec:summary}
 %
@@ -671,12 +671,12 @@ The class \cppin{Evolution} has several member variables that store the results 
 	\item \cppin{LD TE1}: value of $\TEI$ (in $\GeV$). It is initialised at 0. If $\rhoPhi$ never reaches $\rhoR$, This variable will be equal to $\Ti$.
 	\item \cppin{LD TE2}: value of $\TEII$ (in $\GeV$). It is initialised at 0. If $\rhoPhi$ never reaches $\rhoR$ or $c>4$, this variable will be equal to $\Ti$. 
 	\item \cppin{LD TD1}: value of $\TDI$ (in $\GeV$). It is initialised at 0. If the energy injection rate never becomes more than $10\%$ of the free dilution rate of $\rhoR$, this variable obtains the value of $\Ti$.
-	\item \cppin{LD TD2}: value of $\TDII$ (in $\GeV$).It is initialised at 0. If the energy injection rate never becomes more than $10\%$ of the free dilution rate of $\rhoR$, this variable obtains the value of $\Ti$.
+	\item \cppin{LD TD2}: value of $\TDII$ (in $\GeV$). It is initialised at 0. If the energy injection rate never becomes more than $10\%$ of the free dilution rate of $\rhoR$, this variable obtains the value of $\Ti$.
 	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	\item \cppin{LD uE1}: value of $\uEI$. It is initialised at 0. If $\rhoPhi$ never reaches $\rhoR$, This variable will be equal to $0$.
 	\item \cppin{LD uE2}: value of $\uEII$. It is initialised at 0. If $\rhoPhi$ never reaches $\rhoR$  or $c>4$, this variable will be equal to $0$.
 	\item \cppin{LD uD1}: value of $\uDI$. It is initialised at 0. If the energy injection rate never becomes more than $10\%$ of the free dilution rate of $\rhoR$, this variable obtains the value of $0$.
-	\item \cppin{LD uD2}: value of $\uDII$.It is initialised at 0. If the energy injection rate never becomes more than $10\%$ of the free dilution rate of $\rhoR$, this variable obtains the value of $0$.	
+	\item \cppin{LD uD2}: value of $\uDII$. It is initialised at 0. If the energy injection rate never becomes more than $10\%$ of the free dilution rate of $\rhoR$, this variable obtains the value of $0$.	
 \end{enumerate} 
 
 %There is also a \cppin{solveNSC} definition without aggregation:
