@@ -3,6 +3,7 @@
 *path.py
 *type.py
 *path.hpp
+*nsc_paths.hpp
 *.pyc
 *__pycache__*
 *.so
