@@ -3,7 +3,7 @@
 
 
 #include"src/Cosmo/Cosmo.hpp"
-#include"src/misc_dir/path.hpp"
+#include"src/misc_dir/nsc_paths.hpp"
 
 
 /*uncomment to print difference between interpolation and data*/
