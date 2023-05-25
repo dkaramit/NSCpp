@@ -1,5 +1,5 @@
 #include"src/Cosmo/Cosmo.hpp"
-#include "src/misc_dir/path.hpp"
+#include "src/misc_dir/nsc_paths.hpp"
 
 
 /*cosmological parameters*/

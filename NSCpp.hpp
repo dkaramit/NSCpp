@@ -7,7 +7,7 @@
 #include"src/NSC/NSCSolve.hpp"
 
 // get the paths
-#include"src/misc_dir/path.hpp"
+#include"src/misc_dir/nsc_paths.hpp"
 
 // get the utilities
 #include"src/util/timeit.hpp"

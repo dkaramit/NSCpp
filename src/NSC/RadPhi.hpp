@@ -5,7 +5,7 @@
 #include <type_traits>
 
 #include"src/Cosmo/Cosmo.hpp"
-#include "src/misc_dir/path.hpp"
+#include "src/misc_dir/nsc_paths.hpp"
 
 
 namespace nsc{
