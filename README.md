@@ -163,7 +163,7 @@ This script can be ran after `make lib` has finished. Here we assume that the pa
 
 ## If you have trouble using the library I would be happy to help. 
 
-Contact e-mail: <dkaramit@yahoo.com>, <dimitrios.karamitros@manchester.ac.uk>.
+Contact e-mail: <dkaramit@yahoo.com>, <dimitrios.d.karamitros@jyu.fi>.
 
 ## Citation
 
@@ -171,11 +171,14 @@ If you use `NSC++` please cite it as
 ```
 @article{Karamitros:2023uak,
     author = "Karamitros, Dimitrios",
-    title = "{NSC++: Non-Standard Cosmologies in C++}",
+    title = "{NSC++: Non-standard cosmologies in C++}",
     eprint = "2301.08253",
     archivePrefix = "arXiv",
     primaryClass = "astro-ph.CO",
-    month = "1",
+    doi = "10.1016/j.cpc.2023.108743",
+    journal = "Comput. Phys. Commun.",
+    volume = "288",
+    pages = "108743",
     year = "2023"
 }
 ```
